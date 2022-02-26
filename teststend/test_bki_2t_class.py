@@ -187,6 +187,16 @@ class TestBKI2T(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
 
+    def st_test_bki_2t(self) -> bool:
+        if self.st_test_1_bki_2t():
+            if self.st_test_20_bki_2t():
+                if self.st_test_30_bki_2t():
+                    if self.st_test_40_bki_2t():
+                        if self.st_test_50_bki_2t():
+                            if self.st_test_60_bki_2t():
+                                return True
+        return False
+
 
 if __name__ == '__main__':
     test_bki_2t = TestBKI2T()
