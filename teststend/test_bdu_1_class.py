@@ -220,7 +220,7 @@ if __name__ == '__main__':
             my_msg('Блок исправен')
         else:
             mysql_conn_bdu_1.mysql_block_bad()
-            my_msg('Блок неисправен')
+            my_msg('Блок неисправен', '#A61E1E')
     except OSError:
         fault.debug_msg("ошибка системы", 1)
     except SystemError:
