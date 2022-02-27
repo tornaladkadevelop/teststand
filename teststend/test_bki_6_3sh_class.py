@@ -61,6 +61,7 @@ class TestBKI6(object):
             return False
         self.__fault.debug_msg('тест 1 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '1')
+        return True
 
     def st_test_20_bki6(self) -> bool:
         """
@@ -92,7 +93,12 @@ class TestBKI6(object):
             self.__fault.debug_msg('тест 2.0 положение выходов не соответствует', 1)
             return False
         self.__fault.debug_msg('тест 2.0 положение выходов соответствует', 4)
-        # 2.1. Проверка установившегося состояния контактов по истечению 20 сек
+        return True
+
+    def st_test_21_bki6(self) -> bool:
+        """
+        2.1. Проверка установившегося состояния контактов по истечению 20 сек
+        """
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
         if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
             pass
@@ -108,7 +114,12 @@ class TestBKI6(object):
             return False
         self.__fault.debug_msg('тест 2.1 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '2')
-        # Тест 3. Проверка работы контактов реле К4 «Блокировка ВКЛ».
+        return True
+
+    def st_test_30_bki6(self) -> bool:
+        """
+        Тест 3. Проверка работы контактов реле К4 «Блокировка ВКЛ».
+        """
         self.__ctrl_kl.ctrl_relay('KL36', True)
         sleep(1)
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
@@ -125,6 +136,9 @@ class TestBKI6(object):
                 self.__mysql_conn.mysql_error(131)
             return False
         self.__fault.debug_msg('тест 3.1 положение выходов соответствует', 4)
+        return True
+
+    def st_test_31_bki6(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL36', False)
         k3 = 0
         in_a1, in_a7 = self.__inputs_a1_a7()
@@ -151,6 +165,9 @@ class TestBKI6(object):
             self.__fault.debug_msg('тест 3.2 положение выходов не соответствует', 1)
             return False
         self.__fault.debug_msg('тест 3.2 положение выходов соответствует', 4)
+        return True
+
+    def st_test_32_bki6(self) -> bool:
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
         if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
             pass
@@ -166,7 +183,12 @@ class TestBKI6(object):
             return False
         self.__fault.debug_msg('тест 3.3 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '3')
-        # Тест 4. Проверка работы контактов реле К6 «Срабатывание БКИ»
+        return True
+
+    def st_test_40_bki6(self) -> bool:
+        """
+        Тест 4. Проверка работы контактов реле К6 «Срабатывание БКИ»
+        """
         self.__ctrl_kl.ctrl_relay('KL22', False)
         self.__resist.resist_kohm(30)
         sleep(10)
@@ -184,7 +206,12 @@ class TestBKI6(object):
                 self.__mysql_conn.mysql_error(137)
             return False
         self.__fault.debug_msg('тест 4.1 положение выходов соответствует', 4)
-        # 4.2. Отключение 30 кОм
+        return True
+
+    def st_test_41_bki6(self) -> bool:
+        """
+        4.2. Отключение 30 кОм
+        """
         self.__resist.resist_kohm(590)
         sleep(2)
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
@@ -202,7 +229,12 @@ class TestBKI6(object):
             return False
         self.__fault.debug_msg('тест 4.2 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '4')
-        # Тест 5. Проверка исправности контактов реле К5 «Срабатывание БКИ на сигнал
+        return True
+
+    def st_test_50_bki6(self) -> bool:
+        """
+        Тест 5. Проверка исправности контактов реле К5 «Срабатывание БКИ на сигнал
+        """
         self.__ctrl_kl.ctrl_relay('KL22', True)
         sleep(2)
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
@@ -219,6 +251,9 @@ class TestBKI6(object):
                 self.__mysql_conn.mysql_error(143)
             return False
         self.__fault.debug_msg('тест 5.1 положение выходов соответствует', 4)
+        return True
+
+    def st_test_51_bki6(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL22', False)
         sleep(5)
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.__inputs_a()
@@ -238,35 +273,57 @@ class TestBKI6(object):
         self.__mysql_conn.mysql_ins_result('исправен', '5')
         return True
     
-    @staticmethod
-    def __inputs_a():
+    def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a4 = self.__read_mb.read_discrete(4)
         in_a5 = self.__read_mb.read_discrete(5)
         in_a6 = self.__read_mb.read_discrete(6)
         in_a7 = self.__read_mb.read_discrete(7)
+        if in_a1 is None or in_a4 is None or in_a5 is None or in_a6 is None or in_a7 in None:
+            raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a4, in_a5, in_a6, in_a7
     
-    @staticmethod
-    def __inputs_a1_a7():
+    def __inputs_a1_a7(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a7 = self.__read_mb.read_discrete(7)
+        if in_a1 is None or in_a7 in None:
+            raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a7
+
+    def st_test_bki_6_3sh(self) -> bool:
+        if self.st_test_1_bki6():
+            if self.st_test_20_bki6():
+                if self.st_test_21_bki6():
+                    if self.st_test_30_bki6():
+                        if self.st_test_31_bki6():
+                            if self.st_test_32_bki6():
+                                if self.st_test_40_bki6():
+                                    if self.st_test_41_bki6():
+                                        if self.st_test_50_bki6():
+                                            if self.st_test_51_bki6():
+                                                return True
+        return False
 
 
 if __name__ == '__main__':
+    test_bki6 = TestBKI6()
+    reset_test_bki6 = ResetRelay()
+    mysql_conn_bki6 = MySQLConnect()
+    fault = Bug(True)
     try:
-        test_bki_6_3sh = TestBKI6()
-        if test_bki_6_3sh.st_test_bki_6_3sh():
-            mysql_conn.mysql_block_good()
+        if test_bki6.st_test_bki_6_3sh():
+            mysql_conn_bki6.mysql_block_good()
             my_msg('Блок исправен')
         else:
-            mysql_conn.mysql_block_bad()
-            my_msg('Блок неисправен')
+            mysql_conn_bki6.mysql_block_bad()
+            my_msg('Блок неисправен', '#A61E1E')
     except OSError:
         my_msg("ошибка системы")
     except SystemError:
         my_msg("внутренняя ошибка")
+    except ModbusConnectException as mce:
+        fault.debug_msg(mce, 1)
+        my_msg(str(mce), '#A61E1E')
     finally:
-        reset.reset_all()
+        reset_test_bki6.reset_all()
         exit()
