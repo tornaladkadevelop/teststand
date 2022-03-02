@@ -7,8 +7,9 @@
 БУР ПМВИР (пускатель)	Нет производителя
 
 """
+
 import sys
-from sys import exit
+
 from time import sleep
 
 from gen_func_utils import *
