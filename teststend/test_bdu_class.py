@@ -8,6 +8,7 @@
 БДУ	Углеприбор
 
 """
+import sys
 from sys import exit
 from time import sleep
 from gen_func_utils import *
@@ -173,6 +174,7 @@ class TestBDU(object):
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1 = self.__inputs_a()
         if in_a1 is False:
             pass
@@ -224,4 +226,4 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка")
     finally:
         reset_test_bdu.reset_all()
-        exit()
+        sys.exit()
