@@ -72,4 +72,6 @@ __all__ = ("config", "gen_func_procedure", "gen_func_tv1", "gen_func_utils", "ge
            "test_bru_2sr_class", "test_bu_pmvir_class", "test_bur_pmvir_class", "test_mtz_5_v4_11_class",
            "test_bu_apsh_m_class", "test_bmz_apsh_4_class", "test_bmz_apsh_m_class", "test_mkzp_6_4sh_class")
 
-__author__ = 'Irik Safin <irik.safin@tornaladka.ru>'
+__author__ = '<konstantin.devyaterikov@tornaladka.ru>' \
+             '<irik.safin@tornaladka.ru>, ' \
+             '<vladilen.aborin@tornaladka.ru>, '
