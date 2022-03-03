@@ -32,6 +32,8 @@ class TestBZMPP(object):
     __mysql_conn = MySQLConnect()
     __fault = Bug(True)
 
+    coef_volt: float
+
     def __init__(self):
         pass
     
@@ -75,11 +77,11 @@ class TestBZMPP(object):
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        coef_volt = self.__proc.procedure_1_22_32()
-        if coef_volt is not False:
+        self.coef_volt = self.__proc.procedure_1_22_32()
+        if self.coef_volt is not False:
             pass
         else:
-            self.__mysql_conn.mysql_ins_result("неисправен TV1", "1")
+            self.__mysql_conn.mysql_ins_result("неисправен", "1")
             self.__reset.stop_procedure_32()
             return False
         self.__reset.stop_procedure_32()
@@ -101,7 +103,8 @@ class TestBZMPP(object):
         self.__mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
-    def st_test_20_bzmp_p(self) -> bool:
+    @staticmethod
+    def st_test_20_bzmp_p() -> bool:
         """
         Тест 2. Проверка срабатывания блока при снижении изоляции цепей 36В
         """
@@ -110,11 +113,10 @@ class TestBZMPP(object):
         msg_3 = "С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Uном=660В»"
         if my_msg(msg_2):
             if my_msg(msg_3):
-                pass
-            else:
-                return False
-        else:
-            return False
+                return True
+        return False
+
+    def st_test_21_bzmp_p(self) -> bool:
         self.__mb_ctrl.ctrl_relay('KL21', True)
         sleep(1)
         self.__mb_ctrl.ctrl_relay('KL27', True)
@@ -137,7 +139,7 @@ class TestBZMPP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "2")
-        return  True
+        return True
 
     def st_test_30_bzmp_p(self) -> bool:
         """
@@ -170,28 +172,28 @@ class TestBZMPP(object):
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "3")
         return True
-        # Тест 4. Проверка защиты ПМЗ
-        # Сообщение	«С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»
+
+    def st_test_40_bzmp_p(self) -> bool:
+        """
+        Тест 4. Проверка защиты ПМЗ
+        """
         msg_5 = "С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_5):
             pass
         else:
             return False
         if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_29(coef_volt=coef_volt)
+            calc_volt = self.__proc.start_procedure_29(coef_volt=self.coef_volt)
             if calc_volt is not False:
                 if self.__proc.start_procedure_38(calc_volt=calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
-            return False
-        # 4.2.  Проверка срабатывания блока от сигнала нагрузки:
+                    return True
+        self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
+        return False
+
+    def st_test_41_bzmp_p(self) -> bool:
+        """
+        4.2.  Проверка срабатывания блока от сигнала нагрузки:
+        """
         self.__mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
         self.__mb_ctrl.ctrl_relay('KL63', False)
@@ -205,7 +207,12 @@ class TestBZMPP(object):
             self.__reset.stop_procedure_3()
             return False
         self.__reset.stop_procedure_3()
-        # 4.2.2. Сброс защит после проверки
+        return True
+
+    def st_test_42_bzmp_p(self) -> bool:
+        """
+        4.2.2. Сброс защит после проверки
+        """
         self.__sbros_zashit()
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is True and in_a6 is False:
@@ -215,28 +222,29 @@ class TestBZMPP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "4")
-        # Тест 5. Проверка защиты от несимметрии фаз
-        # Сообщение	«С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»
+        return True
+
+    def st_test_50_bzmp_p(self) -> bool:
+        """
+        Тест 5. Проверка защиты от несимметрии фаз
+        """
         msg_6 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_6):
             pass
         else:
             return False
         if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_210(coef_volt=coef_volt)
+            calc_volt = self.__proc.start_procedure_210(coef_volt=self.coef_volt)
             if calc_volt is not False:
                 if self.__proc.start_procedure_39(calc_volt=calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")
-            return False
-        # 5.2.  Проверка срабатывания блока от сигнала нагрузки:
+                    return True
+        self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")
+        return False
+
+    def st_test_51_bzmp_p(self) -> bool:
+        """
+        5.2.  Проверка срабатывания блока от сигнала нагрузки:
+        """
         self.__mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL63', True)
