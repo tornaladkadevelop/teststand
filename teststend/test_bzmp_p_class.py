@@ -277,8 +277,11 @@ class TestBZMPP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {timer_test_5_2:.1f} сек', "5")
-        # Тест 6. Проверка защиты от перегрузки
-        # Сообщение	«С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»
+
+    def st_test_60_bzmp_p(self) -> bool:
+        """
+        Тест 6. Проверка защиты от перегрузки
+        """
         msg_7 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_7):
             pass
