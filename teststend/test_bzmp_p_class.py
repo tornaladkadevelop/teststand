@@ -159,8 +159,6 @@ class TestBZMPP(object):
         return True
 
     def st_test_31_bzmp_p(self) -> bool:
-        # Отключение 65 кОм	KL13- KL20-ВЫКЛ 	А2:0B - А2:7B-ВЫКЛ
-        # Пауза 2000 мс
         self.__resist.resist_kohm(590)
         sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
@@ -171,6 +169,7 @@ class TestBZMPP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "3")
+        return True
         # Тест 4. Проверка защиты ПМЗ
         # Сообщение	«С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»
         msg_5 = "С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
