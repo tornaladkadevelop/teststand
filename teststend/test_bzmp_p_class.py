@@ -33,6 +33,7 @@ class TestBZMPP(object):
     __fault = Bug(True)
 
     coef_volt: float
+    timer_test_6_2: float
 
     def __init__(self):
         pass
@@ -187,7 +188,7 @@ class TestBZMPP(object):
             if calc_volt is not False:
                 if self.__proc.start_procedure_38(calc_volt=calc_volt):
                     return True
-        self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
+        self.__mysql_conn.mysql_ins_result("неисправен", "4")
         return False
 
     def st_test_41_bzmp_p(self) -> bool:
@@ -284,6 +285,7 @@ class TestBZMPP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {timer_test_5_2:.1f} сек', "5")
+        return True
 
     def st_test_60_bzmp_p(self) -> bool:
         """
@@ -295,20 +297,17 @@ class TestBZMPP(object):
         else:
             return False
         if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_211(coef_volt=coef_volt)
+            calc_volt = self.__proc.start_procedure_211(coef_volt=self.coef_volt)
             if calc_volt is not False:
                 if self.__proc.start_procedure_310(calc_volt=calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result("неисправен TV1", "6")
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result("неисправен TV1", "6")
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result("неисправен TV1", "6")
-            return False
+                    return True
+        self.__mysql_conn.mysql_ins_result("неисправен", "6")
+        return False
+
+    def st_test_61_bzmp_p(self) -> bool:
+        """
         # 6.2.  Проверка срабатывания блока от сигнала нагрузки:
+        """
         self.__mb_ctrl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b()
         k = 0
@@ -321,10 +320,10 @@ class TestBZMPP(object):
         while in_a5 is True and stop_timer <= 360:
             in_a5 = self.__inputs_a5()
             stop_timer = time() - start_timer
-        timer_test_6_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 6.2: {timer_test_6_2}', 2)
+        self.timer_test_6_2 = stop_timer
+        self.__fault.debug_msg(f'таймер тест 6.2: {self.timer_test_6_2}', 2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        if in_a1 is False and in_a5 is False and in_a6 is True and timer_test_6_2 <= 360:
+        if in_a1 is False and in_a5 is False and in_a6 is True and self.timer_test_6_2 <= 360:
             pass
         else:
             self.__fault.debug_msg("положение выходов не соответствует", 1)
@@ -332,8 +331,14 @@ class TestBZMPP(object):
             self.__reset.sbros_kl63_proc_all()
             return False
         self.__reset.sbros_kl63_proc_all()
-        # Выдаем сообщение: «Сработала защита от перегрузки»
-        # 6.6. Сброс защит после проверки
+        return True
+
+    def st_test_62_bzmp_p(self) -> bool:
+        """
+        Выдаем сообщение: «Сработала защита от перегрузки»
+        6.6. Сброс защит после проверки
+        :return:
+        """
         self.__sbros_zashit()
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is True and in_a6 is False:
@@ -342,7 +347,7 @@ class TestBZMPP(object):
             self.__fault.debug_msg("положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "6")
             return False
-        self.__mysql_conn.mysql_ins_result(f'исправен, {timer_test_6_2:.1f} сек', "6")
+        self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "6")
         return True
     
     def __sbros_zashit(self):
@@ -376,6 +381,25 @@ class TestBZMPP(object):
         if in_a9 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a9
+
+    def st_test_bzmp_p(self) -> bool:
+        if self.st_test_10_bzmp_p():
+            if self.st_test_11_bzmp_p():
+                if self.st_test_12_bzmp_p():
+                    if self.st_test_20_bzmp_p():
+                        if self.st_test_21_bzmp_p():
+                            if self.st_test_30_bzmp_p():
+                                if self.st_test_31_bzmp_p():
+                                    if self.st_test_40_bzmp_p():
+                                        if self.st_test_41_bzmp_p():
+                                            if self.st_test_42_bzmp_p():
+                                                if self.st_test_50_bzmp_p():
+                                                    if self.st_test_51_bzmp_p():
+                                                        if self.st_test_60_bzmp_p():
+                                                            if self.st_test_61_bzmp_p():
+                                                                if self.st_test_62_bzmp_p():
+                                                                    return True
+        return False
 
 
 if __name__ == '__main__':
