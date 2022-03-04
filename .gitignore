@@ -1,4 +1,4 @@
-.idea
 __pycache__
 build
-/create-pdf-with-python-fpdf2-main
+/create_pdf_with_python_fpdf2_main/
+/.idea/
