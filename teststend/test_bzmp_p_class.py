@@ -23,7 +23,6 @@ from gen_mysql_connect import *
 
 
 class TestBZMPP(object):
-
     __proc = Procedure()
     __reset = ResetRelay()
     __resist = Resistor()
@@ -37,7 +36,7 @@ class TestBZMPP(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bzmp_p(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -124,19 +123,21 @@ class TestBZMPP(object):
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL27', False)
         sleep(0.2)
-        in_a6 = self.__inputs_a6()
-        if in_a6 is True:
+        in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 2.1.1 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
-        sleep(2)
+        sleep(5)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 2.1.2 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "2")
@@ -152,11 +153,13 @@ class TestBZMPP(object):
         else:
             return False
         self.__resist.resist_kohm(61)
+        sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.0 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
         return True
@@ -165,10 +168,11 @@ class TestBZMPP(object):
         self.__resist.resist_kohm(590)
         sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "3")
@@ -200,6 +204,7 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL63', False)
         sleep(1)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
@@ -215,6 +220,7 @@ class TestBZMPP(object):
         4.2.2. Сброс защит после проверки
         """
         self.__sbros_zashit()
+        sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
@@ -249,6 +255,7 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL63', True)
+        sleep(2)
         in_b1 = self.__inputs_b()
         i = 0
         while in_b1 is False and i <= 10:
@@ -276,7 +283,7 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(4)
         self.__mb_ctrl.ctrl_relay('KL24', False)
-        sleep(0.7)
+        sleep(1)
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
@@ -309,6 +316,7 @@ class TestBZMPP(object):
         # 6.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
         self.__mb_ctrl.ctrl_relay('KL63', True)
+        sleep(2)
         in_b1 = self.__inputs_b()
         k = 0
         while in_b1 is False and k <= 10:
@@ -340,6 +348,7 @@ class TestBZMPP(object):
         :return:
         """
         self.__sbros_zashit()
+        sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
@@ -349,13 +358,12 @@ class TestBZMPP(object):
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "6")
         return True
-    
+
     def __sbros_zashit(self):
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(3)
         self.__mb_ctrl.ctrl_relay('KL24', False)
-        sleep(0.7)
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a5 = self.__read_mb.read_discrete(5)
@@ -363,19 +371,19 @@ class TestBZMPP(object):
         if in_a1 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5, in_a6
-    
+
     def __inputs_a5(self):
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
-    
+
     def __inputs_a6(self):
         in_a6 = self.__read_mb.read_discrete(6)
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
-    
+
     def __inputs_b(self):
         in_a9 = self.__read_mb.read_discrete(9)
         if in_a9 is None:
@@ -420,7 +428,7 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bzmp_p.reset_all()
         sys.exit()
