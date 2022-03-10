@@ -23,7 +23,6 @@ from gen_mysql_connect import *
 
 
 class TestBZMPD(object):
-
     __proc = Procedure()
     __reset = ResetRelay()
     __resist = Resistor()
@@ -40,7 +39,7 @@ class TestBZMPD(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bzmp_d(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -120,14 +119,16 @@ class TestBZMPD(object):
                 break
             else:
                 continue
+        sleep(1)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f'{in_a1 = } (True), {in_a5 = } (True), {in_a6 = } (False)', 3)
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("тест 1.2 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 1.3 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "1")
             return False
-        self.__fault.debug_msg("тест 1.2 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 1.3 положение выходов соответствует", 4)
         self.__mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
@@ -149,6 +150,7 @@ class TestBZMPD(object):
         return False
 
     def st_test_21_bzmp_d(self) -> bool:
+        self.__fault.debug_msg("идёт тест 2.1", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
         self.__mb_ctrl.ctrl_relay('KL21', True)
         sleep(1)
@@ -170,6 +172,7 @@ class TestBZMPD(object):
         """
         2.2. Сброс защит после проверки
         """
+        self.__fault.debug_msg("идёт тест 2.2", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(0.3)
@@ -190,6 +193,7 @@ class TestBZMPD(object):
         """
         Тест 3. Проверка срабатывания блока при снижении силовой изоляции
         """
+        self.__fault.debug_msg("идёт тест 3.0", 3)
         msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         if my_msg(msg_4):
             pass
@@ -197,33 +201,36 @@ class TestBZMPD(object):
             return False
         self.__mysql_conn.mysql_ins_result('идёт тест 3.1', '3')
         self.__resist.resist_kohm(61)
-        sleep(2)
+        sleep(5)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f'{in_a1 = } (False), {in_a5 = } (False), {in_a6 = } (True)', 3)
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 3 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.0 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
-        self.__fault.debug_msg("тест 3 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 3.0 положение выходов соответствует", 4)
         return True
 
     def st_test_31_bzmp_d(self) -> bool:
+        self.__fault.debug_msg("идёт тест 3.1", 3)
         self.__resist.resist_kohm(590)
         sleep(2)
         self.__mysql_conn.mysql_ins_result('идёт тест 3.2', '3')
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(0.3)
         self.__mb_ctrl.ctrl_relay('KL24', False)
-        sleep(0.7)
+        sleep(1)
         in_a1, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f'{in_a1 = } (True), {in_a5 = } (True), {in_a6 = } (False)', 3)
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
-        self.__fault.debug_msg("тест 3 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 3.1 положение выходов соответствует", 4)
         self.__mysql_conn.mysql_ins_result("исправен", "3")
         return True
 
@@ -231,6 +238,7 @@ class TestBZMPD(object):
         """
         Тест 4. Проверка защиты ПМЗ
         """
+        self.__fault.debug_msg("идёт тест 4.0", 3)
         msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         if my_msg(msg_5):
             pass
@@ -242,11 +250,13 @@ class TestBZMPD(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             return False
+        return True
 
     def st_test_41_bzmp_d(self) -> bool:
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
+        self.__fault.debug_msg("идёт тест 4.1", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 4.2', '4')
         self.__mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
@@ -264,6 +274,7 @@ class TestBZMPD(object):
         return True
 
     def st_test_42_bzmp_d(self) -> bool:
+        self.__fault.debug_msg("идёт тест 4.2", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 4.3', '4')
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(0.3)
@@ -284,6 +295,7 @@ class TestBZMPD(object):
         """
         Тест 5. Проверка защиты от перегрузки
         """
+        self.__fault.debug_msg("идёт тест 5.0", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 5.1', '5')
         if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
             pass
@@ -296,6 +308,7 @@ class TestBZMPD(object):
         """
         5.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
+        self.__fault.debug_msg("идёт тест 5.1", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 5.2', '5')
         self.__mb_ctrl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b()
@@ -329,6 +342,7 @@ class TestBZMPD(object):
         return True
 
     def st_test_52_bzmp_d(self) -> bool:
+        self.__fault.debug_msg("идёт тест 5.2", 3)
         self.__mysql_conn.mysql_ins_result('идёт тест 5.3', '5')
         self.__sbros_zashit()
         in_a1, in_a5, in_a6 = self.__inputs_a()
@@ -341,13 +355,13 @@ class TestBZMPD(object):
         self.__fault.debug_msg("положение выходов соответствует", 4)
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_5:.1f} сек', "5")
         return True
-    
+
     def __sbros_zashit(self):
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(3)
         self.__mb_ctrl.ctrl_relay('KL24', False)
         sleep(0.7)
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a5 = self.__read_mb.read_discrete(5)
@@ -355,7 +369,7 @@ class TestBZMPD(object):
         if in_a1 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5, in_a6
-    
+
     def __inputs_a5(self):
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a5 is None:
@@ -367,7 +381,7 @@ class TestBZMPD(object):
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
-    
+
     def __inputs_b(self):
         in_a9 = self.__read_mb.read_discrete(9)
         if in_a9 is None:
@@ -400,7 +414,6 @@ if __name__ == '__main__':
     mysql_conn_bzmp_d = MySQLConnect()
     fault = Bug(True)
     try:
-
         if test_bzmp_d.st_test_bzmp_d():
             mysql_conn_bzmp_d.mysql_block_good()
             my_msg('Блок исправен', '#1E8C1E')
@@ -413,7 +426,7 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bzmp_d.reset_all()
         sys.exit()
