@@ -20,7 +20,6 @@ __all__ = ["TestBZMPP1"]
 
 
 class TestBZMPP1(object):
-
     __proc = Procedure()
     __reset = ResetRelay()
     __read_mb = ReadMB()
@@ -36,7 +35,7 @@ class TestBZMPP1(object):
 
     def __init__(self):
         pass
-    
+
     @staticmethod
     def st_test_10_bzmp_p1() -> bool:
         """
@@ -51,6 +50,7 @@ class TestBZMPP1(object):
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
+        self.__fault.debug_msg("идёт тест 1.1", 3)
         meas_volt_ust = self.__proc.procedure_1_21_31()
         if meas_volt_ust is not False:
             pass
@@ -81,6 +81,7 @@ class TestBZMPP1(object):
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
+        self.__fault.debug_msg("идёт тест 1.2", 3)
         self.coef_volt = self.__proc.procedure_1_22_32()
         if self.coef_volt is not False:
             pass
@@ -91,6 +92,7 @@ class TestBZMPP1(object):
         return True
 
     def st_test_13_bzmp_p1(self) -> bool:
+        self.__fault.debug_msg("идёт тест 1.3", 3)
         self.__mb_ctrl.ctrl_relay('KL67', True)
         timer_test_1 = 0
         start_timer_test_1 = time()
@@ -126,6 +128,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_21_bzmp_p1(self) -> bool:
+        self.__fault.debug_msg("идёт тест 2.1", 3)
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_29(coef_volt=self.coef_volt)
             if calc_volt is not False:
@@ -135,6 +138,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_22_bzmp_p1(self) -> bool:
+        self.__fault.debug_msg("идёт тест 2.2", 3)
         self.__mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
         self.__mb_ctrl.ctrl_relay('KL63', False)
@@ -154,7 +158,9 @@ class TestBZMPP1(object):
         """
         2.4.2. Сброс защит после проверки
         """
+        self.__fault.debug_msg("идёт тест 2.3", 3)
         self.__sbros_zashit()
+        sleep(1)
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a6 is False:
             pass
@@ -169,6 +175,7 @@ class TestBZMPP1(object):
         """
         Тест 3. Проверка защиты от несимметрии фаз
         """
+        self.__fault.debug_msg("идёт тест 3.0", 3)
         msg_4 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_4):
             pass
@@ -183,6 +190,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_31_bzmp_p1(self) -> bool:
+        self.__fault.debug_msg("идёт тест 3.1", 3)
         self.__mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL63', True)
@@ -197,10 +205,10 @@ class TestBZMPP1(object):
         while in_a6 is False and stop_timer <= 12:
             in_a6 = self.__inputs_a6()
             stop_timer = time() - start_timer
-        timer_test_5_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 3: {timer_test_5_2}', 2)
+        self.timer_test_5_2 = stop_timer
+        self.__fault.debug_msg(f'таймер тест 3: {self.timer_test_5_2}', 2)
         in_a1, in_a6 = self.__inputs_a()
-        if in_a1 is False and in_a6 is True and timer_test_5_2 <= 12:
+        if in_a1 is False and in_a6 is True and self.timer_test_5_2 <= 12:
             pass
         else:
             self.__fault.debug_msg("положение выходов не соответствует", 1)
@@ -208,6 +216,7 @@ class TestBZMPP1(object):
             self.__reset.sbros_kl63_proc_all()
             self.__mb_ctrl.ctrl_relay('KL81', False)
             return False
+        self.__fault.debug_msg("положение выходов соответствует", 4)
         self.__reset.sbros_kl63_proc_all()
         self.__mb_ctrl.ctrl_relay('KL81', False)
         return True
@@ -216,6 +225,7 @@ class TestBZMPP1(object):
         """
         3.5. Сброс защит после проверки
         """
+        self.__fault.debug_msg("идёт тест 3.2", 3)
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(4)
         self.__mb_ctrl.ctrl_relay('KL24', False)
@@ -227,6 +237,7 @@ class TestBZMPP1(object):
             self.__fault.debug_msg("положение выходов не соответствует", 1)
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             return False
+        self.__fault.debug_msg("положение выходов соответствует", 4)
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_5_2:.1f} сек', "3")
         return True
 
@@ -234,6 +245,7 @@ class TestBZMPP1(object):
         """
         Тест 4. Проверка защиты от перегрузки
         """
+        self.__fault.debug_msg("идёт тест 4.0", 3)
         msg_5 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_5):
             pass
@@ -248,6 +260,7 @@ class TestBZMPP1(object):
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
+        self.__fault.debug_msg("идёт тест 4.1", 3)
         self.__mb_ctrl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b()
         k = 0
@@ -271,6 +284,7 @@ class TestBZMPP1(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             self.__reset.sbros_kl63_proc_all()
             return False
+        self.__fault.debug_msg("положение выходов соответствует", 4)
         self.__reset.sbros_kl63_proc_all()
         return True
 
@@ -278,7 +292,9 @@ class TestBZMPP1(object):
         """
         4.6. Сброс защит после проверки
         """
+        self.__fault.debug_msg("идёт тест 4.2", 3)
         self.__sbros_zashit()
+        sleep(1)
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a6 is False:
             pass
@@ -288,32 +304,31 @@ class TestBZMPP1(object):
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "4")
         return True
-    
+
     def __sbros_zashit(self):
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(3)
         self.__mb_ctrl.ctrl_relay('KL24', False)
-        sleep(0.7)
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a6 = self.__read_mb.read_discrete(6)
         if in_a1 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a6
-    
+
     def __inputs_a5(self):
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
-    
+
     def __inputs_a6(self):
         in_a6 = self.__read_mb.read_discrete(6)
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
-    
+
     def __inputs_b(self):
         in_a9 = self.__read_mb.read_discrete(9)
         if in_a9 is None:
@@ -345,7 +360,6 @@ if __name__ == '__main__':
     mysql_conn_bzmp_p1 = MySQLConnect()
     fault = Bug(True)
     try:
-
         if test_bzmp_p1.st_test_bzmp_p1():
             mysql_conn_bzmp_p1.mysql_block_good()
             my_msg('Блок исправен', '#1E8C1E')
@@ -358,7 +372,7 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bzmp_p1.reset_all()
         sys.exit()
