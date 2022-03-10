@@ -16,16 +16,15 @@ __all__ = ["TestBKI1T"]
 
 
 class TestBKI1T(object):
-
     __resist = Resistor()
     __ctrl_kl = CtrlKL()
     __read_mb = ReadMB()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bki_1t(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока
@@ -72,7 +71,7 @@ class TestBKI1T(object):
             b = self.__ctrl_kl.ctrl_ai_code_100()
             if b == 0:
                 break
-            elif b is 1 or b == 9999:
+            elif b == 1 or b == 9999:
                 self.__mysql_conn.mysql_error(32)
                 self.__mysql_conn.mysql_ins_result("неисправен", "3")
                 return False
@@ -101,7 +100,7 @@ class TestBKI1T(object):
         Тест 5. Работа блока в режиме «Аварийный» при сопротивлении изоляции
         ниже 30 кОм (Подключение на внутреннее сопротивление)
         """
-        #self.__resist.resist_kohm(220)
+        # self.__resist.resist_kohm(220)
         sleep(1)
         self.__ctrl_kl.ctrl_relay('KL22', True)
         sleep(1)
@@ -115,7 +114,7 @@ class TestBKI1T(object):
         self.__ctrl_kl.ctrl_relay('KL21', False)
         self.__mysql_conn.mysql_ins_result("исправен", "5")
         return True
-    
+
     def __inputs_a(self):
         in_a0 = self.__read_mb.read_discrete(0)
         in_a1 = self.__read_mb.read_discrete(1)
@@ -141,17 +140,17 @@ if __name__ == '__main__':
     try:
         if test_bki_1t.st_test_bki_1t():
             mysql_conn_bki_1t.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', '#1E8C1E')
         else:
             mysql_conn_bki_1t.mysql_block_bad()
             my_msg('Блок неисправен', '#A61E1E')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", '#A61E1E')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bki_1t.reset_all()
         exit()
