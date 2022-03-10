@@ -36,7 +36,8 @@ class TestBTZT(object):
 
     # ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
     list_ust_tzp = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
-    list_ust_pmz = (67.9, 86.4, 100.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
+    list_ust_pmz = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
+    # list_ust_pmz = (70.9, 89.4, 103.1, 120.2, 143.7, 149.4, 159.6, 167.2, 178.7, 186.7, 195.1)
     list_delta_t_pmz = []
     list_delta_t_tzp = []
     list_delta_percent_pmz = []
@@ -230,7 +231,6 @@ class TestBTZT(object):
         self.__mysql_conn.mysql_ins_result('идет тест 3.1', '3')
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
-            self.__fault.debug_msg("положение выходов блока соответствует", 4)
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
@@ -247,6 +247,8 @@ class TestBTZT(object):
                 self.__fault.debug_msg("положение входа 6 не соответствует", 1)
                 self.__mysql_conn.mysql_error(406)
             return False
+        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        return True
 
     def st_test_31_btz_t(self) -> bool:
         """
@@ -650,7 +652,7 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_btz_t.reset_all()
         sys.exit()
