@@ -408,7 +408,7 @@ if __name__ == '__main__':
         my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bmz_2.reset_all()
         sys.exit()
