@@ -298,9 +298,10 @@ class Resistor(object):
         R18		183,3	кОм	
     """
 
-    def resist_ohm(self, ohm):
-        self.ohm = ohm
-        if self.ohm == 0:
+    @staticmethod
+    def resist_ohm(ohm):
+
+        if ohm == 0:
             ctrl_kl.ctrl_relay('KL3', True)
             ctrl_kl.ctrl_relay('KL4', True)
             ctrl_kl.ctrl_relay('KL5', True)
@@ -309,7 +310,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', True)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 10:
+        elif ohm == 10:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', True)
@@ -318,7 +319,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', True)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 15:
+        elif ohm == 15:
             ctrl_kl.ctrl_relay('KL3', True)
             ctrl_kl.ctrl_relay('KL4', True)
             ctrl_kl.ctrl_relay('KL5', True)
@@ -327,7 +328,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', True)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 20:
+        elif ohm == 20:
             ctrl_kl.ctrl_relay('KL3', True)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -336,7 +337,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', True)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 35:
+        elif ohm == 35:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -345,7 +346,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', False)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 46:
+        elif ohm == 46:
             ctrl_kl.ctrl_relay('KL3', True)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', True)
@@ -354,7 +355,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', False)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 50:
+        elif ohm == 50:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -363,7 +364,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', False)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 100:
+        elif ohm == 100:
             ctrl_kl.ctrl_relay('KL3', True)
             ctrl_kl.ctrl_relay('KL4', True)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -372,7 +373,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', False)
             ctrl_kl.ctrl_relay('KL9', False)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 110:
+        elif ohm == 110:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', True)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -381,7 +382,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', False)
             ctrl_kl.ctrl_relay('KL9', False)
             ctrl_kl.ctrl_relay('KL10', True)
-        elif self.ohm == 150:
+        elif ohm == 150:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', True)
             ctrl_kl.ctrl_relay('KL5', True)
@@ -390,7 +391,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL8', True)
             ctrl_kl.ctrl_relay('KL9', True)
             ctrl_kl.ctrl_relay('KL10', False)
-        elif self.ohm == 255:
+        elif ohm == 255:
             ctrl_kl.ctrl_relay('KL3', False)
             ctrl_kl.ctrl_relay('KL4', False)
             ctrl_kl.ctrl_relay('KL5', False)
@@ -400,9 +401,10 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL9', False)
             ctrl_kl.ctrl_relay('KL10', False)
         
-    def resist_kohm(self, kohm):
-        self.kohm = kohm
-        if self.kohm == 0:
+    @staticmethod
+    def resist_kohm(kohm):
+
+        if kohm == 0:
             ctrl_kl.ctrl_relay('KL13', True)
             ctrl_kl.ctrl_relay('KL14', True)
             ctrl_kl.ctrl_relay('KL15', True)
@@ -411,7 +413,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        if self.kohm == 12:
+        if kohm == 12:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', True)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -420,7 +422,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        if self.kohm == 21:
+        if kohm == 21:
             ctrl_kl.ctrl_relay('KL13', True)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', True)
@@ -429,7 +431,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 26:
+        elif kohm == 26:
             ctrl_kl.ctrl_relay('KL13', True)
             ctrl_kl.ctrl_relay('KL14', True)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -438,7 +440,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 30:
+        elif kohm == 30:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', True)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -447,7 +449,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 61:
+        elif kohm == 61:
             ctrl_kl.ctrl_relay('KL13', True)
             ctrl_kl.ctrl_relay('KL14', True)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -456,7 +458,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 65:
+        elif kohm == 65:
             ctrl_kl.ctrl_relay('KL13', True)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -465,7 +467,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 100:
+        elif kohm == 100:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', True)
@@ -474,7 +476,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', False)
             ctrl_kl.ctrl_relay('KL19', True)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 200:
+        elif kohm == 200:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -483,7 +485,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', False)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 220:
+        elif kohm == 220:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', False)
@@ -492,7 +494,7 @@ class Resistor(object):
             ctrl_kl.ctrl_relay('KL18', True)
             ctrl_kl.ctrl_relay('KL19', False)
             ctrl_kl.ctrl_relay('KL20', True)
-        elif self.kohm == 590:
+        elif kohm == 590:
             ctrl_kl.ctrl_relay('KL13', False)
             ctrl_kl.ctrl_relay('KL14', False)
             ctrl_kl.ctrl_relay('KL15', False)
