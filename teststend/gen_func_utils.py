@@ -27,11 +27,11 @@ class DeltaTimeNoneKL63(object):
     def calc_dt(self):
         ctrl_kl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b1()
-        while in_b1 == False:
+        while in_b1 is False:
             in_b1 = self.__inputs_b1()
         start_timer = time()
         in_ax = self.__inputs_a6()
-        while in_ax == True:
+        while in_ax is True:
             in_ax = self.__inputs_a6()
         stop_timer = time()
         delta_t_calc = stop_timer - start_timer
@@ -56,24 +56,22 @@ class Bug(object):
         self.dbg = dbg
 
     def debug_msg(self, msg, lev):
-        self.msg = msg
-        self.lev = lev
-        if self.dbg == True:
-            if self.lev == 1:
+        if self.dbg is True:
+            if lev == 1:
                 # красный
-                print("\033[31m {}".format(self.msg))
-            elif self.lev == 2:
+                print("\033[31m {}".format(msg))
+            elif lev == 2:
                 # желтый
-                print("\033[33m {}".format(self.msg))
-            elif self.lev == 3:
+                print("\033[33m {}".format(msg))
+            elif lev == 3:
                 # голубой
-                print("\033[36m {}".format(self.msg))
-            elif self.lev == 4:
+                print("\033[36m {}".format(msg))
+            elif lev == 4:
                 # зеленый
-                print("\033[32m {}".format(self.msg))
-            elif self.lev == 5:
+                print("\033[32m {}".format(msg))
+            elif lev == 5:
                 # фиолетовый
-                print("\033[35m {}".format(self.msg))
+                print("\033[35m {}".format(msg))
         else:
             pass
 
