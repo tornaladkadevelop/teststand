@@ -14,8 +14,8 @@
 БКЗ-З	    ДонЭнергоЗавод
 БКЗ-З	    ИТЭП
 """
+import sys
 
-from sys import exit
 from time import sleep, time
 
 from my_msgbox import *
@@ -116,7 +116,8 @@ class TestBKZ3MK(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.1 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f"напряжение после включения KL63 {min_volt} <= {meas_volt} <= {max_volt}", 2)
+        self.__fault.debug_msg(f"напряжение после включения KL63 "
+                               f"{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}", 2)
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -196,7 +197,7 @@ class TestBKZ3MK(object):
         sleep(2)
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -240,13 +241,13 @@ class TestBKZ3MK(object):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '4')
-            self.__fault.debug_msg(f'дельта t \t {calc_delta_t_mtz}', 2)
+            self.__fault.debug_msg(f'дельта t \t {calc_delta_t_mtz:.2f}', 2)
             self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
                                                 f'дельта t: {calc_delta_t_mtz:.1f} '
                                                 f'дельта % \t {calc_delta_percent_mtz:.2f}')
             in_a5, in_a6 = self.__inputs_a()
-            self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+            self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 5)
             self.__reset.stop_procedure_3()
             if in_a5 is False and in_a6 is True:
                 if self.__subtest_45():
@@ -302,8 +303,8 @@ class TestBKZ3MK(object):
             meas_volt_test5 = self.__read_mb.read_analog()
             self.__fault.debug_msg(f'напряжение \t {meas_volt_test5}', 2)
             calc_delta_percent_tzp = 0.06075 * meas_volt_test5 ** 2 + 8.887875 * meas_volt_test5
-            self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.1f}')
-            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_tzp}', 2)
+            self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
+            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_tzp:.2f}', 2)
             # 5.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__mysql_conn.mysql_ins_result('идет тест 5.4', '5')
             calc_delta_t_tzp = self.__delta_t_tzp()
@@ -359,7 +360,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_ins_result('идет тест 4.2', '4')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -388,7 +389,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]} дельта t: {calc_delta_t_mtz:.1f}')
         self.__reset.stop_procedure_3()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 5)
         if in_a5 is False and in_a6 is True:
             if self.__subtest_45():
                 return True
@@ -411,7 +412,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_ins_result('идет тест 4.3', '4')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } {in_a6 = }', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -427,7 +428,7 @@ class TestBKZ3MK(object):
         # 4.5. Расчет времени и кратности срабатывания
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             self.__fault.debug_msg("положение входов соответствует", 4)
             return True
@@ -443,7 +444,7 @@ class TestBKZ3MK(object):
         self.__fault.debug_msg('идет тест 5.5', 3)
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             return True
         elif in_a5 is False:
@@ -458,7 +459,7 @@ class TestBKZ3MK(object):
         self.__fault.debug_msg('идет тест 5.6', 3)
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5=} {in_a6=}', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
         if in_a5 is True and in_a6 is True:
             return True
         elif in_a5 is False:
@@ -565,4 +566,4 @@ if __name__ == '__main__':
         my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bkz_3mk.reset_all()
-        exit()
+        sys.exit()
