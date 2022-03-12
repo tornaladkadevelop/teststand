@@ -72,7 +72,7 @@ class TestBMZAPSH4(object):
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен TV1', '1')
@@ -96,7 +96,7 @@ class TestBMZAPSH4(object):
         self.__mysql_conn.mysql_ins_result('идёт тест 1.3', '1')
         coef_volt = self.__proc.procedure_1_22_32()
         self.__fault.debug_msg(f'коэф. сети \t {coef_volt}', 2)
-        if coef_volt is not False:
+        if coef_volt != 0.0:
             pass
         else:
             self.__reset.stop_procedure_32()
