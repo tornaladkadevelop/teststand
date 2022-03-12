@@ -71,7 +71,7 @@ class TestBZMPD(object):
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "1")
@@ -102,7 +102,7 @@ class TestBZMPD(object):
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
         self.coef_volt = self.__proc.procedure_1_22_32()
-        if self.coef_volt is not False:
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__reset.stop_procedure_32()
