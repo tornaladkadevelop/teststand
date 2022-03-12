@@ -35,9 +35,9 @@ class TestBTZT(object):
     # None - отключен, True - включен
 
     # ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
-    list_ust_tzp = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
-    list_ust_pmz = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
-    # list_ust_pmz = (70.9, 89.4, 103.1, 120.2, 143.7, 149.4, 159.6, 167.2, 178.7, 186.7, 195.1)
+    list_ust_tzp_volt = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
+    list_ust_pmz_volt = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
+    # list_ust_pmz_volt = (70.9, 89.4, 103.1, 120.2, 143.7, 149.4, 159.6, 167.2, 178.7, 186.7, 195.1)
     list_delta_t_pmz = []
     list_delta_t_tzp = []
     list_delta_percent_pmz = []
@@ -102,8 +102,10 @@ class TestBTZT(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         meas_volt = self.__read_mb.read_analog()
+        min_volt = 0.4 * meas_volt_ust
+        max_volt = 1.1 * meas_volt_ust
         self.__fault.debug_msg(f'напряжение после подключения KL63 {meas_volt}', 2)
-        if 0.6 * meas_volt_ust <= meas_volt <= 1.1 * meas_volt_ust:
+        if min_volt <= meas_volt <= max_volt:
             pass
         else:
             self.__fault.debug_msg("напряжение не соответствует", 1)
@@ -292,7 +294,7 @@ class TestBTZT(object):
         self.__fault.debug_msg("тест 4", 3)
         self.__mysql_conn.mysql_ins_result('идет тест 4', '4')
         k = 0
-        for i in self.list_ust_pmz:
+        for i in self.list_ust_pmz_volt:
             msg_5 = (f'Установите регулятор уставок ПМЗ (1-11) на блоке в положение {self.list_ust_pmz_num[k]}')
             msg_result = my_msg_2(msg_5)
             if msg_result == 0:
@@ -326,9 +328,9 @@ class TestBTZT(object):
             self.__fault.debug_msg(f'дельта t: {calc_delta_t_pmz}', 2)
             self.list_delta_t_pmz.append(round(calc_delta_t_pmz, 0))
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_pmz_num[k]} '
-                                                f'дельта t: {calc_delta_t_pmz:.0f}')
+                                                f'дельта t: {calc_delta_t_pmz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_pmz_num[k]} '
-                                                f'дельта %: {calc_delta_percent_pmz:.0f}')
+                                                f'дельта %: {calc_delta_percent_pmz:.2f}')
             in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
                 self.__fault.debug_msg("положение выходов блока соответствует", 4)
@@ -366,7 +368,7 @@ class TestBTZT(object):
         self.__fault.debug_msg("тест 5", 3)
         self.__mysql_conn.mysql_ins_result('идет тест 5', '5')
         m = 0
-        for n in self.list_ust_tzp:
+        for n in self.list_ust_tzp_volt:
             msg_7 = (f'Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение\t{self.list_ust_tzp_num[m]}')
             msg_result = my_msg_2(msg_7)
             if msg_result == 0:
@@ -484,9 +486,9 @@ class TestBTZT(object):
         self.__fault.debug_msg(f'дельта t: {calc_delta_t_pmz}', 2)
         self.list_delta_t_pmz[-1] = round(calc_delta_t_pmz, 0)
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_pmz_num[k]} '
-                                            f'дельта t: {calc_delta_t_pmz:.0f}')
+                                            f'дельта t: {calc_delta_t_pmz:.1f}')
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_pmz_num[k]} '
-                                            f'дельта %: {calc_delta_percent_pmz:.0f}')
+                                            f'дельта %: {calc_delta_percent_pmz:.2f}')
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
             pass
