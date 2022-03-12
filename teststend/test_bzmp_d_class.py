@@ -112,6 +112,7 @@ class TestBZMPD(object):
             self.__mb_ctrl.ctrl_relay('KL24', True)
             sleep(0.2)
             self.__mb_ctrl.ctrl_relay('KL24', False)
+            sleep(0.8)
             timer_test_1 = time() - start_timer_test_1
             in_a1, in_a5, in_a6 = self.__inputs_a()
             self.__fault.debug_msg(f'времени прошло\t{timer_test_1:.2f}', 2)
