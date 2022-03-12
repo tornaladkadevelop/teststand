@@ -9,9 +9,10 @@
 БДУ-Д.01	Без Производителя
 
 """
+import sys
 
-from sys import exit
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -30,7 +31,7 @@ class TestBDUD42(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bdu_d4_2(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -204,7 +205,7 @@ class TestBDUD42(object):
         self.__fault.debug_msg('тест 5 исправен', 4)
         self.__mysql_conn.mysql_ins_result("исправен", '5')
         return True
-    
+
     def __subtest_22(self, subtest_2_num: float, test_2_num: int) -> bool:
         """
         2.2. Включение блока от кнопки «Пуск»
@@ -249,7 +250,7 @@ class TestBDUD42(object):
             return False
         self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 4)
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
@@ -279,17 +280,21 @@ if __name__ == '__main__':
     test_bdu_d4_2 = TestBDUD42()
     reset_test_bdu_d4_2 = ResetRelay()
     mysql_conn_test_bdu_d4_2 = MySQLConnect()
+    fault = Bug(True)
     try:
         if test_bdu_d4_2.st_test_bdu_d4_2():
             mysql_conn_test_bdu_d4_2.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', '#1E8C1E')
         else:
             mysql_conn_test_bdu_d4_2.mysql_block_bad()
-            my_msg('Блок неисправен')
+            my_msg('Блок неисправен', '#A61E1E')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", '#A61E1E')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", '#A61E1E')
+    except ModbusConnectException as mce:
+        fault.debug_msg(mce, 1)
+        my_msg(str(mce), '#A61E1E')
     finally:
         reset_test_bdu_d4_2.reset_all()
-        exit()
+        sys.exit()
