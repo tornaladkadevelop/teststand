@@ -76,7 +76,7 @@ class TestBMZAPSHM(object):
         """
         self.__fault.debug_msg("тест 1.1", 4)
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
@@ -103,7 +103,7 @@ class TestBMZAPSHM(object):
         """
         self.__fault.debug_msg("тест 1.2", 4)
         coef_volt = self.__proc.procedure_1_22_32()
-        if coef_volt is not False:
+        if coef_volt != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
@@ -122,7 +122,7 @@ class TestBMZAPSHM(object):
 
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_26(self.coef_volt)
-            if calc_volt is not False:
+            if calc_volt != 0.0:
                 if self.__proc.start_procedure_33(calc_volt):
                     pass
                 else:
@@ -203,7 +203,7 @@ class TestBMZAPSHM(object):
         self.__ctrl_kl.ctrl_relay('KL73', True)
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_26(self.coef_volt)
-            if calc_volt is not False:
+            if calc_volt != 0.0:
                 if self.__proc.start_procedure_33(calc_volt):
                     pass
                 else:
