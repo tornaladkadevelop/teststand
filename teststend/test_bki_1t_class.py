@@ -2,11 +2,21 @@
 # -*- coding: utf-8 -*-
 
 """
+Алгоритм проверки
+Тип блока	Производитель
+БКИ-1	нет производителя
+БКИ-1	Углеприбор
+БКИ-Т	нет производителя
+БКИ-Т	Углеприбор
+БКИ-Т	ТЭТЗ-Инвест
+БКИ-Т	СтройЭнергоМаш
 
 """
 
-from sys import exit
+import sys
+
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -16,6 +26,7 @@ __all__ = ["TestBKI1T"]
 
 
 class TestBKI1T(object):
+
     __resist = Resistor()
     __ctrl_kl = CtrlKL()
     __read_mb = ReadMB()
@@ -153,4 +164,4 @@ if __name__ == '__main__':
         my_msg(f'{mce}', '#A61E1E')
     finally:
         reset_test_bki_1t.reset_all()
-        exit()
+        sys.exit()
