@@ -79,7 +79,7 @@ class TestTZP(object):
         """
         self.__mysql_conn.mysql_ins_result('идет тест 1.1', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
@@ -111,7 +111,7 @@ class TestTZP(object):
         """
         self.__mysql_conn.mysql_ins_result('идет тест 1.3', '1')
         self.coef_volt = self.__proc.procedure_1_22_32()
-        if self.coef_volt is not False:
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__reset.stop_procedure_32()
