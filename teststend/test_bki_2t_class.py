@@ -10,8 +10,10 @@
 
 """
 
-from sys import exit
+import sys
+
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -21,16 +23,15 @@ __all__ = ["TestBKI2T"]
 
 
 class TestBKI2T(object):
-
     __resist = Resistor()
     __ctrl_kl = CtrlKL()
     __read_mb = ReadMB()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bki_2t(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -75,6 +76,7 @@ class TestBKI2T(object):
         self.__mysql_conn.mysql_ins_result("идет тест 3", "3")
         self.__ctrl_kl.ctrl_relay('KL31', True)
         self.__resist.resist_kohm(12)
+        sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a5 is False and in_a1 is True and in_a6 is True and in_a2 is False:
             pass
@@ -149,6 +151,7 @@ class TestBKI2T(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", '6')
         self.__ctrl_kl.ctrl_relay('KL22', True)
+        sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a5 is True and in_a1 is False and in_a6 is False and in_a2 is True:
             pass
@@ -161,7 +164,7 @@ class TestBKI2T(object):
             return False
         self.__mysql_conn.mysql_ins_result("исправен", '6')
         return True
-    
+
     def __subtest_21(self, subtest_2_num: float, test_2_num: int) -> bool:
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_2_num}', f'{test_2_num}')
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
@@ -177,7 +180,7 @@ class TestBKI2T(object):
             return False
         self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 4)
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
@@ -206,17 +209,17 @@ if __name__ == '__main__':
     try:
         if test_bki_2t.st_test_bki_2t():
             mysql_conn_bki_2t.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', '#1E8C1E')
         else:
             mysql_conn_bki_2t.mysql_block_bad()
             my_msg('Блок неисправен', '#A61E1E')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", '#A61E1E')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
         my_msg(str(mce), '#A61E1E')
     finally:
         reset_test_bki_2t.reset_all()
-        exit()
+        sys.exit()
