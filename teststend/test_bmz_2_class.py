@@ -10,8 +10,8 @@
 БМЗ-2	    Строй-энергомаш	            79
 
 """
+import sys
 
-from sys import exit
 from time import sleep
 
 from my_msgbox import *
@@ -36,12 +36,18 @@ class TestBMZ2(object):
     list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
     # расчетный лист уставок (при тестировании данных напряжений не хватает)
     # ust = (32.2, 40.2, 48.2, 56.3, 64.3, 72.3, 80.4, 88.4, 96.5, 104.5, 112.5)
-    list_ust = (32.2, 40.2, 48.2, 56.3, 64.3, 72.3, 80.4, 88.4, 98.5, 106.5, 114.5)
+    list_ust_volt = (34.2, 42.2, 50.2, 58.3, 66.3, 74.3, 82.4, 90.4, 98.5, 106.5, 114.5)
     list_delta_t = []
     list_delta_percent = []
     list_result = []
 
     coef_volt: float
+
+    msg_1 = "Переключите тумблер на корпусе блока в положение " \
+            "«Работа» и установите регулятор уставок в положение 1"
+    msg_2 = "Переключите тумблер на корпусе блока в положение «Проверка»."
+    msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
+    msg_4 = f'Установите регулятор уставок на блоке в положение '
 
     def __init__(self):
         pass
@@ -50,9 +56,7 @@ class TestBMZ2(object):
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        msg_1 = "Переключите тумблер на корпусе блока в положение " \
-                "«Работа» и установите регулятор уставок в положение 1"
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             pass
         else:
             return False
@@ -92,7 +96,7 @@ class TestBMZ2(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после подключения KL63 {meas_volt}', 2)
+        self.__fault.debug_msg(f'напряжение после подключения KL63 {meas_volt:.2f}', 2)
         if 0.6 * meas_volt_ust <= meas_volt <= 1.1 * meas_volt_ust:
             pass
         else:
@@ -103,6 +107,7 @@ class TestBMZ2(object):
             return False
         self.__fault.debug_msg("напряжение соответствует", 4)
         self.__reset.sbros_kl63_proc_1_21_31()
+        return True
 
     def st_test_12_bmz_2(self) -> bool:
         """
@@ -124,8 +129,7 @@ class TestBMZ2(object):
         """
         Тест 2. Проверка работоспособности защиты блока в режиме «Проверка»
         """
-        msg_2 = "Переключите тумблер на корпусе блока в положение «Проверка»."
-        if my_msg(msg_2):
+        if my_msg(self.msg_2):
             pass
         else:
             return False
@@ -135,17 +139,9 @@ class TestBMZ2(object):
             calc_volt = self.__proc.start_procedure_23(self.coef_volt)
             if calc_volt is not False:
                 if self.__proc.start_procedure_37(calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result('неисправен', '2')
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '2')
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '2')
-            return False
-        return True
+                    return True
+        self.__mysql_conn.mysql_ins_result('неисправен', '2')
+        return False
 
     def st_test_21_bmz_2(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL63', True)
@@ -201,17 +197,15 @@ class TestBMZ2(object):
         """
         Тест 3. Проверка срабатывания защиты блока по уставкам
         """
-        msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
-        if my_msg(msg_3):
+        if my_msg(self.msg_3):
             pass
         else:
             return False
         self.__mysql_conn.mysql_ins_result('идет тест 3', '3')
         # Цикл i=1…11 (Таблица уставок 1)
         k = 0
-        for i in self.list_ust:
-            msg_4 = (f'Установите регулятор уставок на блоке в положение {self.list_ust_num[k]}')
-            msg_result = my_msg_2(msg_4)
+        for i in self.list_ust_volt:
+            msg_result = my_msg_2(f'{self.msg_4} {self.list_ust_num[k]}')
             if msg_result == 0:
                 pass
             elif msg_result == 1:
@@ -233,16 +227,19 @@ class TestBMZ2(object):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            self.__fault.debug_msg(f'дельта t \t {calc_delta_t}', 2)
-            self.list_delta_t.append(round(calc_delta_t, 0))
+            self.__fault.debug_msg(f'дельта t \t {calc_delta_t:.1f}', 2)
+            if calc_delta_t < 10:
+                self.list_delta_t.append(f'< 10')
+            else:
+                self.list_delta_t.append(f'{calc_delta_t:.1f}')
             # Δ%= 6,1085*U4
             meas_volt = self.__read_mb.read_analog()
             calc_delta_percent = meas_volt * 6.1085
-            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent}', 2)
-            self.list_delta_percent.append(round(calc_delta_percent, 0))
+            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
+            self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
             self.__reset.stop_procedure_3()
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t}')
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent:.2f}')
             in_a1, in_a2, in_a5 = self.__inputs_a()
             if in_a1 is True and in_a5 is False and in_a2 is True:
                 self.__fault.debug_msg("соответствие выходов блока, сбрасываем и переходим к тесту 3.5", 3)
@@ -271,11 +268,8 @@ class TestBMZ2(object):
                         self.__mysql_conn.mysql_ins_result('неисправен', '3')
                         return False
         self.__mysql_conn.mysql_ins_result('исправен', '3')
-        for g1 in range(len(self.list_delta_percent)):
-            self.list_result.append((self.list_ust_num[g1], self.list_delta_percent[g1], self.list_delta_t[g1]))
-        self.__mysql_conn.mysql_pmz_result(self.list_result)
         return True
-    
+
     def __subtest_32(self, i, k) -> bool:
         """
         3.2. Формирование нагрузочного сигнала 1,1*calc_volt[i]:
@@ -301,44 +295,41 @@ class TestBMZ2(object):
                 self.__mysql_conn.mysql_error(340)
             return False
         self.__mysql_conn.mysql_ins_result('идет тест 3.3', '3')
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_25(self.coef_volt, i)
-            if calc_volt is not False:
-                if self.__proc.start_procedure_35(i, calc_volt):
-                    pass
-                else:
-                    return False
-            else:
-                return False
+        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+            pass
         else:
             return False
         # Δ%= 6,1085*U4
         meas_volt = self.__read_mb.read_analog()
         calc_delta_percent = meas_volt * 6.1085
-        self.__fault.debug_msg(f'дельта % \t {calc_delta_percent}', 2)
-        self.list_delta_percent[-1] = round(calc_delta_percent, 0)
+        self.__fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
+        self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'
         self.__mysql_conn.mysql_ins_result('идет тест 3.4', '3')
         calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
         if calc_delta_t != 9999:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
-        self.__fault.debug_msg(f'дельта t \t {calc_delta_t}', 2)
-        self.list_delta_t[-1] = round(calc_delta_t, 0)
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t}')
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent}')
+        self.__fault.debug_msg(f'дельта t \t {calc_delta_t:.1f}', 2)
+        if calc_delta_t < 10:
+            self.list_delta_t[-1] = f'< 10'
+        else:
+            self.list_delta_t[-1] = f'{calc_delta_t:.1f}'
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent:.2f}')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False and in_a2 is True:
-            self.__fault.debug_msg("выходы блока соответствуют", 3)
-            self.__reset.stop_procedure_3()
-            self.__fault.debug_msg("сброс реле и старт теста 3.5", 2)
-            return True
+            pass
         else:
             self.__fault.debug_msg("выходы блока не соответствуют", 1)
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             self.__mysql_conn.mysql_error(341)
             return False
-    
+        self.__fault.debug_msg("выходы блока соответствуют", 3)
+        self.__reset.stop_procedure_3()
+        self.__fault.debug_msg("сброс реле и старт теста 3.5", 2)
+        return True
+
     def __subtest_35(self):
         """
         3.5. Расчет относительной нагрузки сигнала
@@ -363,7 +354,7 @@ class TestBMZ2(object):
                 self.__fault.debug_msg("вход 2 не соответствует", 1)
                 self.__mysql_conn.mysql_error(340)
             return False
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
@@ -371,7 +362,7 @@ class TestBMZ2(object):
         if in_a1 is None or in_a2 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5
-    
+
     def __inputs_b(self):
         in_b0 = self.__read_mb.read_discrete(8)
         in_b1 = self.__read_mb.read_discrete(9)
@@ -390,6 +381,11 @@ class TestBMZ2(object):
                                     return True
         return False
 
+    def result_test_bmz_2(self):
+        for g1 in range(len(self.list_delta_percent)):
+            self.list_result.append((self.list_ust_num[g1], self.list_delta_percent[g1], self.list_delta_t[g1]))
+        self.__mysql_conn.mysql_tzp_result(self.list_result)
+
 
 if __name__ == '__main__':
     test_bmz_2 = TestBMZ2()
@@ -399,18 +395,20 @@ if __name__ == '__main__':
     try:
         test_bmz_2 = TestBMZ2()
         if test_bmz_2.st_test_bmz_2():
+            test_bmz_2.result_test_bmz_2()
             mysql_conn_bmz2.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', '#1E8C1E')
         else:
+            test_bmz_2.result_test_bmz_2()
             mysql_conn_bmz2.mysql_block_bad()
             my_msg('Блок неисправен', '#A61E1E')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", '#A61E1E')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
         my_msg(str(mce), '#A61E1E')
     finally:
         reset_test_bmz_2.reset_all()
-        exit()
+        sys.exit()
