@@ -398,7 +398,6 @@ if __name__ == '__main__':
     mysql_conn_mmtz_d = MySQLConnect()
     fault = Bug(True)
     try:
-
         if test_mmtz_d.st_test_mmtz_d():
             mysql_conn_mmtz_d.mysql_block_good()
             my_msg('Блок исправен', '#1E8C1E')
