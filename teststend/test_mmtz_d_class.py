@@ -87,7 +87,7 @@ class TestMMTZD(object):
         :return:
         """
         self.meas_volt_ust = self.__proc.procedure_1_21_31()
-        if self.meas_volt_ust is not False:
+        if self.meas_volt_ust != 0.0:
             return True
         self.__mysql_conn.mysql_ins_result("неисправен", "1")
         return False
@@ -121,7 +121,7 @@ class TestMMTZD(object):
         """
         self.coef_volt = self.__proc.procedure_1_22_32()
         self.__fault.debug_msg(f'коэф. сети равен: {self.coef_volt:.2f}', 2)
-        if self.coef_volt is not False:
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__reset.stop_procedure_32()
