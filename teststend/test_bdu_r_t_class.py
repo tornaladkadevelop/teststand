@@ -9,8 +9,10 @@
 
 """
 
-from sys import exit
+import sys
+
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -362,17 +364,17 @@ if __name__ == '__main__':
     try:
         if test_bdu_r_t.st_test_bdu_r_t():
             mysql_conn_bdu_r_t.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', '#1E8C1E')
         else:
             mysql_conn_bdu_r_t.mysql_block_bad()
             my_msg('Блок неисправен', '#A61E1E')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", '#A61E1E')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", '#A61E1E')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
         my_msg(str(mce), '#A61E1E')
     finally:
         reset_test_bdu_r_t.reset_all()
-        exit()
+        sys.exit()
