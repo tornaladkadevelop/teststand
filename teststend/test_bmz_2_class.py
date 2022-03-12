@@ -90,7 +90,7 @@ class TestBMZ2(object):
         self.__mysql_conn.mysql_ins_result('идет тест 1.1', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
         self.__fault.debug_msg(f'напряжение в процедуре 1 {meas_volt_ust}', 2)
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
@@ -115,7 +115,7 @@ class TestBMZ2(object):
         """
         self.__mysql_conn.mysql_ins_result('идет тест 1.2', '1')
         self.coef_volt = self.__proc.procedure_1_22_32()
-        if self.coef_volt is not False:
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
@@ -137,7 +137,7 @@ class TestBMZ2(object):
         self.__fault.debug_msg("начало теста 2, сброс всех реле", 4)
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_23(self.coef_volt)
-            if calc_volt is not False:
+            if calc_volt != 0.0:
                 if self.__proc.start_procedure_37(calc_volt):
                     return True
         self.__mysql_conn.mysql_ins_result('неисправен', '2')
