@@ -227,7 +227,7 @@ class TestBDU014TP(object):
         in_a1 = self.__read_mb.read_discrete(1)
         self.__fault.debug_msg(f'{in_a0 = }  {in_a1 = }', 4)
         if in_a1 is None or in_a0 is None:
-            self.__fault.debug_msg(f'нет связи с контроллером', 1)
+            raise ModbusConnectException(f'нет связи с контроллером')
         return in_a0, in_a1
 
     def st_test_bdu_014tp(self) -> bool:
@@ -266,8 +266,8 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 1)
-        my_msg(str(mce), 'red')
+        fault.debug_msg(mce, 'red')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bdu_014tp.reset_all()
         sys.exit()

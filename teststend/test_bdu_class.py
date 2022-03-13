@@ -192,7 +192,7 @@ class TestBDU(object):
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         if in_a1 is None:
-            self.__fault.debug_msg(f'нет связи с контроллером', 1)
+            raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1
 
     def st_test_bdu(self) -> bool:
@@ -215,6 +215,7 @@ if __name__ == '__main__':
     test_bdu = TestBDU()
     reset_test_bdu = ResetRelay()
     mysql_conn_test_bdu = MySQLConnect()
+    fault = Bug(True)
     try:
         if test_bdu.st_test_bdu():
             mysql_conn_test_bdu.mysql_block_good()
@@ -226,6 +227,9 @@ if __name__ == '__main__':
         my_msg("ошибка системы", 'red')
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
+    except ModbusConnectException as mce:
+        fault.debug_msg(mce, 'red')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bdu.reset_all()
         sys.exit()

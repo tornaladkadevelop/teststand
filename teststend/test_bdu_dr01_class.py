@@ -33,7 +33,10 @@ class TestBDUDR01(object):
         pass
     
     def st_test_1_bdu_dr01(self):
-        # Тест 1. Проверка исходного состояния блока:
+        """
+        Тест 1. Проверка исходного состояния блока:
+        :return:
+        """
         self.__mysql_conn.mysql_ins_result("идёт тест 1", '1')
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
@@ -528,7 +531,7 @@ class TestBDUDR01(object):
         in_a3 = self.__mb_read.read_discrete(3)
         in_a4 = self.__mb_read.read_discrete(4)
         if in_a1 is None or in_a2 is None or in_a3 is None or in_a4 is None:
-            self.__fault.debug_msg("нет связи с контроллером", 1)
+            raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a3, in_a4
 
     def st_test_bdu_dr01(self) -> bool:
