@@ -7,15 +7,19 @@ import PySimpleGUI as sg
 
 
 def my_msg(msg: str, bgcolor='#37474F'):
-    #sg.theme('DarkAmber')   # Add a touch of color
+    dict_bgcolor = {'green': '#1E8C1E', 'darkgrey': '#37474F', 'red': '#A61E1E', 'yellow': '#CEFF00',
+                    'blue': '#0FC0FC', 'purple': '#BA55D3', 'orange': '#E78E00'}
+    if bgcolor.startswith('#'):
+        bg_color = bgcolor
+    else:
+        bg_color = dict_bgcolor.get(bgcolor)
     font = ('Arial', 15)
-    # All the stuff inside your window.
     layout = [
-            [sg.Text(msg, size=(60, 5), justification='center', font=font, background_color=bgcolor)],
+            [sg.Text(msg, size=(60, 5), justification='center', font=font, background_color=bg_color)],
             [sg.Button('Ok', font=font, size=16, button_color='#2D3D45', focus=True),
              sg.Button('Отмена', font=font, size=16, button_color='#2D3D45')]
         ]
-    window = sg.Window('Внимание!', layout, element_justification='c', background_color=bgcolor,
+    window = sg.Window('Внимание!', layout, element_justification='c', background_color=bg_color,
                        keep_on_top=True, use_default_focus=True)
 
     while True:
