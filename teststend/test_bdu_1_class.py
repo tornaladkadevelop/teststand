@@ -40,11 +40,11 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tблок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1 = } \tблок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.__mysql_conn.mysql_ins_result('исправен', '1')
-        self.__fault.debug_msg(f'{in_a1=} \tтест 1 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1 = } \tтест 1 пройден', 'green')
         return True
 
     def st_test_20_bdu_1(self) -> bool:
@@ -57,10 +57,10 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tблок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tблок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 2.1 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 2.1 пройден', 'green')
         return True
 
     def st_test_22_bdu_1(self) -> bool:
@@ -75,10 +75,10 @@ class TestBDU1(object):
         if in_a1 is True:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 2.2 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 2.2 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 2.2 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 2.2 пройден', 'green')
         return True
 
     def st_test_23_bdu_1(self) -> bool:
@@ -92,10 +92,10 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 2.3 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 2.3 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 2.3 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 2.3 пройден', 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -112,10 +112,10 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 3 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 3 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 3 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 3 пройден', 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '3')
         return True
 
@@ -133,10 +133,10 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 4 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 4 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '4')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 4 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 4 пройден', 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '4')
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(0.5)
@@ -156,10 +156,10 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 5 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 5 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '5')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 5 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 5 пройден', 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '5')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL11', False)
@@ -180,12 +180,12 @@ class TestBDU1(object):
         if in_a1 is False:
             pass
         else:
-            self.__fault.debug_msg(f'{in_a1=} \tТест 6 блок неисправен', 1)
+            self.__fault.debug_msg(f'{in_a1=} \tТест 6 блок неисправен', 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '6')
             return False
-        self.__fault.debug_msg(f'{in_a1=} \tтест 6 пройден', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест 6 пройден', 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '6')
-        self.__fault.debug_msg(f'{in_a1=} \tтест завершен', 3)
+        self.__fault.debug_msg(f'{in_a1=} \tтест завершен', 'blue')
         return True
     
     def __inputs_a(self) -> bool:

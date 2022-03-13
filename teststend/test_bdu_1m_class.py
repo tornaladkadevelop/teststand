@@ -36,18 +36,18 @@ class TestBDU1M(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 1", '1')
         in_a1, in_a2 = self.__inputs_a()
-        self.__fault.debug_msg(f'{in_a2=}', 3)
+        self.__fault.debug_msg(f'{in_a2 = }', 'blue')
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 1 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 1 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '1')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(198)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(199)
             return False
-        self.__fault.debug_msg('тест 1 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 1 положение выходов соответствует', 'green')
         self.__mysql_conn.mysql_ins_result("исправен", '1')
         return True
 
@@ -70,14 +70,14 @@ class TestBDU1M(object):
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 2.1 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 2.1 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '2')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(200)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(201)
             return False
-        self.__fault.debug_msg('тест 2.1 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 2.1 положение выходов соответствует', 'green')
         return True
 
     def st_test_22_bdu_1m(self) -> bool:
@@ -101,14 +101,14 @@ class TestBDU1M(object):
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 2.4 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 2.4 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '2')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(206)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(207)
             return False
-        self.__fault.debug_msg('тест 2.4 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 2.4 положение выходов соответствует', 'green')
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__ctrl_kl.ctrl_relay('KL22', True)
@@ -135,14 +135,14 @@ class TestBDU1M(object):
         if in_a2 is True:
             pass
         else:
-            self.__fault.debug_msg('тест 3.2 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 3.2 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '3')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(208)
             elif in_a2 is False:
                 self.__mysql_conn.mysql_error(209)
             return False
-        self.__fault.debug_msg('тест 3.2 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 3.2 положение выходов соответствует', 'green')
         self.__mysql_conn.mysql_ins_result("исправен", '3')
         return True
 
@@ -167,14 +167,14 @@ class TestBDU1M(object):
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 4.3 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 4.3 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '4')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(210)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(211)
             return False
-        self.__fault.debug_msg('тест 4.3 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 4.3 положение выходов соответствует', 'green')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__mysql_conn.mysql_ins_result("исправен", '4')
@@ -200,14 +200,14 @@ class TestBDU1M(object):
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 5.3 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 5.3 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '5')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(212)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(213)
             return False
-        self.__fault.debug_msg('тест 5.2 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 5.2 положение выходов соответствует', 'green')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__ctrl_kl.ctrl_relay('KL25', False)
@@ -232,14 +232,14 @@ class TestBDU1M(object):
         if in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 6.2 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 6.2 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '6')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(214)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(215)
             return False
-        self.__fault.debug_msg('тест 6.2 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 6.2 положение выходов соответствует', 'green')
         self.__mysql_conn.mysql_ins_result("исправен", '6')
         return True
     
@@ -261,13 +261,13 @@ class TestBDU1M(object):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", f'{test_2_num}')
-            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 1)
+            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(202)
             elif in_a2 is False:
                 self.__mysql_conn.mysql_error(203)
             return False
-        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 4)
+        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 'green')
         return True
 
     def __subtest_23(self, subtest_3_num: float, test_3_num: int) -> bool:
@@ -285,13 +285,13 @@ class TestBDU1M(object):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", f'{test_3_num}')
-            self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов не соответствует', 1)
+            self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов не соответствует', 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(204)
             elif in_a2 is False:
                 self.__mysql_conn.mysql_error(205)
             return False
-        self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 4)
+        self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 'green')
         return True
     
     def __inputs_a(self):
