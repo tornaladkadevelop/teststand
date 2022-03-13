@@ -8,7 +8,7 @@
 
 """
 
-from sys import exit
+import sys
 
 from time import sleep, time
 
@@ -59,6 +59,10 @@ class TestMTZ5V27(object):
         pass
     
     def st_test_10(self) -> bool:
+        """
+        Тест 1.0
+        :return: bool
+        """
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
@@ -76,20 +80,20 @@ class TestMTZ5V27(object):
         if in_a1 is True and in_a5 is False:
             pass
         else:
-            self.__fault.debug_msg("тест 1.1 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 1.1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             return False
-        self.__fault.debug_msg("тест 1.1 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 1.1 положение выходов соответствует", 'green')
         return True
 
     def st_test_11(self) -> bool:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        :return
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        if meas_volt_ust is not False:
+        if meas_volt_ust != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_error(433)
@@ -99,8 +103,8 @@ class TestMTZ5V27(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt}\t'
-                               f'должно быть от\t{min_volt}\tдо\t{max_volt}', 3)
+        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt:.2f}\t'
+                               f'должно быть от\t{min_volt:.2f}\tдо\t{max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -113,14 +117,14 @@ class TestMTZ5V27(object):
 
     def st_test_12(self) -> bool:
         """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
-        :return:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
         self.__fault.debug_msg("1.2. Определение коэффициента Кс отклонения "
-                               "фактического напряжения от номинального", 3)
+                               "фактического напряжения от номинального", 'blue')
         self.coef_volt = self.__proc.procedure_1_22_32()
-        if self.coef_volt is not False:
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "1")
@@ -133,10 +137,9 @@ class TestMTZ5V27(object):
     def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работоспособности защиты МТЗ блока в режиме «Проверка»
-        :return:
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 2', '2')
-
         if my_msg(self.msg_3):
             if my_msg(self.msg_4):
                 pass
@@ -154,9 +157,9 @@ class TestMTZ5V27(object):
     def st_test_21(self) -> bool:
         """
         2.2.  Проверка срабатывания блока от сигнала нагрузки:
-        :return:
+        :return: bool
         """
-        self.__fault.debug_msg("2.2.  Проверка срабатывания блока от сигнала нагрузки:", 3)
+        self.__fault.debug_msg("2.2.  Проверка срабатывания блока от сигнала нагрузки:", 'blue')
         self.__mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         sleep(0.5)
@@ -179,30 +182,30 @@ class TestMTZ5V27(object):
     def st_test_22(self) -> bool:
         """
         2.4.2. Сброс защит после проверки
-        :return:
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 2.4', '2')
-        self.__fault.debug_msg("2.4.2. Сброс защит после проверки", 3)
+        self.__fault.debug_msg("2.4.2. Сброс защит после проверки", 'blue')
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(446)
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(447)
             return False
-        self.__fault.debug_msg("положение выходов соответствует", 4)
+        self.__fault.debug_msg("положение выходов соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
     def st_test_30(self) -> bool:
         """
-        Тест 3. Проверка срабатывания защиты ПМЗ блока по уставкам
-        :return:
+        Тест 3. Проверка срабатывания защиты ПМЗ блока по уставкам.
+        :return: bool
         """
         if my_msg(self.msg_5):
             pass
@@ -227,33 +230,33 @@ class TestMTZ5V27(object):
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "3")
                 return False
-            self.__fault.debug_msg("3.1.  Проверка срабатывания блока от сигнала нагрузки:", 3)
+            self.__fault.debug_msg("3.1.  Проверка срабатывания блока от сигнала нагрузки:", 'blue')
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_mtz_num[k]}', '3')
             # Δ%= 0.0029*(U4)2+5.192*U4
             meas_volt = self.__read_mb.read_analog()
             calc_delta_percent_mtz = 0.0029 * meas_volt ** 2 + 5.192 * meas_volt
-            self.__fault.debug_msg(f'дельта %:\t{calc_delta_percent_mtz}', 2)
-            self.list_delta_percent_mtz.append(round(calc_delta_percent_mtz, 0))
+            self.__fault.debug_msg(f'дельта %:\t{calc_delta_percent_mtz:.2f}', 'orange')
+            self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.2f}')
             calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
             if calc_delta_t_mtz != 9999:
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            self.__fault.debug_msg(f'дельта t:\t{calc_delta_t_mtz}', 3)
-            self.list_delta_t_mtz.append(round(calc_delta_t_mtz, 0))
+            self.__fault.debug_msg(f'дельта t:\t{calc_delta_t_mtz:.1f}', 'orange')
+            self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                                f'дельта t: {calc_delta_t_mtz:.0f}')
+                                                f'дельта t: {calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                                f'дельта %: {calc_delta_percent_mtz:.0f}')
+                                                f'дельта %: {calc_delta_percent_mtz:.2f}')
             self.__reset.stop_procedure_3()
             in_a1, in_a5 = self.__inputs_a()
             if in_a1 is False and in_a5 is True:
-                self.__subtest_3()
+                self.__subtest_33()
             else:
                 self.__mysql_conn.mysql_error(448)
                 if self.__subtest_32(i, k):
-                    if self.__subtest_35():
+                    if self.__subtest_33():
                         k += 1
                         continue
                     else:
@@ -271,8 +274,8 @@ class TestMTZ5V27(object):
 
     def st_test_40(self) -> bool:
         """
-        Тест 4. Проверка срабатывания защиты от перегрузки блока по уставкам
-        :return:
+        Тест 4. Проверка срабатывания защиты от перегрузки блока по уставкам.
+        :return: bool
         """
         if my_msg(self.msg_7):
             pass
@@ -301,8 +304,8 @@ class TestMTZ5V27(object):
             # Δ%= 0.0132*U42[i]+5.4183* U4[i]
             meas_volt = self.__read_mb.read_analog()
             calc_delta_percent_tzp = 0.0132 * meas_volt ** 2 + 5.4183 * meas_volt
-            self.__fault.debug_msg(f'дельта %:\t{calc_delta_percent_tzp}', 2)
-            self.list_delta_percent_tzp.append(calc_delta_percent_tzp)
+            self.__fault.debug_msg(f'дельта %:\t{calc_delta_percent_tzp:.2f}', 'orange')
+            self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
             # 4.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__ctrl_kl.ctrl_relay('KL63', True)
             r = 0
@@ -319,23 +322,23 @@ class TestMTZ5V27(object):
             stop_timer_tzp = time()
             self.__ctrl_kl.ctrl_relay('KL63', False)
             calc_delta_t_tzp = stop_timer_tzp - start_timer_tzp
-            self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp}', 2)
-            self.list_delta_t_tzp.append(round(calc_delta_t_tzp, 0))
+            self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp:.1f}', 'orange')
+            self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
-                                                f'дельта t: {calc_delta_t_tzp:.0f}')
+                                                f'дельта t: {calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
-                                                f'дельта %: {calc_delta_percent_tzp:.0f}')
+                                                f'дельта %: {calc_delta_percent_tzp:.2f}')
             self.__reset.stop_procedure_3()
             in_a1, in_a5 = self.__inputs_a()
             if in_a1 is False and in_a5 is True and calc_delta_t_tzp <= 21:
-                self.__fault.debug_msg("положение выходов соответствует", 4)
+                self.__fault.debug_msg("положение выходов соответствует", 'green')
                 if self.__subtest_46():
                     m += 1
                     continue
                 else:
                     return False
             else:
-                self.__fault.debug_msg("положение выходов не соответствует", 1)
+                self.__fault.debug_msg("положение выходов не соответствует", 'red')
                 self.__mysql_conn.mysql_error(448)
                 if self.__subtest_46():
                     m += 1
@@ -348,9 +351,9 @@ class TestMTZ5V27(object):
     def __subtest_32(self, i, k):
         """
         3.2. Формирование нагрузочного сигнала 1,15*U3[i]:
-        :param i:
-        :param k:
-        :return:
+        :param i: уставка
+        :param k: счетчик цикла
+        :return: bool
         """
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
@@ -376,17 +379,17 @@ class TestMTZ5V27(object):
         # 3.2.2.  Проверка срабатывания блока от сигнала нагрузки:
         meas_volt = self.__read_mb.read_analog()
         calc_delta_percent_mtz = 0.0029 * meas_volt ** 2 + 5.192 * meas_volt
-        self.list_delta_percent_mtz[-1] = calc_delta_percent_mtz
+        self.list_delta_percent_mtz[-1] = f'{calc_delta_percent_mtz:.2f}'
         calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
         if calc_delta_t_mtz != 9999:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
-        self.list_delta_t_mtz[-1] = calc_delta_t_mtz
+        self.list_delta_t_mtz[-1] = f'{calc_delta_t_mtz:.1f}'
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                            f'дельта t: {calc_delta_t_mtz:.0f}')
+                                            f'дельта t: {calc_delta_t_mtz:.1f}')
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                            f'дельта %: {calc_delta_percent_mtz:.0f}')
+                                            f'дельта %: {calc_delta_percent_mtz:.2f}')
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a5 is True:
             self.__reset.stop_procedure_3()
@@ -401,41 +404,22 @@ class TestMTZ5V27(object):
         3.3. Сброс защит после проверки
         3.5. Расчет относительной нагрузки сигнала
         Δ%= 3.4364*(U4[i])/0.63
-        :return:
+        :return: bool
         """
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False:
-            self.__fault.debug_msg("подтест 3.3 пройден", 4)
+            self.__fault.debug_msg("подтест 3.3 пройден", 'green')
             return True
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            self.__fault.debug_msg("подтест 3.3 не пройден", 1)
+            self.__fault.debug_msg("подтест 3.3 не пройден", 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(446)
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(447)
             return False
 
-    # def __subtest_45(self):
-    #     self.__reset.stop_procedure_3()
-    #     # 4.5.1. Сброс защит после проверки
-    #     self.__sbros_zashit()
-    #     in_a1, in_a5 = self.__inputs_a()
-    #     if in_a1 is True and in_a5 is False:
-    #         self.__fault.debug_msg("тест 4.5 положение выходов соответствует", 4)
-    #         return True
-    #     elif in_a1 is False:
-    #         self.__mysql_conn.mysql_error(446)
-    #         self.__mysql_conn.mysql_ins_result('неисправен', '4')
-    #         self.__fault.debug_msg("тест 4.5 положение выходов не соответствует", 1)
-    #         return False
-    #     elif in_a5 is True:
-    #         self.__mysql_conn.mysql_error(447)
-    #         self.__mysql_conn.mysql_ins_result('неисправен', '4')
-    #         self.__fault.debug_msg("тест 4.5 положение выходов не соответствует", 1)
-    #         return False
-    
     def __subtest_46(self):
         """
         4.6.1. Сброс защит после проверки
@@ -445,11 +429,11 @@ class TestMTZ5V27(object):
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False:
-            self.__fault.debug_msg("тест 4.6 положение выходов соответствует", 4)
+            self.__fault.debug_msg("тест 4.6 положение выходов соответствует", 'green')
             return True
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '4')
-            self.__fault.debug_msg("тест 4.6 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 4.6 положение выходов не соответствует", 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(449)
             elif in_a5 is True:
@@ -457,6 +441,10 @@ class TestMTZ5V27(object):
             return False
     
     def __inputs_a(self):
+        """
+        Считывает из OPC сервера положение входов ПЛК
+        :return: in_a1, in_a5
+        """
         in_a1 = self.__read_mb.read_discrete(1)
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a5 is None:
@@ -464,24 +452,40 @@ class TestMTZ5V27(object):
         return in_a1, in_a5
     
     def __inputs_a5(self):
+        """
+        Считывает из OPC сервера положение входов ПЛК
+        :return: in_a5
+        """
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
     
     def __sbros_zashit(self):
+        """
+        Сброс защит.
+        :return:
+        """
         self.__ctrl_kl.ctrl_relay('KL1', False)
         sleep(1.5)
         self.__ctrl_kl.ctrl_relay('KL1', True)
         sleep(2)
     
     def __inputs_b(self):
+        """
+        Считывает из OPC сервера положение входов ПЛК
+        :return: in_b1
+        """
         in_b1 = self.__read_mb.read_discrete(9)
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
     def result_test(self):
+        """
+        Записывает результаты проверки в БД.
+        :return:
+        """
         for g1 in range(len(self.list_delta_percent_mtz)):
             self.list_mtz_result.append((self.list_ust_mtz_num[g1],
                                          self.list_delta_percent_mtz[g1],
@@ -493,21 +497,44 @@ class TestMTZ5V27(object):
                                          self.list_delta_t_tzp[g2]))
         self.__mysql_conn.mysql_tzp_result(self.list_tzp_result)
 
+    def st_test_mtz_5_v2_7(self) -> bool:
+        """
+        Функция собирающая все тесты в один тест.
+        :return: bool
+        """
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_12():
+                    if self.st_test_20():
+                        if self.st_test_21():
+                            if self.st_test_22():
+                                if self.st_test_30():
+                                    if self.st_test_40():
+                                        return True
+        return False
+
 
 if __name__ == '__main__':
+    test_mtz = TestMTZ5V27()
+    reset_test_mtz = ResetRelay()
+    mysql_conn_mtz = MySQLConnect()
+    fault = Bug(True)
     try:
-        test_mtz_5_v2_7 = TestMTZ5V27()
-        if test_mtz_5_v2_7.st_test_mtz_5_v2_7():
-
-            mysql_conn.mysql_block_good()
-            my_msg('Блок исправен')
+        if test_mtz.st_test_mtz_5_v2_7():
+            test_mtz.result_test()
+            mysql_conn_mtz.mysql_block_good()
+            my_msg('Блок исправен', 'green')
         else:
-            mysql_conn.mysql_block_bad()
-            my_msg('Блок неисправен')
+            test_mtz.result_test()
+            mysql_conn_mtz.mysql_block_bad()
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", 'red')
+    except ModbusConnectException as mce:
+        fault.debug_msg(mce, 1)
+        my_msg(f'{mce}', 'red')
     finally:
-        reset.reset_all()
-        exit()
+        reset_test_mtz.reset_all()
+        sys.exit()
