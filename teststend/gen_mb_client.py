@@ -183,16 +183,15 @@ class CtrlKL(object):
     def reset_all_v1(self):
         for i in range(len(self.list_relay)):
             kl = self.list_relay[i]
+            # sleep(0.1)
             opc[kl] = False
-            i += 1
-        opc.close()
 
     def reset_all_v2(self):
         kl = self.relay.keys()
         for i in kl:
             rele = self.relay[i]
+            # sleep(0.1)
             opc[rele] = False
-        opc.close()
 
     def ctrl_ai_code_v0(self, code):
         """
