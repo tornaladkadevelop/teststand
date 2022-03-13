@@ -7,9 +7,8 @@ import PySimpleGUI as sg
 
 
 def my_msg_2(msg: str):
-    #sg.theme('DarkAmber')   # Add a touch of color
+
     font = ('Arial', 15)
-    # All the stuff inside your window.
     layout = [
             [sg.Text(msg, size=(60, 5), justification='center', font=font, background_color='#37474F')],
             [sg.Button('Ok', font=font, size=16, button_color='#2D3D45'),
