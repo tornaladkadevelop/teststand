@@ -565,6 +565,7 @@ if __name__ == '__main__':
     test_bdu_dr01 = TestBDUDR01()
     reset_test_bdu_dr01 = ResetRelay()
     mysql_conn_test_bdu_dr01 = MySQLConnect()
+    fault = Bug(True)
     try:
         if test_bdu_dr01.st_test_bdu_dr01():
             mysql_conn_test_bdu_dr01.mysql_block_good()
@@ -576,6 +577,9 @@ if __name__ == '__main__':
         my_msg("ошибка системы", 'red')
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
+    except ModbusConnectException as mce:
+        fault.debug_msg(mce, 'red')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bdu_dr01.reset_all()
         sys.exit()
