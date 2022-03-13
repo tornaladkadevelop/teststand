@@ -50,28 +50,33 @@ class DeltaTimeNoneKL63(object):
 
 class Bug(object):
     """
-        вывод сообщений в консоль
+        Вывод сообщений в консоль, с цветовой дифференциацией штанов
     """
     def __init__(self, dbg=None):
         self.dbg = dbg
 
-    def debug_msg(self, msg, lev):
+    def debug_msg(self, *args):
+
         if self.dbg is True:
-            if lev == 1:
-                # красный
+            msg, lev = args
+            if lev == 1 or lev == 'red':
+                # красный Red
                 print("\033[31m {}".format(msg))
-            elif lev == 2:
-                # желтый
+            elif lev == 2 or lev == 'yellow':
+                # желтый yellow
                 print("\033[33m {}".format(msg))
-            elif lev == 3:
-                # голубой
+            elif lev == 3 or lev == 'blue':
+                # голубой blue
                 print("\033[36m {}".format(msg))
-            elif lev == 4:
-                # зеленый
+            elif lev == 4 or lev == 'green':
+                # зеленый green
                 print("\033[32m {}".format(msg))
-            elif lev == 5:
-                # фиолетовый
+            elif lev == 5 or lev == 'purple':
+                # фиолетовый purple
                 print("\033[35m {}".format(msg))
+            else:
+                # серый, если пришел неизвестный аргумент
+                print("\033[37m {}".format(msg))
         else:
             pass
 
@@ -593,7 +598,7 @@ class ResultMsg(object):
     """
     reset = ResetRelay()
 
-    def test_error(self, test_number: float):
+    def test_error(self, test_number):
         msg = (f'Тест: {test_number} не пройден')
         my_msg(msg)
         self.reset.reset_all()
