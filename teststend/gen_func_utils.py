@@ -56,14 +56,18 @@ class Bug(object):
         self.dbg = dbg
 
     def debug_msg(self, *args):
+        """
+        :param args: 1 or red, 2 or orange, 3 or blue, 4 or green, 5 or purple
+        :return: string
+        """
 
         if self.dbg is True:
             msg, lev = args
             if lev == 1 or lev == 'red':
                 # красный Red
                 print("\033[31m {}".format(msg))
-            elif lev == 2 or lev == 'yellow':
-                # желтый yellow
+            elif lev == 2 or lev == 'orange':
+                # оранжевый orange
                 print("\033[33m {}".format(msg))
             elif lev == 3 or lev == 'blue':
                 # голубой blue
