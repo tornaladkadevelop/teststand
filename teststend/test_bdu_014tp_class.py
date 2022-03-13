@@ -18,8 +18,10 @@
 БДУ-П УХЛ5-03   Пульсар
 """
 
-from sys import exit
+import sys
+
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -255,17 +257,17 @@ if __name__ == '__main__':
     try:
         if test_bdu_014tp.st_test_bdu_014tp():
             mysql_conn_test_bdu_014tp.mysql_block_good()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_test_bdu_014tp.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(str(mce), 'red')
     finally:
         reset_test_bdu_014tp.reset_all()
-        exit()
+        sys.exit()

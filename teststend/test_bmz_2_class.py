@@ -10,6 +10,7 @@
 БМЗ-2	    Строй-энергомаш	            79
 
 """
+
 import sys
 
 from time import sleep
@@ -397,18 +398,18 @@ if __name__ == '__main__':
         if test_bmz_2.st_test_bmz_2():
             test_bmz_2.result_test_bmz_2()
             mysql_conn_bmz2.mysql_block_good()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             test_bmz_2.result_test_bmz_2()
             mysql_conn_bmz2.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(f'{mce}', '#A61E1E')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bmz_2.reset_all()
         sys.exit()

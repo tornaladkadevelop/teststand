@@ -10,8 +10,10 @@
 
 """
 
-from sys import exit
+import sys
+
 from time import sleep, time
+
 from gen_func_utils import *
 from my_msgbox import *
 from my_msgbox_2 import *
@@ -474,7 +476,7 @@ if __name__ == '__main__':
                 list_tzp_result.append((list_ust_tzp_num[g2], list_delta_percent_tzp[g2], list_delta_t_tzp[g2]))
             mysql_conn.mysql_tzp_result(list_tzp_result)
             mysql_conn.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', 'green')
         else:
             g1, g2 = 0, 0
             for g1 in range(len(list_delta_percent_mtz)):
@@ -484,11 +486,11 @@ if __name__ == '__main__':
                 list_tzp_result.append((list_ust_tzp_num[g2], list_delta_percent_tzp[g2], list_delta_t_tzp[g2]))
             mysql_conn.mysql_tzp_result(list_tzp_result)
             mysql_conn.mysql_block_bad()
-            my_msg('Блок неисправен')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", 'red')
     finally:
         reset.reset_all()
-        exit()
+        sys.exit()

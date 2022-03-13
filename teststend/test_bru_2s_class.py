@@ -9,7 +9,7 @@
 
 """
 
-from sys import exit
+import sys
 
 from my_msgbox import *
 from gen_func_utils import *
@@ -277,17 +277,17 @@ if __name__ == '__main__':
     try:
         if test_bru_2s.st_test_bru_2s():
             mysql_conn_bru_2s.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_bru_2s.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bru_2s.reset_all()
-        exit()
+        sys.exit()

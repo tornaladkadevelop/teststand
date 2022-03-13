@@ -364,17 +364,17 @@ if __name__ == '__main__':
     try:
         if test_bdu_r_t.st_test_bdu_r_t():
             mysql_conn_bdu_r_t.mysql_block_good()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_bdu_r_t.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(str(mce), 'red')
     finally:
         reset_test_bdu_r_t.reset_all()
         sys.exit()

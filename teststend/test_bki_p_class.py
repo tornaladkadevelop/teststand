@@ -10,7 +10,8 @@
 
 """
 
-from sys import exit
+import sys
+
 from time import sleep
 
 from gen_func_utils import *
@@ -153,17 +154,17 @@ if __name__ == '__main__':
     try:
         if test_bki_p.st_test_bki_p():
             mysql_conn_bki_p.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_bki_p.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(str(mce), 'red')
     finally:
         reset_test_bki_p.reset_all()
-        exit()
+        sys.exit()

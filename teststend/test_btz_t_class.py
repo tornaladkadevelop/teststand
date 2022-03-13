@@ -636,18 +636,18 @@ if __name__ == '__main__':
         if test_btz_t.st_test_btz_t():
             test_btz_t.result_test_btz_t()
             mysql_conn_btz_t.mysql_block_good()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             test_btz_t.result_test_btz_t()
             mysql_conn_btz_t.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(f'{mce}', '#A61E1E')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_btz_t.reset_all()
         sys.exit()

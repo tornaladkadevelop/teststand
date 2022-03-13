@@ -14,6 +14,7 @@
 БКЗ-З	    ДонЭнергоЗавод
 БКЗ-З	    ИТЭП
 """
+
 import sys
 
 from time import sleep, time
@@ -552,18 +553,18 @@ if __name__ == '__main__':
         if test_bkz_3mk.st_test_bkz_3mk():
             mysql_conn_bkz_3mk.mysql_block_good()
             test_bkz_3mk.result_test_bkz_3mk()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_bkz_3mk.mysql_block_bad()
             test_bkz_3mk.result_test_bkz_3mk()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(f'{mce}', '#A61E1E')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_bkz_3mk.reset_all()
         sys.exit()

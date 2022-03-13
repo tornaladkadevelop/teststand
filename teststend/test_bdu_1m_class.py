@@ -7,8 +7,10 @@
 БДУ-1М  Пульсар
 """
 
-from sys import exit
+import sys
+
 from time import sleep
+
 from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
@@ -326,14 +328,14 @@ if __name__ == '__main__':
     try:
         if test_bdu_1m.st_test_bdu_1m():
             mysql_conn_test_bdu_1m.mysql_block_good()
-            my_msg('Блок исправен')
+            my_msg('Блок исправен', 'green')
         else:
             mysql_conn_test_bdu_1m.mysql_block_bad()
-            my_msg('Блок неисправен')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы")
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка")
+        my_msg("внутренняя ошибка", 'red')
     finally:
         reset_test_bdu_1m.reset_all()
-        exit()
+        sys.exit()

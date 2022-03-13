@@ -8,6 +8,7 @@
 УМЗ	        Нет производителя
 
 """
+
 import sys
 
 from time import sleep
@@ -417,18 +418,18 @@ if __name__ == '__main__':
         if test_umz.st_test_umz():
             test_umz.result_umz()
             mysql_conn_umz.mysql_block_good()
-            my_msg('Блок исправен', '#1E8C1E')
+            my_msg('Блок исправен', 'green')
         else:
             test_umz.result_umz()
             mysql_conn_umz.mysql_block_bad()
-            my_msg('Блок неисправен', '#A61E1E')
+            my_msg('Блок неисправен', 'red')
     except OSError:
-        my_msg("ошибка системы", '#A61E1E')
+        my_msg("ошибка системы", 'red')
     except SystemError:
-        my_msg("внутренняя ошибка", '#A61E1E')
+        my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 1)
-        my_msg(str(mce), '#A61E1E')
+        my_msg(f'{mce}', 'red')
     finally:
         reset_test_umz.reset_all()
         sys.exit()
