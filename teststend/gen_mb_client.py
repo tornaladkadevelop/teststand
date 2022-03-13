@@ -173,17 +173,26 @@ class CtrlKL(object):
                   'Устройство.tg.in_Q113_6', 'Устройство.tg.in_Q113_7')
 
     def ctrl_relay(self, rel, ctrl):
-        self.rel = rel
-        self.ctrl = ctrl
-        kl = self.relay.get(self.rel)
-        opc[kl] = self.ctrl
+        # self.rel = rel
+        # self.ctrl = ctrl
+        # kl = self.relay.get(self.rel)
+        kl = self.relay[f'{rel}']
+        # opc[kl] = self.ctrl
+        opc[kl] = ctrl
 
-    def reset_all(self):
-        i: int
-        for i in self.list_relay:
-            kl = self.relay.get(self.list_relay[i])
+    def reset_all_v1(self):
+        for i in range(len(self.list_relay)):
+            kl = self.list_relay[i]
             opc[kl] = False
             i += 1
+        opc.close()
+
+    def reset_all_v2(self):
+        kl = self.relay.keys()
+        for i in kl:
+            rele = self.relay[i]
+            opc[rele] = False
+        opc.close()
 
     def ctrl_ai_code_v0(self, code):
         """
