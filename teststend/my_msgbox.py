@@ -7,6 +7,14 @@ import PySimpleGUI as sg
 
 
 def my_msg(msg: str, bgcolor='#37474F'):
+    """
+    Окно для взаимодействия пользователя с алгоритмом проверки.
+    По умолчанию цвет окна темно серый #37474F
+    :param msg: текст который необходимо вывести в окне
+    :param bgcolor: 'green': '#1E8C1E', 'darkgrey': '#37474F', 'red': '#A61E1E', 'yellow': '#CEFF00',
+                    'blue': '#0FC0FC', 'purple': '#BA55D3', 'orange': '#E78E00'
+    :return: bool
+    """
     dict_bgcolor = {'green': '#1E8C1E', 'darkgrey': '#37474F', 'red': '#A61E1E', 'yellow': '#CEFF00',
                     'blue': '#0FC0FC', 'purple': '#BA55D3', 'orange': '#E78E00'}
     if bgcolor.startswith('#'):
