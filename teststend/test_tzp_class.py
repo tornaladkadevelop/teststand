@@ -45,7 +45,7 @@ class TestTZP(object):
 
     msg_1 = "Переключите тумблер на корпусе блока в положение «Проверка» "
     msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
-    msg_3 = (f'Установите регулятор уставок на блоке в положение')
+    msg_3 = f'Установите регулятор уставок на блоке в положение'
 
     def __init__(self):
         pass
@@ -64,13 +64,13 @@ class TestTZP(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             if in_a1 is True:
-                self.__fault.debug_msg("вход 1 не соответствует", 1)
+                self.__fault.debug_msg("вход 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(277)
             elif in_a5 is False:
-                self.__fault.debug_msg("вход 5 не соответствует", 1)
+                self.__fault.debug_msg("вход 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(278)
             return False
-        self.__fault.debug_msg("состояние выходов блока соответствует", 3)
+        self.__fault.debug_msg("состояние выходов блока соответствует", 'green')
         return True
 
     def st_test_11(self) -> bool:
@@ -92,12 +92,12 @@ class TestTZP(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.1 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение \t{meas_volt}', 3)
+        self.__fault.debug_msg(f'напряжение \t{meas_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
-            self.__fault.debug_msg("напряжение соответствует", 3)
+            self.__fault.debug_msg("напряжение соответствует", 'green')
             pass
         else:
-            self.__fault.debug_msg("напряжение не соответствует", 1)
+            self.__fault.debug_msg("напряжение не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(281)
             self.__reset.sbros_kl63_proc_1_21_31()
@@ -119,7 +119,7 @@ class TestTZP(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.__reset.stop_procedure_32()
-        self.__fault.debug_msg("тест 1 пройден", 3)
+        self.__fault.debug_msg("тест 1 пройден", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
@@ -132,22 +132,22 @@ class TestTZP(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 2.1", 4)
+        self.__fault.debug_msg("тест 2.1", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2', '2')
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False:
             pass
         elif in_a1 is False:
-            self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+            self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(282)
             return False
         elif in_a5 is True:
-            self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+            self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(283)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 3)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         return True
 
     def st_test_21(self) -> bool:
@@ -159,25 +159,25 @@ class TestTZP(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 2.2", 4)
+        self.__fault.debug_msg("тест 2.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.1', '2')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a5 is True:
             pass
         elif in_a1 is True:
-            self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+            self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(284)
             return False
         elif in_a5 is False:
-            self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+            self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(285)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 3)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
-        self.__fault.debug_msg("тест 2 пройден", 3)
+        self.__fault.debug_msg("тест 2 пройден", 'green')
         return True
 
     def st_test_30(self) -> bool:
@@ -185,7 +185,7 @@ class TestTZP(object):
         Тест 3. Проверка срабатывания блока по уставкам
         :return:
         """
-        self.__fault.debug_msg("тест 3", 4)
+        self.__fault.debug_msg("тест 3", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 3', '3')
         k = 0
         for i in self.list_ust_volt:
@@ -208,9 +208,9 @@ class TestTZP(object):
                 return False
             meas_volt = self.__read_mb.read_analog()
             calc_delta_percent = 0.0044 * meas_volt ** 2 + 2.274 * meas_volt
-            self.list_delta_percent.append(calc_delta_percent)
+            self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
             if 0.9 * i / self.coef_volt <= meas_volt <= 1.1 * i / self.coef_volt:
-                self.__fault.debug_msg(f'напряжение соответствует {meas_volt}', 3)
+                self.__fault.debug_msg(f'напряжение соответствует {meas_volt:.2f}', 'orange')
                 self.__ctrl_kl.ctrl_relay('KL63', True)
                 in_b0, in_b1 = self.__inputs_b()
                 while in_b0 is False:
@@ -221,36 +221,36 @@ class TestTZP(object):
                 while in_a5 is True and sub_timer <= 370:
                     sleep(0.2)
                     sub_timer = time() - start_timer
-                    self.__fault.debug_msg(f'времени прошло {sub_timer}', 2)
+                    self.__fault.debug_msg(f'времени прошло {sub_timer:.1f}', 'orange')
                     in_a1, in_a5 = self.__inputs_a()
                 stop_timer = time()
                 self.__ctrl_kl.ctrl_relay('KL63', False)
                 calc_delta_t = stop_timer - start_timer
                 self.__reset.stop_procedure_3()
-                self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t}', 4)
-                self.list_delta_t.append(calc_delta_t)
+                self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t:.1f}', 'orange')
+                self.list_delta_t.append(f'{calc_delta_t:.1f}')
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта t: {calc_delta_t:.0f}')
+                                                    f'дельта t: {calc_delta_t:.1f}')
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта %: {calc_delta_percent:.0f}')
+                                                    f'дельта %: {calc_delta_percent:.2f}')
                 in_a1, in_a5 = self.__inputs_a()
                 if calc_delta_t <= 360 and in_a1 is True and in_a5 is False:
                     # Если в период времени до 6 минут входа DI.A1, DI.A5 занимают
                     # состояние, указанное в таблице выше, то переходим к п.3.6.
-                    self.__fault.debug_msg("время переключения соответствует", 3)
+                    self.__fault.debug_msg("время переключения соответствует", 'green')
                     self.__subtest_35()
                     k += 1
                     continue
                 else:
                     # Если в период времени до 6 минут входа DI.A1, DI.A5 не занимают
                     # состояние, указанное в таблице выше, то переходим к п.3.5.
-                    self.__fault.debug_msg("время переключения не соответствует", 1)
+                    self.__fault.debug_msg("время переключения не соответствует", 'red')
                     self.__mysql_conn.mysql_error(287)
                     self.__subtest_35()
                     k += 1
                     continue
             else:
-                self.__fault.debug_msg("напряжение U4 не соответствует", 1)
+                self.__fault.debug_msg("напряжение U4 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(286)
                 self.__reset.stop_procedure_3()
         self.__mysql_conn.mysql_ins_result('исправен', '3')
@@ -262,15 +262,15 @@ class TestTZP(object):
         sleep(1)
         in_a1, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a5 is True:
-            self.__fault.debug_msg("положение выходов блока соответствует", 3)
+            self.__fault.debug_msg("положение выходов блока соответствует", 'green')
             return True
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is True:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(284)
             elif in_a5 is False:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(285)
             return False
     

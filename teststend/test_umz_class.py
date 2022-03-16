@@ -100,16 +100,16 @@ class TestUMZ(object):
         min_volt = 0.4 * meas_volt_ust
         max_volt = 1.1 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63 \t{meas_volt}', 2)
+        self.__fault.debug_msg(f'напряжение после включения KL63 \t{meas_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
-            self.__fault.debug_msg("измеренное напряжение не соответствует заданному", 1)
+            self.__fault.debug_msg("измеренное напряжение не соответствует заданному", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(478)
             self.__reset.sbros_kl63_proc_1_21_31()
             return False
-        self.__fault.debug_msg("измеренное напряжение соответствует заданному", 3)
+        self.__fault.debug_msg("измеренное напряжение соответствует заданному", 'green')
         self.__reset.sbros_kl63_proc_1_21_31()
         return True
 
@@ -126,7 +126,7 @@ class TestUMZ(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(150)
             return False
-        self.__fault.debug_msg(f'коэф. сети\t {self.coef_volt}', 2)
+        self.__fault.debug_msg(f'коэф. сети\t {self.coef_volt:.2f}', 'orange')
         self.__mysql_conn.mysql_ins_result('исправен', '1')
         self.__reset.stop_procedure_32()
         return True
@@ -156,34 +156,34 @@ class TestUMZ(object):
                 self.list_delta_t_vg.append('пропущена')
                 k += 1
                 continue
-            progress_msg = (f'формируем U уставки {k}')
-            self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+            progress_msg = f'формируем U уставки'
+            self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
             if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '2')
                 return False
-            progress_msg = (f'канал АБ дельта t {k}')
-            self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+            progress_msg = f'канал АБ дельта t'
+            self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
             calc_delta_t_ab = self.__ctrl_kl.ctrl_ai_code_v0(109)
             if calc_delta_t_ab != 9999:
                 pass
             else:
                 return False
-            self.list_delta_t_ab.append(calc_delta_t_ab)
+            self.list_delta_t_ab.append(f'{calc_delta_t_ab:.1f}')
             in_a1, in_a5 = self.__inputs_a()
             if in_a1 is True and in_a5 is False:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
-                progress_msg = (f'канал АБ дельта % {k}')
-                self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+                progress_msg = f'канал АБ дельта %'
+                self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
                 self.meas_volt_ab = self.__read_mb.read_analog()
                 calc_delta_percent_ab = 0.00004762 * self.meas_volt_ab ** 2 + 9.5648 * self.meas_volt_ab
-                self.list_delta_percent_ab.append(calc_delta_percent_ab)
+                self.list_delta_percent_ab.append(f'{calc_delta_percent_ab:.2f}')
                 self.test_setpoint_ab = True
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта t: {calc_delta_t_ab:.0f}')
+                                                    f'дельта t: {calc_delta_t_ab:.1f}')
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта %: {calc_delta_percent_ab:.0f}')
+                                                    f'дельта %: {calc_delta_percent_ab:.2f}')
             else:
                 self.test_setpoint_ab = False
             self.__ctrl_kl.ctrl_relay('KL73', True)
@@ -191,27 +191,27 @@ class TestUMZ(object):
                 pass
             else:
                 return False
-            progress_msg = (f'канал ВГ дельта t {k}')
-            self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+            progress_msg = f'канал ВГ дельта t'
+            self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
             calc_delta_t_vg = self.__ctrl_kl.ctrl_ai_code_v0(109)
             if calc_delta_t_ab != 9999:
                 pass
             else:
                 return False
-            self.list_delta_t_vg.append(calc_delta_t_vg)
+            self.list_delta_t_vg.append(f'{calc_delta_t_vg:.1f}')
             in_a1, in_a5 = self.__inputs_a()
             if in_a1 is True and in_a5 is False:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
-                progress_msg = (f'канал ВГ дельта % {k}')
-                self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+                progress_msg = f'канал ВГ дельта %'
+                self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
                 self.meas_volt_vg = self.__read_mb.read_analog()
                 calc_delta_percent_vg = 0.00004762 * self.meas_volt_vg ** 2 + 9.5648 * self.meas_volt_vg
-                self.list_delta_percent_vg.append(calc_delta_percent_vg)
+                self.list_delta_percent_vg.append(f'{calc_delta_percent_vg:.2f}')
                 self.test_setpoint_vg = True
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта t: {calc_delta_t_vg:.0f}')
+                                                    f'дельта t: {calc_delta_t_vg:.1f}')
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта %: {calc_delta_percent_vg:.0f}')
+                                                    f'дельта %: {calc_delta_percent_vg:.2f}')
             else:
                 self.test_setpoint_vg = False
             self.__ctrl_kl.ctrl_relay('KL73', False)
@@ -224,8 +224,8 @@ class TestUMZ(object):
                 k += 1
                 continue
             elif self.test_setpoint_ab is False and self.test_setpoint_vg is False:
-                progress_msg = (f'повышаем U уставки {k}')
-                self.__mysql_conn.mysql_ins_result(progress_msg, '2')
+                progress_msg = f'повышаем U уставки'
+                self.__mysql_conn.mysql_ins_result(f'{progress_msg} {k}', '2')
                 if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
                     pass
                 else:
@@ -236,16 +236,16 @@ class TestUMZ(object):
                     pass
                 else:
                     return False
-                self.list_delta_t_ab[-1] = calc_delta_t_ab
+                self.list_delta_t_ab[-1] = f'{calc_delta_t_ab:.1f}'
                 in_a1, in_a5 = self.__inputs_a()
                 if in_a1 is True and in_a5 is False:
                     # Δ%= 0,00004762*(U4)2+9,5648* U4
                     self.meas_volt_ab = self.__read_mb.read_analog()
                     calc_delta_percent_ab = 0.00004762 * self.meas_volt_ab ** 2 + 9.5648 * self.meas_volt_ab
-                    self.list_delta_percent_ab[-1] = calc_delta_percent_ab
+                    self.list_delta_percent_ab[-1] = f'{calc_delta_percent_ab:.2f}'
                     self.test_setpoint_ab = True
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта t: {calc_delta_t_ab:.0f}')
+                                                        f'дельта t: {calc_delta_t_ab:.1f}')
                 else:
                     self.test_setpoint_ab = False
                 self.__ctrl_kl.ctrl_relay('KL73', True)
@@ -258,18 +258,18 @@ class TestUMZ(object):
                     pass
                 else:
                     return False
-                self.list_delta_t_vg[-1] = calc_delta_t_vg
+                self.list_delta_t_vg[-1] = f'{calc_delta_t_vg:.1f}'
                 in_a1, in_a5 = self.__inputs_a()
                 if in_a1 is True and in_a5 is False:
                     # Δ%= 0,00004762*(U4)2+9,5648* U4
                     self.meas_volt_vg = self.__read_mb.read_analog()
                     calc_delta_percent_vg = 0.00004762 * self.meas_volt_vg ** 2 + 9.5648 * self.meas_volt_vg
-                    self.list_delta_percent_vg[-1] = calc_delta_percent_vg
+                    self.list_delta_percent_vg[-1] = f'{calc_delta_percent_vg:.2f}'
                     self.test_setpoint_vg = True
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта t: {calc_delta_t_vg:.0f}')
+                                                        f'дельта t: {calc_delta_t_vg:.1f}')
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта %: {calc_delta_percent_vg:.0f}')
+                                                        f'дельта %: {calc_delta_percent_vg:.2f}')
                 else:
                     self.test_setpoint_vg = False
                 self.__ctrl_kl.ctrl_relay('KL73', False)
@@ -298,18 +298,18 @@ class TestUMZ(object):
                     pass
                 else:
                     return False
-                self.list_delta_t_ab[-1] = calc_delta_t_ab
+                self.list_delta_t_ab[-1] = f'{calc_delta_t_ab:.1f}'
                 in_a1, in_a5 = self.__inputs_a()
                 if in_a1 is True and in_a5 is False:
                     # Δ%= 0,00004762*(U4)2+9,5648* U4
                     self.meas_volt_ab = self.__read_mb.read_analog()
                     calc_delta_percent_ab = 0.00004762 * self.meas_volt_ab ** 2 + 9.5648 * self.meas_volt_ab
-                    self.list_delta_percent_ab[-1] = calc_delta_percent_ab
+                    self.list_delta_percent_ab[-1] = f'{calc_delta_percent_ab:.2f}'
                     self.test_setpoint_ab = True
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта t: {calc_delta_t_ab:.0f}')
+                                                        f'дельта t: {calc_delta_t_ab:.1f}')
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта %: {calc_delta_percent_ab:.0f}')
+                                                        f'дельта %: {calc_delta_percent_ab:.2f}')
                 else:
                     self.test_setpoint_ab = False
                 self.__reset.stop_procedure_3()
@@ -334,22 +334,22 @@ class TestUMZ(object):
                 else:
                     return False
                 calc_delta_t_vg = self.__ctrl_kl.ctrl_ai_code_v0(109)
-                if calc_delta_t_ab != 9999:
+                if calc_delta_t_vg != 9999:
                     pass
                 else:
                     return False
-                self.list_delta_t_vg[-1] = calc_delta_t_vg
+                self.list_delta_t_vg[-1] = f'{calc_delta_t_vg:.1f}'
                 in_a1, in_a5 = self.__inputs_a()
                 if in_a1 is True and in_a5 is False:
                     # Δ%= 0,00004762*(U4)2+9,5648* U4
                     self.meas_volt_vg = self.__read_mb.read_analog()
                     calc_delta_percent_vg = 0.00004762 * self.meas_volt_vg ** 2 + 9.5648 * self.meas_volt_vg
-                    self.list_delta_percent_vg[-1] = calc_delta_percent_vg
+                    self.list_delta_percent_vg[-1] = f'{calc_delta_percent_vg:.2f}'
                     self.test_setpoint_vg = True
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта t: {calc_delta_t_vg:.0f}')
+                                                        f'дельта t: {calc_delta_t_vg:.1f}')
                     self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                        f'дельта %: {calc_delta_percent_vg:.0f}')
+                                                        f'дельта %: {calc_delta_percent_vg:.2f}')
                 else:
                     self.test_setpoint_vg = False
                 self.__ctrl_kl.ctrl_relay('KL73', False)
