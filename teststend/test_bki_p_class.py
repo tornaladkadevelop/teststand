@@ -29,6 +29,9 @@ class TestBKIP(object):
     __mysql_conn = MySQLConnect()
     __fault = Bug(True)
 
+    msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
+    msg_2 = 'Переведите тумблер на блоке в режим «Аварийный»'
+
     def __init__(self):
         pass
 
@@ -52,8 +55,7 @@ class TestBKIP(object):
         Тест 2. Проверка работы блока при нормальном сопротивлении изоляции
         """
         self.__fault.debug_msg('тест 2.0', 'blue')
-        msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             pass
         else:
             return False
@@ -97,8 +99,7 @@ class TestBKIP(object):
         Тест 4. Проверка работы блока в режиме «Аварийный» при сопротивлении изоляции 100 кОм
         """
         self.__fault.debug_msg('тест 4.0', 'blue')
-        msg_2 = 'Переведите тумблер на блоке в режим «Аварийный»'
-        if my_msg(msg_2):
+        if my_msg(self.msg_2):
             pass
         else:
             return False

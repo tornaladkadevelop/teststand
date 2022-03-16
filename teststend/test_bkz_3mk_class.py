@@ -41,14 +41,14 @@ class TestBKZ3MK(object):
     # Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
     # медленные
     list_ust_tzp_num = (0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1)
-    list_ust_tzp = (4.7, 6.2, 7.7, 9.2, 10.6, 12.0, 13.4, 14.7, 16.6)
+    list_ust_tzp_volt = (4.7, 6.2, 7.7, 9.2, 10.6, 12.0, 13.4, 14.7, 16.6)
     list_delta_t_tzp = []
     list_delta_percent_tzp = []
     list_result_tzp = []
     # Тест 4. Проверка срабатывания защиты МТЗ блока по уставкам
     # быстрые
     list_ust_mtz_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-    list_ust_mtz = (21.8, 27.2, 32.7, 38.1, 43.6, 49.0, 54.4, 59.9, 65.3, 70.8, 76.2)
+    list_ust_mtz_volt = (21.8, 27.2, 32.7, 38.1, 43.6, 49.0, 54.4, 59.9, 65.3, 70.8, 76.2)
     list_delta_t_mtz = []
     list_delta_percent_mtz = []
     list_result_mtz = []
@@ -80,22 +80,22 @@ class TestBKZ3MK(object):
         Тест 1. Проверка исходного состояния блока:
         """
         self.__mysql_conn.mysql_ins_result('идет тест 1', '1')
-        self.__fault.debug_msg("Тест 1. Проверка исходного состояния блока", 4)
+        self.__fault.debug_msg("Тест 1. Проверка исходного состояния блока", 'blue')
         self.__ctrl_kl.ctrl_relay('KL21', True)
         sleep(2)
         self.__reset.sbros_zashit_kl30_1s5()
         sleep(1)
         in_a5, in_a6 = self.__inputs_a()
         if in_a5 is True and in_a6 is True:
-            self.__fault.debug_msg("состояние выходов соответствует", 3)
+            self.__fault.debug_msg("состояние выходов соответствует", 'green')
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             if in_a5 is False:
-                self.__fault.debug_msg("вход 5 не соответствует", 1)
+                self.__fault.debug_msg("вход 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(317)
             elif in_a6 is False:
-                self.__fault.debug_msg("вход 6 не соответствует", 1)
+                self.__fault.debug_msg("вход 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(318)
             return False
         return True
@@ -105,7 +105,6 @@ class TestBKZ3MK(object):
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         """
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        self.__fault.debug_msg(f"напряжение {meas_volt_ust}", 2)
         if meas_volt_ust != 0.0:
             pass
         else:
@@ -118,16 +117,16 @@ class TestBKZ3MK(object):
         max_volt = 1.1 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
         self.__fault.debug_msg(f"напряжение после включения KL63 "
-                               f"{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}", 2)
+                               f"{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}", 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
-            self.__fault.debug_msg("напряжение не соответствует", 1)
+            self.__fault.debug_msg("напряжение не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(32)
             self.__reset.sbros_kl63_proc_1_21_31()
             return False
-        self.__fault.debug_msg("напряжение соответствует", 3)
+        self.__fault.debug_msg("напряжение соответствует", 'green')
         self.__reset.sbros_kl63_proc_1_21_31()
         return True
 
@@ -145,7 +144,7 @@ class TestBKZ3MK(object):
             return False
         self.__reset.stop_procedure_32()
         self.__mysql_conn.mysql_ins_result('исправен', '1')
-        self.__fault.debug_msg("тест 1 пройден", 3)
+        self.__fault.debug_msg("тест 1 пройден", 'green')
         return True
 
     def st_test_20_bkz_3mk(self) -> bool:
@@ -161,15 +160,15 @@ class TestBKZ3MK(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a5 is False:
-                self.__fault.debug_msg("вход 5 не соответствует", 1)
+                self.__fault.debug_msg("вход 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(319)
             elif in_a6 is False:
-                self.__fault.debug_msg("вход 6 не соответствует", 1)
+                self.__fault.debug_msg("вход 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(320)
             return False
-        self.__fault.debug_msg("состояние выходов соответствует", 3)
+        self.__fault.debug_msg("состояние выходов соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
-        self.__fault.debug_msg("тест 2 пройден", 3)
+        self.__fault.debug_msg("тест 2 пройден", 'green')
         return True
 
     def st_test_30_bkz_3mk(self) -> bool:
@@ -185,7 +184,7 @@ class TestBKZ3MK(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a5 is False:
-                self.__fault.debug_msg("вход 5 не соответствует", 1)
+                self.__fault.debug_msg("вход 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(321)
             elif in_a6 is True:
                 self.__fault.debug_msg("вход 6 не соответствует", 1)
@@ -212,7 +211,7 @@ class TestBKZ3MK(object):
         """
         self.__mysql_conn.mysql_ins_result('идет тест 4', '4')
         k = 0
-        for i in self.list_ust_mtz:
+        for i in self.list_ust_mtz_volt:
             msg_result_mtz = my_msg_2(f'{self.msg_3} {self.list_ust_mtz_num[k]}')
             if msg_result_mtz == 0:
                 pass
@@ -283,7 +282,7 @@ class TestBKZ3MK(object):
             return False
         self.__mysql_conn.mysql_ins_result('идет тест 5', '5')
         m = 0
-        for n in self.list_ust_tzp:
+        for n in self.list_ust_tzp_volt:
             msg_result_tzp = my_msg_2(f'{self.msg_5} {self.list_ust_tzp_num[m]}')
             if msg_result_tzp == 0:
                 pass
