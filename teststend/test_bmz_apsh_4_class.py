@@ -25,7 +25,6 @@ __all__ = ["TestBMZAPSH4"]
 
 
 class TestBMZAPSH4(object):
-
     __proc = Procedure()
     __reset = ResetRelay()
     __ctrl_kl = CtrlKL()
@@ -43,7 +42,7 @@ class TestBMZAPSH4(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bmz_apsh_4(self) -> bool:
         """
         # Тест 1. Проверка исходного состояния блока:
@@ -86,7 +85,7 @@ class TestBMZAPSH4(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(343)
             self.__reset.sbros_kl63_proc_1_21_31()
-        self.__fault.debug_msg(f'напряжение соответствует заданному \t {meas_volt}', 2)
+        self.__fault.debug_msg(f'напряжение соответствует заданному \t {meas_volt:.2f}', 'orange')
         self.__reset.sbros_kl63_proc_1_21_31()
         return True
 
@@ -96,7 +95,6 @@ class TestBMZAPSH4(object):
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1.3', '1')
         coef_volt = self.__proc.procedure_1_22_32()
-        self.__fault.debug_msg(f'коэф. сети \t {coef_volt}', 2)
         if coef_volt != 0.0:
             pass
         else:
@@ -115,8 +113,8 @@ class TestBMZAPSH4(object):
         self.__mysql_conn.mysql_ins_result('идёт тест 2', '1')
         k = 0
         for i in self.list_ust:
-            msg_4 = (f'Установите регулятор уставок на блоке в положение: {self.list_ust_num[k]}')
-            msg_result = my_msg_2(msg_4)
+            msg_4 = 'Установите регулятор уставок на блоке в положение:'
+            msg_result = my_msg_2(f'{msg_4} {self.list_ust_num[k]}')
             if msg_result == 0:
                 pass
             elif msg_result == 1:
@@ -133,8 +131,8 @@ class TestBMZAPSH4(object):
                 self.__mysql_conn.mysql_ins_result('неисправен TV1', '1')
             # 2.1.  Проверка срабатывания блока от сигнала нагрузки:
             calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(111)
-            self.__fault.debug_msg(f'delta t:\t {calc_delta_t}', 2)
-            self.list_delta_t.append(round(calc_delta_t, 0))
+            self.__fault.debug_msg(f'delta t:\t {calc_delta_t:.1f}', 2)
+            self.list_delta_t.append(f'{calc_delta_t:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
             in_a1 = self.__inputs_a()
             if in_a1 is True:
@@ -165,7 +163,7 @@ class TestBMZAPSH4(object):
             self.list_result.append((self.list_ust_num[t1], self.list_delta_t[t1]))
         self.__mysql_conn.mysql_ubtz_btz_result(self.list_result)
         return True
-    
+
     def __subtest_2_2(self, i, k):
         if self.__sbros_zashit():
             pass
@@ -176,8 +174,8 @@ class TestBMZAPSH4(object):
         else:
             return False
         calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(111)
-        self.__fault.debug_msg('delta t\t' + str(calc_delta_t), 2)
-        self.list_delta_t[-1] = round(calc_delta_t, 0)
+        self.__fault.debug_msg(f'delta t: {calc_delta_t:.1f}', 'orange')
+        self.list_delta_t[-1] = f'{calc_delta_t:.1f}'
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
         in_a1 = self.__inputs_a()
         if in_a1 is True:
@@ -189,7 +187,7 @@ class TestBMZAPSH4(object):
             return False
         self.__reset.stop_procedure_3()
         return True
-    
+
     def __sbros_zashit(self):
         self.__ctrl_kl.ctrl_relay('KL1', True)
         sleep(1.5)
@@ -205,13 +203,13 @@ class TestBMZAPSH4(object):
             return False
         self.__fault.debug_msg("вход 1 соответствует", 4)
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1
-    
+
     def __inputs_b(self):
         in_b0 = self.__read_mb.read_discrete(8)
         in_b1 = self.__read_mb.read_discrete(9)
