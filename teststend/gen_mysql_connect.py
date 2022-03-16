@@ -168,3 +168,7 @@ class MySQLConnect(object):
         except mysql_err:
             print('Error! Ошибка связи с базой данных MySQL.')
 
+    def progress_level(self, level: float):
+        level = f'{level:.1f}'
+        upd = f'UPDATE simple_database.progress SET level_progress = {level} WHERE (id_pro = 1);'
+        self.mysql_connect(upd)
