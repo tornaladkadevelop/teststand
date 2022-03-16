@@ -23,20 +23,20 @@ __all__ = ["TestBKIP"]
 
 
 class TestBKIP(object):
-
     __resist = Resistor()
     __ctrl_kl = CtrlKL()
     __read_mb = ReadMB()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bki_p(self):
         """
         Тест 1. Проверка исходного состояния блока
         """
+        self.__fault.debug_msg('тест 1.0', 'blue')
         in_a0, in_a1 = self.__inputs_a()
         if in_a0 is True and in_a1 is False:
             pass
@@ -51,6 +51,7 @@ class TestBKIP(object):
         """
         Тест 2. Проверка работы блока при нормальном сопротивлении изоляции
         """
+        self.__fault.debug_msg('тест 2.0', 'blue')
         msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
         if my_msg(msg_1):
             pass
@@ -75,6 +76,7 @@ class TestBKIP(object):
         Тест 3. Проверка работы блока в режиме «Предупредительный» при снижении
         уровня сопротивлении изоляции до 100 кОм
         """
+        self.__fault.debug_msg('тест 3.0', 'blue')
         self.__resist.resist_220_to_100_kohm()
         b = self.__ctrl_kl.ctrl_ai_code_100()
         i = 0
@@ -82,7 +84,7 @@ class TestBKIP(object):
             sleep(0.2)
             i += 1
             b = self.__ctrl_kl.ctrl_ai_code_100()
-            if b is 0:
+            if b == 0:
                 break
             elif b == 1:
                 self.__mysql_conn.mysql_error(32)
@@ -94,6 +96,7 @@ class TestBKIP(object):
         """
         Тест 4. Проверка работы блока в режиме «Аварийный» при сопротивлении изоляции 100 кОм
         """
+        self.__fault.debug_msg('тест 4.0', 'blue')
         msg_2 = 'Переведите тумблер на блоке в режим «Аварийный»'
         if my_msg(msg_2):
             pass
@@ -116,24 +119,26 @@ class TestBKIP(object):
         Тест 5. Работа блока в режиме «Аварийный» при сопротивлении изоляции
         ниже 30 кОм (Подключение на внутреннее сопротивление)
         """
+        self.__fault.debug_msg('тест 5.0', 'blue')
         self.__ctrl_kl.ctrl_relay('KL22', True)
+        sleep(1)
         in_a0, in_a1 = self.__inputs_a()
         if in_a0 is False and in_a1 is True:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             self.__mysql_conn.mysql_error(34)
-    
+
             return False
         self.__ctrl_kl.ctrl_relay('KL21', False)
         self.__mysql_conn.mysql_ins_result("исправен", "5")
         return True
-    
+
     def __inputs_a(self):
         in_a0 = self.__read_mb.read_discrete(0)
         in_a1 = self.__read_mb.read_discrete(1)
         if in_a0 is None or in_a1 is None:
-            raise ModbusConnectException(f'нет связи с контроллером')
+            raise ModbusConnectException('нет связи с контроллером')
         return in_a0, in_a1
 
     def st_test_bki_p(self) -> bool:
