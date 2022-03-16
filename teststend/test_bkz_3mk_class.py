@@ -510,6 +510,7 @@ class TestBKZ3MK(object):
             while in_a6 is True and meas_time <= 370:
                 in_a6 = self.__inputs_a6()
                 meas_time = time() - start_timer
+                self.__mysql_conn.progress_level(meas_time)
             if in_a6 is False:
                 stop_timer = time()
                 delta_t_calc = stop_timer - start_timer
