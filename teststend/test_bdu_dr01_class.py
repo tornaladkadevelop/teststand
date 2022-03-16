@@ -22,7 +22,6 @@ __all__ = ["TestBDUDR01"]
 
 
 class TestBDUDR01(object):
-
     __resist = Resistor()
     __mb_read = ReadMB()
     __ctrl_kl = CtrlKL()
@@ -31,7 +30,7 @@ class TestBDUDR01(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bdu_dr01(self):
         """
         Тест 1. Проверка исходного состояния блока:
@@ -137,6 +136,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 3.3", '3')
         self.__resist.resist_10_to_110_ohm()
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -176,6 +176,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 4.3", '4')
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -216,6 +217,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 5.3", '5')
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -245,6 +247,7 @@ class TestBDUDR01(object):
         self.__ctrl_kl.ctrl_relay('KL2', True)
         self.__ctrl_kl.ctrl_relay('KL26', True)
         self.__ctrl_kl.ctrl_relay('KL28', True)
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -280,6 +283,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 6.3", '6')
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -318,6 +322,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 7.3", '7')
         self.__resist.resist_10_to_110_ohm()
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -357,6 +362,7 @@ class TestBDUDR01(object):
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 8.3", '8')
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a3 is False and in_a4 is False:
             pass
@@ -416,7 +422,7 @@ class TestBDUDR01(object):
         self.__fault.debug_msg('тест 9 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result("исправен", '9')
         return True
-    
+
     def __subtest_22(self, subtest_2_num: float, test_2_num: int) -> bool:
         """
         2.2. Включение 1 канала блока от кнопки «Пуск» 1 канала
@@ -424,6 +430,7 @@ class TestBDUDR01(object):
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_2_num}', f'{test_2_num}')
         self.__resist.resist_ohm(255)
         self.__resist.resist_ohm(10)
+        sleep(1)
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
@@ -470,7 +477,7 @@ class TestBDUDR01(object):
             return False
         self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 4)
         return True
-    
+
     def __subtest_62(self, subtest_4_num: float, test_4_num: int) -> bool:
         """
         6.2. Включение 2 канала блока от кнопки «Пуск» 2 канала
@@ -478,6 +485,7 @@ class TestBDUDR01(object):
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_4_num}', f'{test_4_num}')
         self.__resist.resist_ohm(255)
         self.__resist.resist_ohm(10)
+        sleep(1)
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
         in_a1, in_a2, in_a3, in_a4 = self.__inputs_a()
@@ -524,7 +532,7 @@ class TestBDUDR01(object):
             return False
         self.__fault.debug_msg(f'тест {subtest_5_num} положение выходов соответствует', 4)
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__mb_read.read_discrete(1)
         in_a2 = self.__mb_read.read_discrete(2)
