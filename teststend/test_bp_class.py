@@ -8,8 +8,6 @@
 БП	Строй-энергомаш
 БП	ТЭТЗ-Инвест
 БП	нет производителя
-
-
 """
 
 import math
@@ -26,7 +24,6 @@ __all__ = ["TestBP"]
 
 
 class TestBP(object):
-
     __mb_ctrl = CtrlKL()
     __read_mb = ReadMB()
     __mysql_conn = MySQLConnect()
@@ -37,7 +34,7 @@ class TestBP(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bp(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -110,7 +107,7 @@ class TestBP(object):
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             self.__fault.debug_msg("тест 2 не пройден", 1)
             return False
-        self.emkost_kond = math.log(zaryad_1/zaryad_2)
+        self.emkost_kond = math.log(zaryad_1 / zaryad_2)
         self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond}', 2)
         self.emkost_kond = (15000 / self.emkost_kond / 31300) * 1000
         self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond}', 2)
@@ -178,6 +175,7 @@ class TestBP(object):
         self.__fault.debug_msg("тест 4", 3)
         meas_volt = self.__read_mb.read_analog_ai2()
         calc_volt = meas_volt * (103 / 3)
+
         self.__fault.debug_msg(f'вычисленное напряжение, должно быть больше 6\t{calc_volt}', 2)
         if calc_volt >= 6:
             pass
@@ -204,7 +202,7 @@ class TestBP(object):
         self.__mysql_conn.mysql_ins_result("исправен", "6")
         self.__fault.debug_msg("тест 4 пройден", 4)
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
