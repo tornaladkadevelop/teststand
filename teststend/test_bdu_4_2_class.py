@@ -32,7 +32,7 @@ class TestBDU42(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_1_bdu_4_2(self) -> bool:
         """
             Тест 1. Проверка исходного состояния блока:
@@ -93,22 +93,24 @@ class TestBDU42(object):
         if in_a1 is False and in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg('тест 2.4 не пройден', 1)
+            self.__fault.debug_msg('тест 2.4 не пройден', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '2')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(17)
             elif in_a2 is True:
                 self.__mysql_conn.mysql_error(18)
             return False
-        self.__fault.debug_msg('тест 2.4 пройден', 4)
+        self.__fault.debug_msg('тест 2.4 пройден', 'green')
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__mysql_conn.mysql_ins_result("исправен", '2')
+        return True
 
     def st_test_30_bdu_4_2(self) -> bool:
         """
             тест 3. повторяем тесты 2.2 и 2.3
         """
+        self.__fault.debug_msg('тест 3.1 начат', 'blue')
         if self.__subtest_22(3.1, 3):
             if self.__subtest_23(3.2, 3):
                 return True
@@ -118,6 +120,7 @@ class TestBDU42(object):
         """
             3. Отключение исполнительного элемента при увеличении сопротивления цепи заземления
         """
+        self.__fault.debug_msg('тест 3.2 начат', 'blue')
         self.__resist.resist_10_to_110_ohm()
         sleep(1)
         in_a1, in_a2 = self.__inputs_a()
@@ -142,6 +145,7 @@ class TestBDU42(object):
         """
             Тест 4. повторяем тесты 2.2 и 2.3
         """
+        self.__fault.debug_msg('тест 4.1 начат', 'blue')
         if self.__subtest_22(4.1, 4):
             if self.__subtest_23(4.2, 4):
                 return True
@@ -151,6 +155,7 @@ class TestBDU42(object):
         """
             Тест 4. Защита от потери управляемости при замыкании проводов ДУ
         """
+        self.__fault.debug_msg('тест 4.2 начат', 'blue')
         self.__ctrl_kl.ctrl_relay('KL11', True)
         sleep(1)
         in_a1, in_a2 = self.__inputs_a()
@@ -176,6 +181,7 @@ class TestBDU42(object):
         """
             Тест 5. повторяем тесты 2.2 и 2.3
         """
+        self.__fault.debug_msg('тест 5.1 начат', 'blue')
         if self.__subtest_22(5.1, 5):
             if self.__subtest_23(5.2, 5):
                 return True
@@ -185,6 +191,7 @@ class TestBDU42(object):
         """
             Тест 5. Защита от потери управляемости при обрыве проводов ДУ
         """
+        self.__fault.debug_msg('тест 5.2 начат', 'blue')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         sleep(1)
         in_a1, in_a2 = self.__inputs_a()
@@ -201,52 +208,55 @@ class TestBDU42(object):
         self.__fault.debug_msg('тест 5 пройден', 4)
         self.__mysql_conn.mysql_ins_result("исправен", '5')
         return True
-    
+
     def __subtest_22(self, subtest_2_num: float, test_2_num: int) -> bool:
         """
             2.2. Включение блока от кнопки «Пуск»
         """
+        self.__fault.debug_msg(f'тест {subtest_2_num} начат', 'blue')
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_2_num}', f'{test_2_num}')
         self.__resist.resist_ohm(255)
         self.__resist.resist_ohm(10)
-        self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
+        self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is True and in_a2 is True:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", f'{test_2_num}')
-            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 1)
+            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(15)
             elif in_a2 is False:
                 self.__mysql_conn.mysql_error(16)
             return False
-        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 3)
+        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 'green')
         return True
 
     def __subtest_23(self, subtest_3_num: float, test_3_num: int) -> bool:
         """
             2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
+        self.__fault.debug_msg(f'тест {subtest_3_num} начат', 'blue')
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_3_num}', f'{test_3_num}')
         self.__ctrl_kl.ctrl_relay('KL1', True)
         self.__ctrl_kl.ctrl_relay('KL25', True)
-        sleep(1)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is True and in_a2 is True:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", f'{test_3_num}')
-            self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов не соответствует', 1)
+            self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов не соответствует', 'red')
             if in_a1 is False:
                 self.__mysql_conn.mysql_error(7)
             elif in_a2 is False:
                 self.__mysql_conn.mysql_error(8)
             return False
-        self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 3)
+        self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 'green')
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
