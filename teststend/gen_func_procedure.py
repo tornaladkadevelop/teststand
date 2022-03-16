@@ -31,6 +31,10 @@ class Procedure(object):
     calc_volt: float
 
     def start_procedure_1(self) -> bool:
+        """
+        Процедура 1. сброс реле первичной и вторичной обмотки, проверка отсутствия напряжения на первичной обмотке.
+        :return: bool
+        """
         self.reset.sbros_vtor_obm()
         self.reset.sbros_perv_obm()
         self.ctrl_kl.ctrl_relay('KL62', True)
@@ -59,8 +63,8 @@ class Procedure(object):
 
     def start_procedure_21(self) -> bool:
         """
-            Включение контакта первичной обмотки
-            :return:
+        Включение контакта первичной обмотки
+        :return: bool
         """
         self.ctrl_kl.ctrl_relay('KL43', True)
         sleep(1)
@@ -74,8 +78,8 @@ class Procedure(object):
 
     def start_procedure_22(self) -> bool:
         """
-            Включение контакта первичной обмотки
-            :return:
+        Включение контакта первичной обмотки
+        :return: bool
         """
         self.ctrl_kl.ctrl_relay('KL44', True)
         sleep(1)
@@ -89,11 +93,11 @@ class Procedure(object):
 
     def start_procedure_23(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =80В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =80В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 80.0 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -108,12 +112,12 @@ class Procedure(object):
 
     def start_procedure_24(self, coef_volt: float, setpoint_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3[i]=U2[i]/Кс.
-            Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
-            берем из файла «(Тор) TV1.xls»
-            :param coef_volt:
-            :param setpoint_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3[i]=U2[i]/Кс.
+        Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
+        берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :param setpoint_volt: float
+        :return: float
         """
         calc_volt = setpoint_volt / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -128,9 +132,12 @@ class Procedure(object):
 
     def start_procedure_25(self, coef_volt: float, setpoint_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3[i]=1,1*U2[i]/Кс.
-            Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
-            берем из файла «(Тор) TV1.xls»
+        Включение контакта первичной обмотки, соответствующей напряжению U3[i]=1,1*U2[i]/Кс.
+        Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
+        берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :param setpoint_volt: float
+        :return: float
         """
         calc_volt = 1.1 * setpoint_volt / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -145,11 +152,11 @@ class Procedure(object):
 
     def start_procedure_26(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =85.6В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =85.6В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 85.6 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -164,11 +171,11 @@ class Procedure(object):
 
     def start_procedure_27(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =20В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =20В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 20 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -183,12 +190,12 @@ class Procedure(object):
 
     def start_procedure_28(self, coef_volt: float, setpoint_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3[i]=1,15*U2[i]/Кс.
-            Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
-            берем из файла «(Тор) TV1.xls»
-            :param coef_volt:
-            :param setpoint_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3[i]=1,15*U2[i]/Кс.
+        Где U2[i] = напряжение, соответствующее i-ой уставке Сочетание контактов для напряжения U2[i]
+        берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :param setpoint_volt: float
+        :return: float
         """
         calc_volt = 1.15 * setpoint_volt / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -203,11 +210,11 @@ class Procedure(object):
 
     def start_procedure_29(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =25.2В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =25.2В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 25.2 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -222,11 +229,11 @@ class Procedure(object):
 
     def start_procedure_210(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =8,2В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =8,2В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 8.2 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -241,11 +248,11 @@ class Procedure(object):
 
     def start_procedure_211(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =10,7В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
-            :param coef_volt:
-            :return:
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =10,7В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 10.7 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -260,9 +267,11 @@ class Procedure(object):
 
     def start_procedure_212(self, coef_volt: float) -> float:
         """
-            Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-            Где U2 =38В.
-            Сочетание контактов берем из файла «(Тор) TV1.xls»
+        Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
+        Где U2 =38В.
+        Сочетание контактов берем из файла «(Тор) TV1.xls»
+        :param coef_volt: float
+        :return: float
         """
         calc_volt = 80.0 / coef_volt
         self.perv_obm.perv_obm_tv1(calc_volt)
@@ -276,6 +285,10 @@ class Procedure(object):
             return 0.0
 
     def __subtest_meas_volt(self) -> bool:
+        """
+        Функция измерения напряжения, после включения первичной обмотки.
+        :return: bool
+        """
         for i in range(3):
             meas_volt = self.read_mb.read_analog()
             self.fault.debug_msg(f'измеренное напряжение в процедуре 2х:\t {meas_volt:.2f}', 'orange')
@@ -289,10 +302,11 @@ class Procedure(object):
 
     def start_procedure_31(self) -> float:
         """
-            a=1
-            Формирование испытательного сигнала
-            ~ 5.96В
-            KL60 – ВКЛ
+        a=1
+        Формирование испытательного сигнала
+        ~ 5.96В
+        KL60 – ВКЛ
+        :return: float: напряжение
         """
         min_volt = 4.768
         max_volt = 7.152
@@ -311,11 +325,12 @@ class Procedure(object):
 
     def start_procedure_32(self) -> float:
         """
-            a=2	Формирование испытательного сигнала
-            ~ 51,54 В
-            KL54 – ВКЛ
-            AI.0*K=U21 должен быть в диапазоне (0.8…1.2)*51.54
-            от 41.232 до 61.848
+        a=2	Формирование испытательного сигнала
+        ~ 51,54 В
+        KL54 – ВКЛ
+        AI.0*K=U21 должен быть в диапазоне (0.8…1.2)*51.54
+        от 41.232 до 61.848
+        :return: float: напряжение
         """
         self.ctrl_kl.ctrl_relay('KL54', True)
         sleep(2)
@@ -335,13 +350,13 @@ class Procedure(object):
 
     def start_procedure_33(self, calc_volt: float) -> bool:
         """
-            а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2:
-            KL48…KL59 – ВКЛ
-            AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*85.6
-            77,04
-            94,16
+        Подпроцедуры а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2:
+        KL48…KL59 – ВКЛ
+        AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*85.6 = 77,04 до 94,16
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -360,11 +375,14 @@ class Procedure(object):
 
     def start_procedure_34(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
-            а=4	Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
-            определенному в Процедуре 2: а=4.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)* U2[i]
+        Подпроцедура а=4 Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
+        определенному в Процедуре 2: а=4.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)* U2[i]
+        :param calc_volt: float
+        :param setpoint_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -383,13 +401,14 @@ class Procedure(object):
 
     def start_procedure_35(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
-            а=5	Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
-            определенному в Процедуре 2: а=5.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)* 1,1*U2[i]
-            0.99
-            1.21
+        Подпроцедура а=5 Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
+        определенному в Процедуре 2: а=5.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)* 1,1*U2[i] = 0.99 до 1.21
+        :param calc_volt: float
+        :param setpoint_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -408,13 +427,13 @@ class Procedure(object):
 
     def start_procedure_36(self, calc_volt: float) -> bool:
         """
-            а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2: а=3.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*20
-            18
-            22
+        Подпроцедуры а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2: а=3.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*20 = 18 до 22
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -433,13 +452,13 @@ class Procedure(object):
 
     def start_procedure_37(self, calc_volt: float) -> bool:
         """
-            а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2: а=3.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*80
-            72
-            88
+        а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2: а=3.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*80 = 72 до 88
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -458,13 +477,15 @@ class Procedure(object):
 
     def start_procedure_38(self, calc_volt: float) -> bool:
         """
-            а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2: а=3.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*25.2
-            22.68 27.72
+        а=3, a=6, a=7	Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2: а=3.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*25.2
+        22.68 27.72
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -483,13 +504,15 @@ class Procedure(object):
 
     def start_procedure_39(self, calc_volt: float) -> bool:
         """
-            Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*8.2
-            7.38 9.02
+        Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*8.2
+        7.38 9.02
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -508,13 +531,15 @@ class Procedure(object):
 
     def start_procedure_310(self, calc_volt: float) -> bool:
         """
-            Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)*10.7
-            9.63 11.77
+        Включение контакта вторичной обмотки, соответствующей напряжению U3,
+        определенному в Процедуре 2
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)*10.7
+        9.63 11.77
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -533,11 +558,14 @@ class Procedure(object):
 
     def start_procedure_311(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
-            а=4	Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
-            определенному в Процедуре 2: а=4.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)* U2[i]
+        а=4	Включение контакта вторичной обмотки, соответствующей напряжению U3[i],
+        определенному в Процедуре 2: а=4.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)* U2[i]
+        :param calc_volt: float
+        :param setpoint_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -556,11 +584,13 @@ class Procedure(object):
 
     def start_procedure_312(self, calc_volt: float) -> bool:
         """
-            а=12	Включение контакта вторичной обмотки, соответствующей напряжению U3,
-            определенному в Процедуре 2: а=12.
-            KL48…KL59 – ВКЛ
-            Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
-            (0,9…1.1)* U2
+        а=12
+        Включение контакта вторичной обмотки, соответствующей напряжению U3, определенному в Процедуре 2: а=12.
+        KL48…KL59 – ВКЛ
+        Рассчитываем и сравниваем	AI.0*K=U21 должен быть в диапазоне
+        (0,9…1.1)* U2
+        :param calc_volt: float
+        :return: bool
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(2)
@@ -580,7 +610,7 @@ class Procedure(object):
     def procedure_1_21_31(self) -> float:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        :return:
+        :return: float: напряжение
         """
         if self.start_procedure_1():
             if self.start_procedure_21():
@@ -591,13 +621,13 @@ class Procedure(object):
 
     def procedure_1_22_32(self) -> float:
         """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         Процедура 1. Проверка отсутствия вероятности возникновения межвиткового замыкания
             на стороне первичной обмотки TV1
         Процедура 2: a=2. Проверка отсутствия вероятности возникновения межвиткового замыкания
             на стороне вторичной обмотки TV1:
         Процедура 3: a=2. Формирование испытательного сигнала для определения поправочного коэффициента сети:
-        :return:
+        :return: float: коэффициент сети
         """
         if self.start_procedure_1():
             if self.start_procedure_22():
@@ -610,7 +640,7 @@ class Procedure(object):
     def procedure_1_24_34(self, coef_volt: float, setpoint_volt: float) -> bool:
         """
             выполняется последовательно процедура 1 --> 2.4 --> 3.4
-            :return:
+            :return: bool
         """
         if self.start_procedure_1():
             calc_volt = self.start_procedure_24(coef_volt=coef_volt, setpoint_volt=setpoint_volt)
@@ -622,7 +652,7 @@ class Procedure(object):
     def procedure_1_25_35(self, coef_volt: float, setpoint_volt: float) -> bool:
         """
             выполняется последовательно процедура 1 --> 2.5 --> 3.5
-            :return:
+            :return: bool
         """
         if self.start_procedure_1():
             calc_volt = self.start_procedure_25(coef_volt=coef_volt, setpoint_volt=setpoint_volt)
