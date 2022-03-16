@@ -4,7 +4,7 @@
 """
 Тип блока Производитель
 БУ АПШ.М    Без Производителя
-БУ АПШ.М    Горэкс-Светотехника 
+БУ АПШ.М    Горэкс-Светотехника
 """
 
 import sys
@@ -25,7 +25,7 @@ class TestBUAPSHM(object):
     __read_mb = ReadMB()
     __ctrl_kl = CtrlKL()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
@@ -34,6 +34,7 @@ class TestBUAPSHM(object):
         """
         Тест 1. Проверка исходного состояния контактов блока:
         """
+        self.__fault.debug_msg('идёт тест 1.1', 'blue')
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is False and in_a2 is False:
             pass
@@ -50,6 +51,7 @@ class TestBUAPSHM(object):
         """
         1.1. Проверка состояния контактов блока при подаче напряжения питания
         """
+        self.__fault.debug_msg('идёт тест 1.2', 'blue')
         self.__ctrl_kl.ctrl_relay('KL21', True)
         sleep(1)
         in_a1, in_a2 = self.__inputs_a()
@@ -69,6 +71,7 @@ class TestBUAPSHM(object):
         """
         2. Проверка включения / выключения 1 канала блока от кнопки «Пуск / Стоп».
         """
+        self.__fault.debug_msg('идёт тест 2.1', 'blue')
         if self.__subtest_20():
             pass
         else:
@@ -76,6 +79,7 @@ class TestBUAPSHM(object):
             return False
         # 2.1. Выключение 1 канала блока от кнопки «Пуск» при сопротивлении 10 Ом
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is False and in_a2 is False:
             pass
@@ -94,11 +98,13 @@ class TestBUAPSHM(object):
         3. Отключение 1 канала блока при увеличении сопротивления
         цепи заземления на величину более 100 Ом
         """
+        self.__fault.debug_msg('идёт тест 3.1', 'blue')
         if self.__subtest_20():
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
         self.__resist.resist_10_to_110_ohm()
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is False and in_a2 is False:
             pass
@@ -117,6 +123,7 @@ class TestBUAPSHM(object):
         """
         4. Защита от потери управляемости 1 канала блока при замыкании проводов ДУ
         """
+        self.__fault.debug_msg('идёт тест 4.1', 'blue')
         if self.__subtest_20():
             pass
         else:
@@ -144,6 +151,7 @@ class TestBUAPSHM(object):
         """
         Тест 5. Защита от потери управляемости 1 канала блока при обрыве проводов ДУ
         """
+        self.__fault.debug_msg('идёт тест 5.1', 'blue')
         if self.__subtest_20():
             pass
         else:
@@ -169,6 +177,7 @@ class TestBUAPSHM(object):
         6. Проверка включения / выключения 2 канала блока от кнопки «Пуск / Стоп».
         6.1. Включение 1 канала блока от кнопки «Пуск» при сопротивлении 10 Ом.
         """
+        self.__fault.debug_msg('идёт тест 6.1', 'blue')
         self.__ctrl_kl.ctrl_relay('KL26', True)
         sleep(2)
         if self.__subtest_61():
@@ -197,6 +206,7 @@ class TestBUAPSHM(object):
         7. Отключение 2 канала блока при увеличении сопротивления цепи заземления
         на величину более 100 Ом
         """
+        self.__fault.debug_msg('идёт тест 7.1', 'blue')
         sleep(2)
         if self.__subtest_61():
             pass
@@ -204,6 +214,7 @@ class TestBUAPSHM(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '7')
             return False
         self.__resist.resist_10_to_110_ohm()
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
         if in_a1 is False and in_a2 is False:
             pass
@@ -222,6 +233,7 @@ class TestBUAPSHM(object):
         """
         8. Защита от потери управляемости 2 канала блока при замыкании проводов ДУ
         """
+        self.__fault.debug_msg('идёт тест 8.1', 'blue')
         sleep(2)
         if self.__subtest_61():
             pass
@@ -248,6 +260,7 @@ class TestBUAPSHM(object):
         """
         Тест 9. Защита от потери управляемости 2 канала блока при обрыве проводов ДУ
         """
+        self.__fault.debug_msg('идёт тест 9.1', 'blue')
         if self.__subtest_61():
             pass
         else:
@@ -268,12 +281,12 @@ class TestBUAPSHM(object):
         return True
 
     def __subtest_20(self):
+        self.__fault.debug_msg('идёт тест 2.0', 'blue')
         self.__resist.resist_ohm(10)
-        sleep(2)
+        sleep(3)
         self.__ctrl_kl.ctrl_relay('KL12', True)
-        sleep(2)
+        sleep(3)
         in_a1, in_a2 = self.__inputs_a()
-        sleep(1)
         if in_a1 is True and in_a2 is False:
             pass
         else:
@@ -285,12 +298,12 @@ class TestBUAPSHM(object):
         return True
 
     def __subtest_61(self):
+        self.__fault.debug_msg('идёт тест 6.0', 'blue')
         self.__resist.resist_ohm(10)
         sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(2)
         in_a1, in_a2 = self.__inputs_a()
-        sleep(1)
         if in_a1 is False and in_a2 is True:
             pass
         else:
