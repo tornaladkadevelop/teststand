@@ -217,7 +217,7 @@ class TestMTZ5V27(object):
             msg_result_mtz = my_msg_2(f'{self.msg_6} {self.list_ust_mtz_num[k]}')
             if msg_result_mtz == 0:
                 pass
-            elif msg_result_mtz is 1:
+            elif msg_result_mtz == 1:
                 return False
             elif msg_result_mtz == 2:
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} пропущена')
