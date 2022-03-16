@@ -24,7 +24,6 @@ __all__ = ["TestBMZAPSHM"]
 
 
 class TestBMZAPSHM(object):
-
     __proc = Procedure()
     __reset = ResetRelay()
     __ctrl_kl = CtrlKL()
@@ -36,7 +35,7 @@ class TestBMZAPSHM(object):
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bmz_apsh_m(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -103,38 +102,30 @@ class TestBMZAPSHM(object):
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
         self.__fault.debug_msg("тест 1.2", 4)
-        coef_volt = self.__proc.procedure_1_22_32()
-        if coef_volt != 0.0:
+        self.coef_volt = self.__proc.procedure_1_22_32()
+        if self.coef_volt != 0.0:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             return False
-        self.__fault.debug_msg(f'вычисляем коэффициент сети:\t {coef_volt}', 4)
+        self.__fault.debug_msg(f'вычисляем коэффициент сети:\t {self.coef_volt}', 4)
         self.__reset.stop_procedure_32()
         self.__mysql_conn.mysql_ins_result('исправен', '1')
         self.__fault.debug_msg("тест 1 завершен", 3)
-        self.__fault.debug_msg("тест 2", 4)
         return True
 
     def st_test_20_bmz_apsh_m(self) -> bool:
         """
         Тест 2. Проверка работы 1 канала блока
         """
-
+        self.__fault.debug_msg("тест 2.0", 4)
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_26(self.coef_volt)
             if calc_volt != 0.0:
                 if self.__proc.start_procedure_33(calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result('неисправен', '2')
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '2')
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '2')
-            return False
+                    return True
+        self.__mysql_conn.mysql_ins_result('неисправен', '2')
+        return False
 
     def st_test_21_bmz_apsh_m(self) -> bool:
         """
@@ -206,16 +197,9 @@ class TestBMZAPSHM(object):
             calc_volt = self.__proc.start_procedure_26(self.coef_volt)
             if calc_volt != 0.0:
                 if self.__proc.start_procedure_33(calc_volt):
-                    pass
-                else:
-                    self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                    return False
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                return False
-        else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            return False
+                    return True
+        self.__mysql_conn.mysql_ins_result('неисправен', '3')
+        return False
 
     def st_test_31_bmz_apsh_m(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL63', True)
@@ -272,7 +256,7 @@ class TestBMZAPSHM(object):
         self.__fault.debug_msg("состояние выходов блока соответсвует", 3)
         self.__mysql_conn.mysql_ins_result('исправен', '3')
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
