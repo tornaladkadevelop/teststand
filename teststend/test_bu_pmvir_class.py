@@ -21,21 +21,21 @@ __all__ = ["TestBUPMVIR"]
 
 
 class TestBUPMVIR(object):
-
     __resist = Resistor()
     __read_mb = ReadMB()
     __ctrl_kl = CtrlKL()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bu_pmvir(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 1.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -44,6 +44,7 @@ class TestBUPMVIR(object):
         # 1.1. Проверка состояния контактов блока при подаче напряжения питания
         self.__ctrl_kl.ctrl_relay('KL21', True)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 1.1 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -65,7 +66,9 @@ class TestBUPMVIR(object):
             return False
         # 2.2. Выключение блока от кнопки «Стоп» при сопротивлении 10 Ом
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(2)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.2 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -81,8 +84,11 @@ class TestBUPMVIR(object):
         """
         self.__ctrl_kl.ctrl_relay('KL22', True)
         self.__resist.resist_ohm(10)
+        sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 3.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -104,8 +110,9 @@ class TestBUPMVIR(object):
             self.__mysql_conn.mysql_ins_result("неисправен", '4')
             return False
         self.__resist.resist_10_to_137_ohm()
-        sleep(1)
+        sleep(2)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 4.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -126,7 +133,9 @@ class TestBUPMVIR(object):
             self.__mysql_conn.mysql_ins_result("неисправен", '5')
             return False
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        sleep(1)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 5.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -148,7 +157,9 @@ class TestBUPMVIR(object):
             self.__mysql_conn.mysql_ins_result("неисправен", '6')
             return False
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 6.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -173,6 +184,7 @@ class TestBUPMVIR(object):
         self.__ctrl_kl.ctrl_relay('KL27', True)
         sleep(6)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 7.0 {in_a1 = } (False)', 'blue')
         if in_a1 is False:
             pass
         else:
@@ -182,6 +194,7 @@ class TestBUPMVIR(object):
         self.__ctrl_kl.ctrl_relay('KL30', False)
         sleep(6)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 7.1 {in_a1 = } (True)', 'blue')
         if in_a1 is True:
             pass
         else:
@@ -190,21 +203,23 @@ class TestBUPMVIR(object):
             return False
         self.__mysql_conn.mysql_ins_result("исправен", '7')
         return True
-    
+
     def __subtest_21(self) -> bool:
         """
         2.1. Включение блока от кнопки «Пуск» при сопротивлении 10 Ом
         """
         self.__resist.resist_ohm(10)
-        self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
+        self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(3)
         in_a1 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.1 {in_a1 = } (True)', 'blue')
         if in_a1 is True:
             return True
         else:
             self.__mysql_conn.mysql_error(91)
             return False
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         if in_a1 is None:
