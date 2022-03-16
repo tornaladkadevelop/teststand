@@ -43,6 +43,7 @@ class TestBMZ2(object):
     list_result = []
 
     coef_volt: float
+    calc_delta_t = 0
 
     msg_1 = "Переключите тумблер на корпусе блока в положение " \
             "«Работа» и установите регулятор уставок в положение 1"
@@ -223,23 +224,31 @@ class TestBMZ2(object):
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')
                 return False
-            calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
-            if calc_delta_t != 9999:
-                pass
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            self.__fault.debug_msg(f'дельта t \t {calc_delta_t:.1f}', 2)
-            if calc_delta_t < 10:
+            qw = 0
+            for qw in range(4):
+                self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
+                self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
+                if 100 < self.calc_delta_t <= 9999:
+                    self.__reset.sbros_zashit_kl30()
+                    sleep(3)
+                    qw += 1
+                    continue
+                else:
+                    break
+            self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 2)
+            if self.calc_delta_t < 10:
                 self.list_delta_t.append(f'< 10')
+            elif self.calc_delta_t > 100:
+                self.list_delta_t.append(f'> 100')
             else:
-                self.list_delta_t.append(f'{calc_delta_t:.1f}')
+                self.list_delta_t.append(f'{self.calc_delta_t:.1f}')
             # Δ%= 6,1085*U4
             meas_volt = self.__read_mb.read_analog()
             calc_delta_percent = meas_volt * 6.1085
             self.__fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
             self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
             self.__reset.stop_procedure_3()
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {self.calc_delta_t:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent:.2f}')
             in_a1, in_a2, in_a5 = self.__inputs_a()
             if in_a1 is True and in_a5 is False and in_a2 is True:
@@ -306,17 +315,25 @@ class TestBMZ2(object):
         self.__fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
         self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'
         self.__mysql_conn.mysql_ins_result('идет тест 3.4', '3')
-        calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
-        if calc_delta_t != 9999:
-            pass
-        else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '3')
-        self.__fault.debug_msg(f'дельта t \t {calc_delta_t:.1f}', 2)
-        if calc_delta_t < 10:
+        wq = 0
+        for wq in range(4):
+            self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
+            self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
+            if 100 < self.calc_delta_t <= 9999:
+                self.__reset.sbros_zashit_kl30()
+                sleep(3)
+                wq += 1
+                continue
+            else:
+                break
+        self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 2)
+        if self.calc_delta_t < 10:
             self.list_delta_t[-1] = f'< 10'
+        elif self.calc_delta_t > 100:
+            self.list_delta_t[-1] = f'> 100'
         else:
-            self.list_delta_t[-1] = f'{calc_delta_t:.1f}'
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
+            self.list_delta_t[-1] = f'{self.calc_delta_t:.1f}'
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {self.calc_delta_t:.1f}')
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent:.2f}')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is True and in_a5 is False and in_a2 is True:
