@@ -21,21 +21,21 @@ __all__ = ["TestBURPMVIR"]
 
 
 class TestBURPMVIR(object):
-
     __resist = Resistor()
     __read_mb = ReadMB()
     __ctrl_kl = CtrlKL()
     __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
+    __fault = Bug(True)
 
     def __init__(self):
         pass
-    
+
     def st_test_10_bur_pmvir(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 1.0 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -54,6 +54,7 @@ class TestBURPMVIR(object):
         """
         self.__ctrl_kl.ctrl_relay('KL21', True)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.0 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -76,7 +77,9 @@ class TestBURPMVIR(object):
         2.4. Выключение блока от кнопки «Стоп» режима «Вперёд»
         """
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(1)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.4 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -104,7 +107,9 @@ class TestBURPMVIR(object):
         Формирование 100 Ом
         """
         self.__resist.resist_0_to_100_ohm()
+        sleep(1)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 3.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -130,7 +135,9 @@ class TestBURPMVIR(object):
 
     def st_test_41_bur_pmvir(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 4.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -157,7 +164,9 @@ class TestBURPMVIR(object):
 
     def st_test_51_bur_pmvir(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 5.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -177,8 +186,9 @@ class TestBURPMVIR(object):
         Переключение в режим ДУ «Назад»	KL26 - ВКЛ
         """
         self.__ctrl_kl.ctrl_relay('KL26', True)
-        sleep(1)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 6.0 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -201,7 +211,9 @@ class TestBURPMVIR(object):
         6.4. Выключение блока от кнопки «Стоп» режима «Назад»
         """
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 6.4 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -226,7 +238,9 @@ class TestBURPMVIR(object):
 
     def st_test_71_bur_pmvir(self) -> bool:
         self.__resist.resist_0_to_100_ohm()
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 7.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -252,7 +266,9 @@ class TestBURPMVIR(object):
 
     def st_test_81_bur_pmvir(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 8.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -279,7 +295,9 @@ class TestBURPMVIR(object):
 
     def st_test_91_bur_pmvir(self) -> bool:
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 9.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -298,8 +316,11 @@ class TestBURPMVIR(object):
         Тест 10. Блокировка включения блока при снижении сопротивления изоляции контролируемого присоединения
         """
         self.__resist.resist_kohm(30)
+        sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 10.0 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -319,7 +340,9 @@ class TestBURPMVIR(object):
         """
         self.__ctrl_kl.ctrl_relay('KL22', True)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 10.1 {in_a1 = } (False), {in_a2 = } (False)', 'blue')
         if in_a1 is False and in_a2 is False:
             pass
         else:
@@ -331,14 +354,17 @@ class TestBURPMVIR(object):
             return False
         self.__mysql_conn.mysql_ins_result("исправен", '11')
         return True
-    
+
     def __subtest_22(self, test_0_num: int) -> bool:
         """
         2.2. Включение блока от кнопки «Пуск» режима «Вперёд»
         """
         self.__resist.resist_ohm(0)
+        sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.2 {in_a1 = } (True), {in_a2 = } (False)', 'blue')
         if in_a1 is True and in_a2 is False:
             pass
         else:
@@ -355,7 +381,9 @@ class TestBURPMVIR(object):
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления режима «Вперёд»:
         """
         self.__ctrl_kl.ctrl_relay('KL25', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 2.3 {in_a1 = } (True), {in_a2 = } (False)', 'blue')
         if in_a1 is True and in_a2 is False:
             pass
         else:
@@ -366,15 +394,17 @@ class TestBURPMVIR(object):
                 self.__mysql_conn.mysql_error(173)
             return False
         return True
-    
+
     def __subtest_62(self, test_2_num: int) -> bool:
         """
         6.2. Включение блока от кнопки «Пуск» режима «Назад»
         """
         self.__resist.resist_ohm(0)
-        sleep(1)
+        sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 6.2 {in_a1 = } (False), {in_a2 = } (True)', 'blue')
         if in_a1 is False and in_a2 is True:
             pass
         else:
@@ -392,7 +422,9 @@ class TestBURPMVIR(object):
         при подключении Rш пульта управления режима «Назад»:
         """
         self.__ctrl_kl.ctrl_relay('KL25', True)
+        sleep(2)
         in_a1, in_a2 = self.__inputs_a()
+        self.__fault.debug_msg(f'Тест 6.3 {in_a1 = } (False), {in_a2 = } (True)', 'blue')
         if in_a1 is False and in_a2 is True:
             pass
         else:
@@ -403,7 +435,7 @@ class TestBURPMVIR(object):
                 self.__mysql_conn.mysql_error(185)
             return False
         return True
-    
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a2 = self.__read_mb.read_discrete(2)
