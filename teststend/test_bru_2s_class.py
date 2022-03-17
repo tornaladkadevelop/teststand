@@ -32,6 +32,7 @@ class TestBRU2S(object):
     def st_test_10_bru_2s(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
+        :return: bool:
         """
         in_a1 = self.__inputs_a()
         if in_a1 is False:
@@ -45,6 +46,7 @@ class TestBRU2S(object):
     def st_test_20_bru_2s(self) -> bool:
         """
         Тест 2. Проверка включения/выключения блока от кнопки «Пуск/Стоп»
+        :return: bool:
         """
         self.__ctrl_kl.ctrl_relay('KL21', True)
         in_a1 = self.__inputs_a()
@@ -59,6 +61,7 @@ class TestBRU2S(object):
         """
         2.2. Включение блока от кнопки «Пуск»
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        :return: bool:
         """
         if self.__subtest_22(2.2, 2):
             if self.__subtest_23(2.3, 2):
@@ -68,6 +71,7 @@ class TestBRU2S(object):
     def st_test_22_bru_2s(self) -> bool:
         """
         2.4. Выключение блока от кнопки «Стоп»
+        :return: bool:
         """
         self.__ctrl_kl.ctrl_relay('KL12', False)
         in_a1 = self.__inputs_a()
@@ -85,6 +89,7 @@ class TestBRU2S(object):
         """
         Повторяем подтесты 2.2. Включение блока от кнопки «Пуск»
         Повторяем подтесты 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        :return: bool:
         """
         if self.__subtest_22(3.1, 3):
             if self.__subtest_23(3.2, 3):
@@ -94,6 +99,7 @@ class TestBRU2S(object):
     def st_test_31_bru_2s(self) -> bool:
         """
         3. Отключение выходного контакта блока при увеличении сопротивления цепи заземления
+        :return: bool:
         """
         self.__resist.resist_ohm(150)
         in_a1 = self.__inputs_a()
@@ -112,6 +118,7 @@ class TestBRU2S(object):
         """
         Повторяем подтесты 2.2. Включение блока от кнопки «Пуск»
         Повторяем подтесты 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        :return: bool:
         """
         if self.__subtest_22(4.1, 4):
             if self.__subtest_23(4.2, 4):
@@ -121,6 +128,7 @@ class TestBRU2S(object):
     def st_test_41_bru_2s(self) -> bool:
         """
         4. Защита от потери управляемости при замыкании проводов ДУ
+        :return: bool:
         """
         self.__ctrl_kl.ctrl_relay('KL11', True)
         in_a1 = self.__inputs_a()
@@ -140,6 +148,7 @@ class TestBRU2S(object):
         """
         Повторяем подтесты 2.2. Включение блока от кнопки «Пуск»
         Повторяем подтесты 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        :return: bool:
         """
         if self.__subtest_22(5.1, 5):
             if self.__subtest_23(5.2, 5):
@@ -149,6 +158,7 @@ class TestBRU2S(object):
     def st_test_51_bru_2s(self) -> bool:
         """
         Тест 5. Защита от потери управляемости блока при обрыве проводов ДУ
+        :return: bool:
         """
         self.__ctrl_kl.ctrl_relay('KL12', False)
         in_a1 = self.__inputs_a()
@@ -163,6 +173,10 @@ class TestBRU2S(object):
         return True
 
     def st_test_60_bru_2s(self) -> bool:
+        """
+        Тест 6.0
+        :return: bool:
+        """
         msg_1 = "Переведите тумблер «П/А» на блоке в положение «П» и нажмите кнопку «ОК» " \
                 "Если на блоке нет тумблера «П/А» нажмите кнопку «Отмена»"
         if my_msg(msg_1):
@@ -189,6 +203,9 @@ class TestBRU2S(object):
     def __subtest_22(self, subtest_0_num: float, test_0_num: int) -> bool:
         """
         2.2. Включение блока от кнопки «Пуск»
+        :param subtest_0_num: float
+        :param test_0_num: int
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_0_num}', f'{test_0_num}')
         self.__resist.resist_ohm(0)
@@ -205,6 +222,9 @@ class TestBRU2S(object):
     def __subtest_23(self, subtest_1_num: float, test_1_num: int) -> bool:
         """
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        :param subtest_1_num: float
+        :param test_1_num: int
+        :return: bool
         """
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_1_num}', f'{test_1_num}')
         self.__ctrl_kl.ctrl_relay('KL25', True)
@@ -221,6 +241,7 @@ class TestBRU2S(object):
         """
         Тест 6. Блокировка включения блока при снижении сопротивления изоляции
         контролируемого присоединения до уровня предупредительной уставки
+        :return: bool
         """
         self.__resist.resist_kohm(200)
         self.__ctrl_kl.ctrl_relay('KL12', True)
@@ -236,6 +257,7 @@ class TestBRU2S(object):
         """
         Тест 7. Блокировка включения блока при снижении сопротивления изоляции
         контролируемого присоединения до уровня аварийной уставки
+        :return: bool
         """
         self.__resist.resist_kohm(30)
         self.__ctrl_kl.ctrl_relay('KL12', True)
