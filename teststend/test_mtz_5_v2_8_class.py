@@ -251,7 +251,12 @@ class TestMTZ5V28(object):
                     continue
             in_a1, in_a5 = self.__inputs_a()
             self.__fault.debug_msg(f'дельта t\t{self.calc_delta_t_mtz:.1f}', 'orange')
-            self.list_delta_t_mtz.append(f'{self.calc_delta_t_mtz:.1f}')
+            if self.calc_delta_t_mtz < 10:
+                self.list_delta_t_mtz.append(f'< 10')
+            elif self.calc_delta_t_mtz > 500:
+                self.list_delta_t_mtz.append(f'> 500')
+            else:
+                self.list_delta_t_mtz.append(f'{self.calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                                 f'дельта t: {self.calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
@@ -316,6 +321,7 @@ class TestMTZ5V28(object):
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
             # 4.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__ctrl_kl.ctrl_relay('KL63', True)
+            self.__mysql_conn.progress_level(0.0)
             r = 0
             in_b1 = self.__inputs_b()
             while in_b1 is False and r <= 5:
@@ -326,10 +332,12 @@ class TestMTZ5V28(object):
             in_a5 = self.__inputs_a5()
             while in_a5 is False and delta_t_tzp <= 15:
                 delta_t_tzp = time() - start_timer_tzp
+                self.__mysql_conn.progress_level(delta_t_tzp)
                 in_a5 = self.__inputs_a5()
             stop_timer_tzp = time()
             self.__ctrl_kl.ctrl_relay('KL63', False)
             calc_delta_t_tzp = stop_timer_tzp - start_timer_tzp
+            self.__mysql_conn.progress_level(0.0)
             self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp:.1f}', 'orange')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
@@ -399,13 +407,17 @@ class TestMTZ5V28(object):
                 wq += 1
                 continue
         in_a1, in_a5 = self.__inputs_a()
-        self.list_delta_t_mtz[-1] = f'{self.calc_delta_t_mtz:.1f}'
+        if self.calc_delta_t_mtz < 10:
+            self.list_delta_t_mtz[-1] = f'< 10'
+        elif self.calc_delta_t_mtz > 500:
+            self.list_delta_t_mtz[-1] = f'> 500'
+        else:
+            self.list_delta_t_mtz[-1] = f'{self.calc_delta_t_mtz:.1f}'
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                             f'дельта t: {self.calc_delta_t_mtz:.1f}')
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                             f'дельта %: {calc_delta_percent_mtz:.2f}')
         self.__reset.stop_procedure_3()
-
         if in_a1 is False and in_a5 is True:
             pass
         else:
