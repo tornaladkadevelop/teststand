@@ -103,8 +103,8 @@ class TestMTZ5V27(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt:.2f}\t'
-                               f'должно быть от\t{min_volt:.2f}\tдо\t{max_volt:.2f}', 'orange')
+        self.__fault.debug_msg(f'напряжение после включения KL63 '
+                               f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
