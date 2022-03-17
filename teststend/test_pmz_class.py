@@ -67,15 +67,15 @@ class TestPMZ(object):
         """
         self.__ctrl_kl.ctrl_relay('KL21', True)
         self.__reset.sbros_zashit_kl30_1s5()
-        self.__fault.debug_msg("сброс защит", 3)
+        self.__fault.debug_msg("сброс защит", 'blue')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
@@ -98,15 +98,15 @@ class TestPMZ(object):
         2.1.4. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         :return:
         """
-        self.__fault.debug_msg("тест 2.1.4 начало\t", 3)
+        self.__fault.debug_msg("тест 2.1.4", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.1.4', '2')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         sleep(1)
         min_volt = 0.4 * self.meas_volt_ust
         max_volt = 1.1 * self.meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt:.2f}\tдолжно быть '
-                               f'от\t{min_volt:.2f}\tдо\t{max_volt:.2f}', 3)
+        self.__fault.debug_msg(f'напряжение после включения KL63 '
+                               f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -122,7 +122,7 @@ class TestPMZ(object):
         Процедура 2.2. Процедура определения коэффициента отклонения фактического напряжения от номинального
         :return:
         """
-        self.__fault.debug_msg("тест 2.2 начало\t", 3)
+        self.__fault.debug_msg("тест 2.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.2', '2')
         self.coef_volt = self.__proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
@@ -143,7 +143,7 @@ class TestPMZ(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 2.3 начало\t", 3)
+        self.__fault.debug_msg("тест 2.3", 'blue')
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_212(coef_volt=self.coef_volt)
             if calc_volt != 0.0:
@@ -162,11 +162,11 @@ class TestPMZ(object):
         if in_a1 is True and in_a2 is True and in_a5 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             self.__reset.stop_procedure_3()
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__reset.stop_procedure_3()
         return True
 
@@ -176,15 +176,15 @@ class TestPMZ(object):
         :return:
         """
         self.__reset.sbros_zashit_kl30_1s5()
-        self.__fault.debug_msg("сброс защит", 3)
+        self.__fault.debug_msg("сброс защит", 'blue')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -236,7 +236,7 @@ class TestPMZ(object):
                     continue
                 else:
                     break
-            self.__fault.debug_msg(f'время срабатывания, мс\t{self.calc_delta_t:.1f}', 2)
+            self.__fault.debug_msg(f'время срабатывания: {self.calc_delta_t:.1f} мс', 'orange')
             if self.calc_delta_t < 10:
                 self.list_delta_t.append(f'< 10')
             elif self.calc_delta_t > 100:
@@ -248,13 +248,13 @@ class TestPMZ(object):
             self.__reset.stop_procedure_3()
             in_a1, in_a2, in_a5 = self.__inputs_a()
             if in_a1 is True and in_a2 is True and in_a5 is False:
-                self.__fault.debug_msg("положение выходов блока соответствует", 4)
+                self.__fault.debug_msg("положение выходов блока соответствует", 'green')
                 if self.__subtest_36():
                     k += 1
                     continue
                 return False
             else:
-                self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+                self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
                 if self.__subtest_35(i=i, k=k):
                     if self.__subtest_36():
                         k += 1
@@ -272,15 +272,15 @@ class TestPMZ(object):
         :return:
         """
         self.__reset.sbros_zashit_kl30_1s5()
-        self.__fault.debug_msg("сброс защит", 3)
+        self.__fault.debug_msg("сброс защит", 'blue')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
             pass
         else:
@@ -319,11 +319,11 @@ class TestPMZ(object):
         if in_a1 is True and in_a2 is True and in_a5 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             self.__reset.stop_procedure_3()
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__reset.stop_procedure_3()
         return True
 
@@ -333,15 +333,15 @@ class TestPMZ(object):
         :return:
         """
         self.__reset.sbros_zashit_kl30_1s5()
-        self.__fault.debug_msg("сброс защит", 3)
+        self.__fault.debug_msg("сброс защит", 'blue')
         in_a1, in_a2, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+            self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         return True
 
     def __inputs_a(self):
