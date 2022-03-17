@@ -46,17 +46,17 @@ class TestBP(object):
         else:
             return False
         self.__mysql_conn.mysql_ins_result("идёт тест 1", "1")
-        self.__fault.debug_msg("тест 1", 3)
+        self.__fault.debug_msg("тест 1", 'blue')
         self.__mb_ctrl.ctrl_relay('KL78', True)
         in_a1, in_a2, in_a6, in_a7 = self.__inputs_a()
-        self.__fault.debug_msg(f'{in_a1=}\t{in_a2=}\t{in_a6=}\t{in_a7=}', 3)
+        self.__fault.debug_msg(f'{in_a1=}\t{in_a2=}\t{in_a6=}\t{in_a7=}', 'purple')
         if in_a6 is True and in_a1 is False and in_a7 is True and in_a2 is False:
             pass
         else:
-            self.__fault.debug_msg("тест 1 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "1")
             return False
-        self.__fault.debug_msg("тест 1 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 1 положение выходов соответствует", 'green')
         self.__mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
@@ -66,7 +66,7 @@ class TestBP(object):
         2.1. Заряд конденсаторов
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 2.1", "2")
-        self.__fault.debug_msg("тест 2", 3)
+        self.__fault.debug_msg("тест 2", 'blue')
         self.__mb_ctrl.ctrl_relay('KL77', True)
         sleep(0.3)
         self.__mb_ctrl.ctrl_relay('KL65', True)
@@ -76,24 +76,24 @@ class TestBP(object):
         self.__mb_ctrl.ctrl_relay('KL76', True)
         sleep(5)
         zaryad_1 = self.__read_mb.read_analog_ai2()
-        self.__fault.debug_msg(f'заряд конденсатора по истечении 5с:\t{zaryad_1} В', 2)
+        self.__fault.debug_msg(f'заряд конденсатора по истечении 5с:\t{zaryad_1} В', 'orange')
         if zaryad_1 != 999:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
-            self.__fault.debug_msg("тест 2 не пройден", 1)
+            self.__fault.debug_msg("тест 2 не пройден", 'red')
             return False
         sleep(15)
         zaryad_2 = self.__read_mb.read_analog_ai2()
-        self.__fault.debug_msg(f'заряд конденсатора по истечении 15с:\t{zaryad_2} В', 2)
+        self.__fault.debug_msg(f'заряд конденсатора по истечении 15с:\t{zaryad_2} В', 'orange')
         if zaryad_2 != 999:
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
-            self.__fault.debug_msg("тест 2 не пройден", 1)
+            self.__fault.debug_msg("тест 2 не пройден", 'red')
             return False
         delta_zaryad = zaryad_1 - zaryad_2
-        self.__fault.debug_msg(f'дельта заряда конденсатора:\t{delta_zaryad} В', 2)
+        self.__fault.debug_msg(f'дельта заряда конденсатора:\t{delta_zaryad} В', 'orange')
         if delta_zaryad != 0:
             pass
         else:
@@ -105,14 +105,14 @@ class TestBP(object):
             self.__mb_ctrl.ctrl_relay('KL66', False)
             self.__mb_ctrl.ctrl_relay('KL78', False)
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
-            self.__fault.debug_msg("тест 2 не пройден", 1)
+            self.__fault.debug_msg("тест 2 не пройден", 'red')
             return False
         self.emkost_kond = math.log(zaryad_1 / zaryad_2)
-        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond}', 2)
+        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond:.2f}', 'orange')
         self.emkost_kond = (15000 / self.emkost_kond / 31300) * 1000
-        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond}', 2)
+        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond:.2f}', 'orange')
         self.emkost_kond_d = 100 - 100 * (self.emkost_kond / 2000)
-        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond_d}', 2)
+        self.__fault.debug_msg(f'ёмкость:\t{self.emkost_kond_d:.2f}', 'orange')
         if self.emkost_kond >= 1600:
             pass
         else:
@@ -124,11 +124,11 @@ class TestBP(object):
             self.__mb_ctrl.ctrl_relay('KL66', False)
             self.__mb_ctrl.ctrl_relay('KL78', False)
             self.__mysql_conn.mysql_ins_result(f'неиспр. емкость снижена на {self.emkost_kond_d:.1f} %', "2")
-            self.__fault.debug_msg("тест 2 не пройден", 1)
+            self.__fault.debug_msg("тест 2 не пройден", 'red')
             return False
         # 2.3. Форсированный разряд
         self.__mysql_conn.mysql_ins_result("идёт тест 2.3", "2")
-        self.__fault.debug_msg("тест 2.3", 3)
+        self.__fault.debug_msg("тест 2.3", 'blue')
         self.__mb_ctrl.ctrl_relay('KL79', True)
         sleep(1)
         self.__mb_ctrl.ctrl_relay('KL79', False)
@@ -143,15 +143,15 @@ class TestBP(object):
         Тест 3. Проверка работоспособности реле удержания
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 3", "5")
-        self.__fault.debug_msg("тест 3", 3)
+        self.__fault.debug_msg("тест 3", 'blue')
         self.__mb_ctrl.ctrl_relay('KL75', True)
         sleep(0.3)
         in_a1, in_a2, in_a6, in_a7 = self.__inputs_a()
-        self.__fault.debug_msg(f'{in_a1=}\t{in_a2=}\t{in_a6=}\t{in_a7=}', 3)
+        self.__fault.debug_msg(f'{in_a1=}\t{in_a2=}\t{in_a6=}\t{in_a7=}', 'purple')
         if in_a6 is False and in_a1 is True and in_a7 is False and in_a2 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 3 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3 положение выходов не соответствует", 'red')
             self.__mb_ctrl.ctrl_relay('KL77', False)
             sleep(0.1)
             self.__mb_ctrl.ctrl_relay('KL65', False)
@@ -161,9 +161,9 @@ class TestBP(object):
             self.__mb_ctrl.ctrl_relay('KL78', False)
             self.__mb_ctrl.ctrl_relay('KL75', False)
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
-            self.__fault.debug_msg("тест 3 не пройден", 1)
+            self.__fault.debug_msg("тест 3 не пройден", 'red')
             return False
-        self.__fault.debug_msg("тест 3 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 3 положение выходов соответствует", 'green')
         self.__mysql_conn.mysql_ins_result("исправен", "5")
         return True
 
@@ -172,11 +172,10 @@ class TestBP(object):
         Тест 4. Проверка работоспособности реле удержания
         """
         self.__mysql_conn.mysql_ins_result("идёт тест 4", "6")
-        self.__fault.debug_msg("тест 4", 3)
+        self.__fault.debug_msg("тест 4", 'blue')
         meas_volt = self.__read_mb.read_analog_ai2()
         calc_volt = meas_volt * (103 / 3)
-
-        self.__fault.debug_msg(f'вычисленное напряжение, должно быть больше 6\t{calc_volt}', 2)
+        self.__fault.debug_msg(f'вычисленное напряжение, должно быть больше 6\t{calc_volt:.2f}', 'orange')
         if calc_volt >= 6:
             pass
         else:
@@ -189,7 +188,7 @@ class TestBP(object):
             self.__mb_ctrl.ctrl_relay('KL66', False)
             self.__mb_ctrl.ctrl_relay('KL78', False)
             self.__mysql_conn.mysql_ins_result("неисправен", "6")
-            self.__fault.debug_msg("тест 4 не пройден", 1)
+            self.__fault.debug_msg("тест 4 не пройден", 'red')
             return False
         self.__mb_ctrl.ctrl_relay('KL77', False)
         sleep(0.1)
@@ -200,7 +199,7 @@ class TestBP(object):
         self.__mb_ctrl.ctrl_relay('KL66', False)
         self.__mb_ctrl.ctrl_relay('KL78', False)
         self.__mysql_conn.mysql_ins_result("исправен", "6")
-        self.__fault.debug_msg("тест 4 пройден", 4)
+        self.__fault.debug_msg("тест 4 пройден", 'green')
         return True
 
     def __inputs_a(self):
