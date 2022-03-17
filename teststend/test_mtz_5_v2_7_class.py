@@ -44,6 +44,7 @@ class TestMTZ5V27(object):
     ust_mtz = 30.0
 
     coef_volt: float
+    calc_delta_t_mtz = 0.0
 
     msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте блок в соответствующий разъем панели B"
     msg_2 = "«Переключите тумблер на корпусе блока в положение «Работа» и установите регуляторы уставок " \
@@ -238,15 +239,25 @@ class TestMTZ5V27(object):
             calc_delta_percent_mtz = 0.0029 * meas_volt ** 2 + 5.192 * meas_volt
             self.__fault.debug_msg(f'дельта %:\t{calc_delta_percent_mtz:.2f}', 'orange')
             self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.2f}')
-            calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
-            if calc_delta_t_mtz != 9999:
-                pass
+            for qw in range(4):
+                self.calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
+                if 500 < self.calc_delta_t_mtz <= 9999:
+                    self.__sbros_zashit()
+                    sleep(3)
+                    qw += 1
+                    continue
+                else:
+                    qw = 0
+                    break
+            self.__fault.debug_msg(f'дельта t:\t{self.calc_delta_t_mtz:.1f}', 'orange')
+            if self.calc_delta_t_mtz < 10:
+                self.list_delta_t_mtz.append(f'<10')
+            elif self.calc_delta_t_mtz > 500:
+                self.list_delta_t_mtz.append(f'> 500')
             else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '3')
-            self.__fault.debug_msg(f'дельта t:\t{calc_delta_t_mtz:.1f}', 'orange')
-            self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
+                self.list_delta_t_mtz.append(f'{self.calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                                f'дельта t: {calc_delta_t_mtz:.1f}')
+                                                f'дельта t: {self.calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                                 f'дельта %: {calc_delta_percent_mtz:.2f}')
             self.__reset.stop_procedure_3()
@@ -308,6 +319,7 @@ class TestMTZ5V27(object):
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
             # 4.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__ctrl_kl.ctrl_relay('KL63', True)
+            self.__mysql_conn.progress_level(0.0)
             r = 0
             in_b1 = self.__inputs_b()
             while in_b1 is False and r <= 5:
@@ -318,10 +330,12 @@ class TestMTZ5V27(object):
             in_a5 = self.__inputs_a5()
             while in_a5 is False and delta_t_tzp <= 21:
                 delta_t_tzp = time() - start_timer_tzp
+                self.__mysql_conn.progress_level(delta_t_tzp)
                 in_a5 = self.__inputs_a5()
             stop_timer_tzp = time()
             self.__ctrl_kl.ctrl_relay('KL63', False)
             calc_delta_t_tzp = stop_timer_tzp - start_timer_tzp
+            self.__mysql_conn.progress_level(0.0)
             self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp:.1f}', 'orange')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
@@ -380,17 +394,27 @@ class TestMTZ5V27(object):
         meas_volt = self.__read_mb.read_analog()
         calc_delta_percent_mtz = 0.0029 * meas_volt ** 2 + 5.192 * meas_volt
         self.list_delta_percent_mtz[-1] = f'{calc_delta_percent_mtz:.2f}'
-        calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
-        if calc_delta_t_mtz != 9999:
-            pass
+        for wq in range(4):
+            self.calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
+            if 500 < self.calc_delta_t_mtz <= 9999:
+                self.__sbros_zashit()
+                sleep(3)
+                wq += 1
+                continue
+            else:
+                wq = 0
+                break
+        in_a1, in_a5 = self.__inputs_a()
+        if self.calc_delta_t_mtz < 10:
+            self.list_delta_t_mtz[-1] = f'< 10'
+        elif self.calc_delta_t_mtz > 500:
+            self.list_delta_t_mtz[-1] = f'> 500'
         else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '3')
-        self.list_delta_t_mtz[-1] = f'{calc_delta_t_mtz:.1f}'
+            self.list_delta_t_mtz[-1] = f'{self.calc_delta_t_mtz:.1f}'
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                            f'дельта t: {calc_delta_t_mtz:.1f}')
+                                            f'дельта t: {self.calc_delta_t_mtz:.1f}')
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                             f'дельта %: {calc_delta_percent_mtz:.2f}')
-        in_a1, in_a5 = self.__inputs_a()
         if in_a1 is False and in_a5 is True:
             self.__reset.stop_procedure_3()
             return True
