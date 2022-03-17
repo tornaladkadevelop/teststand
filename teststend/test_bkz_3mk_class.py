@@ -54,6 +54,7 @@ class TestBKZ3MK(object):
     list_result_mtz = []
 
     coef_volt: float
+    calc_delta_t_mtz = 0.0
 
     msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте " \
             "блок в соответствующий разъем панели С»"
@@ -187,17 +188,17 @@ class TestBKZ3MK(object):
                 self.__fault.debug_msg("вход 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(321)
             elif in_a6 is True:
-                self.__fault.debug_msg("вход 6 не соответствует", 1)
+                self.__fault.debug_msg("вход 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(322)
             return False
-        self.__fault.debug_msg("состояние выходов блока соответствует", 3)
+        self.__fault.debug_msg("состояние выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '3')
         self.__resist.resist_kohm(590)
         self.__ctrl_kl.ctrl_relay('KL22', False)
         sleep(2)
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -234,42 +235,54 @@ class TestBKZ3MK(object):
             self.__fault.debug_msg(f'напряжение \t {meas_volt_test4:.2f}', 2)
             calc_delta_percent_mtz = meas_volt_test4 * 9.19125
             self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_mtz:.2f}', 2)
-            self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.1f}')
+            self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.2f}')
             self.__mysql_conn.mysql_ins_result('идет тест 4.1', '4')
-            calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(code=105)
-            if calc_delta_t_mtz != 9999:
-                pass
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '4')
-            self.__fault.debug_msg(f'дельта t \t {calc_delta_t_mtz:.2f}', 2)
-            self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
-            self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
-                                                f'дельта t: {calc_delta_t_mtz:.1f} '
-                                                f'дельта % \t {calc_delta_percent_mtz:.2f}')
+            for qw in range(4):
+                self.calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(code=105)
+                self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
+                                                    f'дельта t: {self.calc_delta_t_mtz:.1f} ')
+                if 300 < self.calc_delta_t_mtz <= 9999:
+                    self.__reset.sbros_zashit_kl30_1s5()
+                    sleep(3)
+                    qw += 1
+                    continue
+                else:
+                    qw = 0
+                    break
             in_a5, in_a6 = self.__inputs_a()
-            self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 5)
+            self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t_mtz:.1f}', 'orange')
+            if self.calc_delta_t_mtz < 10:
+                self.list_delta_t_mtz.append(f'< 10')
+            elif self.calc_delta_t_mtz > 300:
+                self.list_delta_t_mtz.append(f'> 300')
+            else:
+                self.list_delta_t_mtz.append(f'{self.calc_delta_t_mtz:.1f}')
+            self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
+                                                f'дельта t: {self.calc_delta_t_mtz:.1f} '
+                                                f'дельта % \t {calc_delta_percent_mtz:.2f}')
+            self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 'blue')
             self.__reset.stop_procedure_3()
             if in_a5 is False and in_a6 is True:
                 if self.__subtest_45():
-                    self.__fault.debug_msg("подтест 4.5 пройден", 3)
+                    self.__fault.debug_msg("подтест 4.5 пройден", 'green')
                     k += 1
                     continue
                 else:
-                    self.__fault.debug_msg("подтест 4.5 не пройден", 1)
+                    self.__fault.debug_msg("подтест 4.5 не пройден", 'red')
                     self.__mysql_conn.mysql_ins_result('неисправен', '4')
                     return False
             else:
                 if self.__subtest_42(i, k):
-                    self.__fault.debug_msg("подтест 4.2 пройден", 3)
+                    self.__fault.debug_msg("подтест 4.2 пройден", 'green')
                     k += 1
                     continue
                 else:
-                    self.__fault.debug_msg("подтест 4.2 не пройден", 1)
+                    self.__fault.debug_msg("подтест 4.2 не пройден", 'red')
                     self.__mysql_conn.mysql_ins_result('неисправен', '4')
                     return False
         self.__mysql_conn.mysql_ins_result('исправен', '4')
-        self.__fault.debug_msg(self.list_result_mtz, 2)
-        self.__fault.debug_msg("тест 4 пройден", 3)
+        self.__fault.debug_msg(f'{self.list_result_mtz}', 'orange')
+        self.__fault.debug_msg("тест 4 пройден", 'green')
         return True
 
     def st_test_50_bkz_3mk(self) -> bool:
@@ -301,14 +314,14 @@ class TestBKZ3MK(object):
                 return False
             # Δ%= 0.06075*(U4)2 + 8.887875*U4
             meas_volt_test5 = self.__read_mb.read_analog()
-            self.__fault.debug_msg(f'напряжение \t {meas_volt_test5}', 2)
+            self.__fault.debug_msg(f'напряжение \t {meas_volt_test5}', 'orange')
             calc_delta_percent_tzp = 0.06075 * meas_volt_test5 ** 2 + 8.887875 * meas_volt_test5
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
-            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_tzp:.2f}', 2)
+            self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_tzp:.2f}', 'orange')
             # 5.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__mysql_conn.mysql_ins_result('идет тест 5.4', '5')
             calc_delta_t_tzp = self.__delta_t_tzp()
-            self.__fault.debug_msg(f'дельта t \t {calc_delta_t_tzp}', 2)
+            self.__fault.debug_msg(f'дельта t \t {calc_delta_t_tzp:.1f}', 'orange')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка ТЗП {self.list_ust_tzp_num[m]} '
                                                 f'дельта t: {calc_delta_t_tzp:.1f}'
@@ -360,7 +373,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_ins_result('идет тест 4.2', '4')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True), {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -375,21 +388,34 @@ class TestBKZ3MK(object):
             return False
         meas_volt_test4 = self.__read_mb.read_analog()
         calc_delta_percent_mtz = meas_volt_test4 * 9.19125
-        self.__fault.debug_msg(calc_delta_percent_mtz, 2)
-        self.list_delta_percent_mtz[-1] = round(calc_delta_percent_mtz, 0)
+        self.__fault.debug_msg(f'{calc_delta_percent_mtz:.2f}', 'orange')
+        self.list_delta_percent_mtz[-1] = f'{calc_delta_percent_mtz:.2f}'
         # 3.2.2.  Проверка срабатывания блока от сигнала нагрузки:
         self.__mysql_conn.mysql_ins_result('идет тест 4.2.2', '4')
-        calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(code=105)
-        if calc_delta_t_mtz != 9999:
-            pass
+        for wq in range(4):
+            self.calc_delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(code=105)
+            self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
+                                                f'дельта t: {self.calc_delta_t_mtz:.1f}')
+            if 300 < self.calc_delta_t_mtz <= 9999:
+                self.__reset.sbros_zashit_kl30_1s5()
+                sleep(3)
+                wq += 1
+                continue
+            else:
+                wq = 0
+                break
+        self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t_mtz}', 'orange')
+        if self.calc_delta_t_mtz < 10:
+            self.list_delta_t_mtz[-1] = f'< 10'
+        elif self.calc_delta_t_mtz > 300:
+            self.list_delta_t_mtz[-1] = f'> 300'
         else:
-            self.__mysql_conn.mysql_ins_result('неисправен', '4')
-        self.__fault.debug_msg(f'дельта t \t {calc_delta_t_mtz}', 2)
-        self.list_delta_t_mtz[-1] = f'{calc_delta_t_mtz:.1f}'
-        self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]} дельта t: {calc_delta_t_mtz:.1f}')
+            self.list_delta_t_mtz[-1] = f'{self.calc_delta_t_mtz:.1f}'
+        self.__mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]} '
+                                            f'дельта t: {self.calc_delta_t_mtz:.1f}')
         self.__reset.stop_procedure_3()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (False), {in_a6 = } (True)', 'blue')
         if in_a5 is False and in_a6 is True:
             if self.__subtest_45():
                 return True
@@ -412,7 +438,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_ins_result('идет тест 4.3', '4')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True), {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
             pass
         else:
@@ -428,9 +454,9 @@ class TestBKZ3MK(object):
         # 4.5. Расчет времени и кратности срабатывания
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True), {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
-            self.__fault.debug_msg("положение входов соответствует", 4)
+            self.__fault.debug_msg("положение входов соответствует", 'green')
             return True
         elif in_a5 is False:
             self.__mysql_conn.mysql_error(325)
@@ -441,10 +467,10 @@ class TestBKZ3MK(object):
 
     def __subtest_55(self):
         self.__mysql_conn.mysql_ins_result('идет тест 5.5', '5')
-        self.__fault.debug_msg('идет тест 5.5', 3)
+        self.__fault.debug_msg('идет тест 5.5', 'blue')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True), {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
             return True
         elif in_a5 is False:
@@ -456,10 +482,10 @@ class TestBKZ3MK(object):
 
     def __subtest_56(self):
         self.__mysql_conn.mysql_ins_result('идет тест 5.6', '5')
-        self.__fault.debug_msg('идет тест 5.6', 3)
+        self.__fault.debug_msg('идет тест 5.6', 'blue')
         self.__reset.sbros_zashit_kl30_1s5()
         in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True) {in_a6 = } (True)', 5)
+        self.__fault.debug_msg(f'положение входов \t {in_a5 = } (True), {in_a6 = } (True)', 'blue')
         if in_a5 is True and in_a6 is True:
             return True
         elif in_a5 is False:
