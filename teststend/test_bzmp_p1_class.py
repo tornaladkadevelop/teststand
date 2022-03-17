@@ -50,7 +50,7 @@ class TestBZMPP1(object):
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
-        self.__fault.debug_msg("идёт тест 1.1", 3)
+        self.__fault.debug_msg("идёт тест 1.1", 'blue')
         meas_volt_ust = self.__proc.procedure_1_21_31()
         if meas_volt_ust != 0.0:
             pass
@@ -65,8 +65,8 @@ class TestBZMPP1(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt}\t'
-                               f'должно быть от\t{min_volt}\tдо\t{max_volt}', 3)
+        self.__fault.debug_msg(f'напряжение после включения KL63 '
+                               f'{min_volt} <= {meas_volt} <= {max_volt}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -81,7 +81,7 @@ class TestBZMPP1(object):
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.__fault.debug_msg("идёт тест 1.2", 3)
+        self.__fault.debug_msg("идёт тест 1.2", 'blue')
         self.coef_volt = self.__proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
             pass
@@ -92,7 +92,7 @@ class TestBZMPP1(object):
         return True
 
     def st_test_13_bzmp_p1(self) -> bool:
-        self.__fault.debug_msg("идёт тест 1.3", 3)
+        self.__fault.debug_msg("идёт тест 1.3", 'blue')
         self.__mb_ctrl.ctrl_relay('KL67', True)
         timer_test_1 = 0
         start_timer_test_1 = time()
@@ -100,7 +100,7 @@ class TestBZMPP1(object):
             sleep(0.2)
             timer_test_1 = time() - start_timer_test_1
             in_a1, in_a6 = self.__inputs_a()
-            self.__fault.debug_msg(f'времени прошло\t{timer_test_1}', 2)
+            self.__fault.debug_msg(f'времени прошло\t{timer_test_1:.1f}', 'orange')
             if in_a1 is True and in_a6 is False:
                 break
             else:
@@ -128,7 +128,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_21_bzmp_p1(self) -> bool:
-        self.__fault.debug_msg("идёт тест 2.1", 3)
+        self.__fault.debug_msg("идёт тест 2.1", 'blue')
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_29(coef_volt=self.coef_volt)
             if calc_volt != 0.0:
@@ -138,7 +138,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_22_bzmp_p1(self) -> bool:
-        self.__fault.debug_msg("идёт тест 2.2", 3)
+        self.__fault.debug_msg("идёт тест 2.2", 'blue')
         self.__mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
         self.__mb_ctrl.ctrl_relay('KL63', False)
@@ -147,7 +147,7 @@ class TestBZMPP1(object):
         if in_a1 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             self.__reset.stop_procedure_3()
             return False
@@ -158,14 +158,14 @@ class TestBZMPP1(object):
         """
         2.4.2. Сброс защит после проверки
         """
-        self.__fault.debug_msg("идёт тест 2.3", 3)
+        self.__fault.debug_msg("идёт тест 2.3", 'blue')
         self.__sbros_zashit()
         sleep(1)
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "2")
@@ -175,7 +175,7 @@ class TestBZMPP1(object):
         """
         Тест 3. Проверка защиты от несимметрии фаз
         """
-        self.__fault.debug_msg("идёт тест 3.0", 3)
+        self.__fault.debug_msg("идёт тест 3.0", 'blue')
         msg_4 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_4):
             pass
@@ -190,7 +190,7 @@ class TestBZMPP1(object):
         return False
 
     def st_test_31_bzmp_p1(self) -> bool:
-        self.__fault.debug_msg("идёт тест 3.1", 3)
+        self.__fault.debug_msg("идёт тест 3.1", 'blue')
         self.__mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL63', True)
@@ -206,17 +206,17 @@ class TestBZMPP1(object):
             in_a6 = self.__inputs_a6()
             stop_timer = time() - start_timer
         self.timer_test_5_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 3: {self.timer_test_5_2}', 2)
+        self.__fault.debug_msg(f'таймер тест 3: {self.timer_test_5_2:.1f}', 'orange')
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a6 is True and self.timer_test_5_2 <= 12:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             self.__reset.sbros_kl63_proc_all()
             self.__mb_ctrl.ctrl_relay('KL81', False)
             return False
-        self.__fault.debug_msg("положение выходов соответствует", 4)
+        self.__fault.debug_msg("положение выходов соответствует", 'green')
         self.__reset.sbros_kl63_proc_all()
         self.__mb_ctrl.ctrl_relay('KL81', False)
         return True
@@ -225,7 +225,7 @@ class TestBZMPP1(object):
         """
         3.5. Сброс защит после проверки
         """
-        self.__fault.debug_msg("идёт тест 3.2", 3)
+        self.__fault.debug_msg("идёт тест 3.2", 'blue')
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(4)
         self.__mb_ctrl.ctrl_relay('KL24', False)
@@ -234,10 +234,10 @@ class TestBZMPP1(object):
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             return False
-        self.__fault.debug_msg("положение выходов соответствует", 4)
+        self.__fault.debug_msg("положение выходов соответствует", 'green')
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_5_2:.1f} сек', "3")
         return True
 
@@ -245,7 +245,7 @@ class TestBZMPP1(object):
         """
         Тест 4. Проверка защиты от перегрузки
         """
-        self.__fault.debug_msg("идёт тест 4.0", 3)
+        self.__fault.debug_msg("идёт тест 4.0", 'blue')
         msg_5 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         if my_msg(msg_5):
             pass
@@ -260,7 +260,7 @@ class TestBZMPP1(object):
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.__fault.debug_msg("идёт тест 4.1", 3)
+        self.__fault.debug_msg("идёт тест 4.1", 'blue')
         self.__mb_ctrl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b()
         k = 0
@@ -273,18 +273,18 @@ class TestBZMPP1(object):
         while in_a6 is False and stop_timer <= 360:
             in_a6 = self.__inputs_a6()
             stop_timer = time() - start_timer
-            self.__fault.debug_msg(f'таймер тест 4: {stop_timer}', 2)
+            self.__fault.debug_msg(f'таймер тест 4: {stop_timer:.1f}', 'orange')
         self.timer_test_6_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 4: {self.timer_test_6_2}', 2)
+        self.__fault.debug_msg(f'таймер тест 4: {self.timer_test_6_2:.1f}', 'orange')
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a6 is True and self.timer_test_6_2 <= 360:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             self.__reset.sbros_kl63_proc_all()
             return False
-        self.__fault.debug_msg("положение выходов соответствует", 4)
+        self.__fault.debug_msg("положение выходов соответствует", 'green')
         self.__reset.sbros_kl63_proc_all()
         return True
 
@@ -292,14 +292,14 @@ class TestBZMPP1(object):
         """
         4.6. Сброс защит после проверки
         """
-        self.__fault.debug_msg("идёт тест 4.2", 3)
+        self.__fault.debug_msg("идёт тест 4.2", 'blue')
         self.__sbros_zashit()
         sleep(1)
         in_a1, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "4")
