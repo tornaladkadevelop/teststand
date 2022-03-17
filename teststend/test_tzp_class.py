@@ -211,6 +211,7 @@ class TestTZP(object):
             self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
             if 0.9 * i / self.coef_volt <= meas_volt <= 1.1 * i / self.coef_volt:
                 self.__fault.debug_msg(f'напряжение соответствует {meas_volt:.2f}', 'orange')
+                self.__mysql_conn.progress_level(0.0)
                 self.__ctrl_kl.ctrl_relay('KL63', True)
                 in_b0, in_b1 = self.__inputs_b()
                 while in_b0 is False:
@@ -222,8 +223,10 @@ class TestTZP(object):
                     sleep(0.2)
                     sub_timer = time() - start_timer
                     self.__fault.debug_msg(f'времени прошло {sub_timer:.1f}', 'orange')
+                    self.__mysql_conn.progress_level(sub_timer)
                     in_a1, in_a5 = self.__inputs_a()
                 stop_timer = time()
+                self.__mysql_conn.progress_level(0.0)
                 self.__ctrl_kl.ctrl_relay('KL63', False)
                 calc_delta_t = stop_timer - start_timer
                 self.__reset.stop_procedure_3()
