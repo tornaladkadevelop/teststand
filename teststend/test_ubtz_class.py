@@ -71,7 +71,7 @@ class TestUBTZ(object):
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg('тест 1 положение выходов не соответствует', 1)
+            self.__fault.debug_msg('тест 1 положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", '1')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(451)
@@ -82,7 +82,7 @@ class TestUBTZ(object):
             elif in_a6 is True:
                 self.__mysql_conn.mysql_error(454)
             return False
-        self.__fault.debug_msg('тест 1 положение выходов соответствует', 4)
+        self.__fault.debug_msg('тест 1 положение выходов соответствует', 'green')
         return True
 
     def st_test_11(self) -> bool:
@@ -90,7 +90,7 @@ class TestUBTZ(object):
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         :return:
         """
-        self.__fault.debug_msg('тест 1.1', 3)
+        self.__fault.debug_msg('тест 1.1', 'blue')
         self.__mysql_conn.mysql_ins_result("идёт тест 1.2", '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
         if meas_volt_ust != 0.0:
@@ -98,7 +98,7 @@ class TestUBTZ(object):
         else:
             return False
         # 1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
-        self.__fault.debug_msg('тест 1.2', 3)
+        self.__fault.debug_msg('тест 1.2', 'blue')
         self.__mysql_conn.mysql_ins_result("идёт тест 1.3", '1')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         sleep(1)
@@ -120,7 +120,7 @@ class TestUBTZ(object):
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         :return:
         """
-        self.__fault.debug_msg('тест 1.3', 3)
+        self.__fault.debug_msg('тест 1.3', 'blue')
         self.__mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
         self.coef_volt = self.__proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
@@ -131,7 +131,7 @@ class TestUBTZ(object):
             return False
         self.__reset.stop_procedure_32()
         self.__mysql_conn.mysql_ins_result('исправен', '1')
-        self.__fault.debug_msg('тест 1 завершён', 3)
+        self.__fault.debug_msg('тест 1 завершён', 'blue')
         return True
 
     def st_test_20(self) -> bool:
@@ -159,12 +159,12 @@ class TestUBTZ(object):
                 return False
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
             calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
-            self.__fault.debug_msg(f'тест 2, дельта t\t{calc_delta_t_bmz}', 2)
-            self.list_delta_t_bmz.append(calc_delta_t_bmz)
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} дельта t: {calc_delta_t_bmz}')
+            self.__fault.debug_msg(f'тест 2, дельта t\t{calc_delta_t_bmz:.1f}', 'orange')
+            self.list_delta_t_bmz.append(f'{calc_delta_t_bmz:.1f}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} дельта t: {calc_delta_t_bmz:.1f}')
             in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
             if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
-                self.__fault.debug_msg('тест 2 положение выходов соответствует', 4)
+                self.__fault.debug_msg('тест 2 положение выходов соответствует', 'green')
                 self.__reset.stop_procedure_3()
                 if self.__subtest_33_or_45(num_test=2):
                     k += 1
@@ -173,7 +173,7 @@ class TestUBTZ(object):
                     self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
                     return False
             else:
-                self.__fault.debug_msg('тест 2 положение выходов не соответствует', 1)
+                self.__fault.debug_msg('тест 2 положение выходов не соответствует', 'red')
                 if in_a1 is False:
                     self.__mysql_conn.mysql_error(456)
                 elif in_a5 is True:
@@ -229,6 +229,7 @@ class TestUBTZ(object):
                 return False
             # 4.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__ctrl_kl.ctrl_relay('KL63', True)
+            self.__mysql_conn.progress_level(0.0)
             in_b1 = self.__inputs_b1()
             while in_b1 is False:
                 in_b1 = self.__inputs_b1()
@@ -237,15 +238,18 @@ class TestUBTZ(object):
             in_a6 = self.__inputs_a6()
             while in_a6 is True and sub_timer <= 370:
                 sub_timer = time() - start_timer
-                self.__fault.debug_msg("времени прошло\t" + str(sub_timer), 2)
+                self.__fault.debug_msg(f'времени прошло: {sub_timer}', 'orange')
+                self.__mysql_conn.progress_level(sub_timer)
                 sleep(0.2)
                 in_a6 = self.__inputs_a6()
             stop_timer = time()
             self.__reset.stop_procedure_3()
+            self.__mysql_conn.progress_level(0.0)
             calc_delta_t_tzp = stop_timer - start_timer
-            self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_tzp}', 2)
+            self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_tzp:.1f}', 'orange')
             self.list_delta_t_tzp.append(calc_delta_t_tzp)
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} дельта t: {calc_delta_t_tzp:.0f}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
+                                                f'дельта t: {calc_delta_t_tzp:.1f}')
             in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
             if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True and calc_delta_t_tzp <= 360:
                 if self.__subtest_33_or_45(num_test=3):
@@ -283,7 +287,7 @@ class TestUBTZ(object):
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(460)
@@ -294,7 +298,7 @@ class TestUBTZ(object):
             elif in_a6 is False:
                 self.__mysql_conn.mysql_error(463)
             return False
-        self.__fault.debug_msg("тест 3.1 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 3.1 положение выходов соответствует", 'green')
         if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
             pass
         else:
@@ -302,14 +306,15 @@ class TestUBTZ(object):
             return False
         # 3.2.2.  Проверка срабатывания блока от сигнала нагрузки:
         calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
-        self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_bmz}', 2)
-        self.list_delta_t_bmz[-1] = calc_delta_t_bmz
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} дельта t: {calc_delta_t_bmz:.0f}')
+        self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_bmz:.1f}', 'orange')
+        self.list_delta_t_bmz[-1] = f'{calc_delta_t_bmz:.1f}'
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
+                                            f'дельта t: {calc_delta_t_bmz:.1f}')
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 3.2 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.2 положение выходов не соответствует", 'red')
             self.__reset.stop_procedure_3()
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(464)
@@ -320,7 +325,7 @@ class TestUBTZ(object):
             elif in_a6 is True:
                 self.__mysql_conn.mysql_error(467)
             return False
-        self.__fault.debug_msg("тест 3.2 положение выходов соответствует", 4)
+        self.__fault.debug_msg("тест 3.2 положение выходов соответствует", 'green')
         self.__reset.stop_procedure_3()
         return True
     
