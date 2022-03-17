@@ -61,8 +61,8 @@ class TestBZMPP(object):
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.__read_mb.read_analog()
-        self.__fault.debug_msg(f'напряжение после включения KL63\t{meas_volt}\t'
-                               f'должно быть от\t{min_volt}\tдо\t{max_volt}', 3)
+        self.__fault.debug_msg(f'напряжение после включения KL63 '
+                               f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -89,17 +89,20 @@ class TestBZMPP(object):
 
     def st_test_12_bzmp_p(self) -> bool:
         self.__mb_ctrl.ctrl_relay('KL67', True)
+        self.__mysql_conn.progress_level(0.0)
         timer_test_1 = 0
         start_timer_test_1 = time()
         while timer_test_1 <= 120:
             sleep(0.2)
             timer_test_1 = time() - start_timer_test_1
+            self.__mysql_conn.progress_level(timer_test_1)
             in_a1, in_a5, in_a6 = self.__inputs_a()
-            self.__fault.debug_msg(f'времени прошло:\t{timer_test_1}', 2)
+            self.__fault.debug_msg(f'времени прошло:\t{timer_test_1:.1f}', 'orange')
             if in_a1 is True and in_a5 is True and in_a6 is False:
                 break
             else:
                 continue
+        self.__mysql_conn.progress_level(0.0)
         self.__mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
@@ -124,20 +127,20 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL27', False)
         sleep(0.2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        self.__fault.debug_msg(f"{in_a1 = }, {in_a5 = }, {in_a6 = }", 'purple')
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 2.1.1 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 2.1.1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         sleep(5)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        self.__fault.debug_msg(f"{in_a1 = }, {in_a5 = }, {in_a6 = }", 'purple')
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("тест 2.1.2 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 2.1.2 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "2")
@@ -155,11 +158,11 @@ class TestBZMPP(object):
         self.__resist.resist_kohm(61)
         sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        self.__fault.debug_msg(f"{in_a1 = }, {in_a5 = }, {in_a6 = }", 'purple')
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("тест 3.0 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.0 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
         return True
@@ -168,11 +171,11 @@ class TestBZMPP(object):
         self.__resist.resist_kohm(590)
         sleep(2)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        self.__fault.debug_msg(f"{in_a1 = }, {in_a5 = }, {in_a6 = }", 'purple')
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 1)
+            self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "3")
@@ -204,11 +207,11 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL63', False)
         sleep(1)
         in_a1, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f"{in_a1 = } {in_a5 = } {in_a6 = }", 3)
+        self.__fault.debug_msg(f"{in_a1 = }, {in_a5 = }, {in_a6 = }", 'purple')
         if in_a1 is False and in_a5 is False and in_a6 is True:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             self.__reset.stop_procedure_3()
             return False
@@ -225,7 +228,7 @@ class TestBZMPP(object):
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "4")
@@ -268,12 +271,12 @@ class TestBZMPP(object):
             in_a5 = self.__inputs_a5()
             stop_timer = time() - start_timer
         timer_test_5_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 6.2: {timer_test_5_2}', 2)
+        self.__fault.debug_msg(f'таймер тест 6.2: {timer_test_5_2:.1f}', 'orange')
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a5 is False and in_a6 is True and timer_test_5_2 <= 12:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             self.__reset.sbros_kl63_proc_all()
             self.__mb_ctrl.ctrl_relay('KL81', False)
@@ -288,7 +291,7 @@ class TestBZMPP(object):
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {timer_test_5_2:.1f} сек', "5")
@@ -317,6 +320,7 @@ class TestBZMPP(object):
         """
         self.__mb_ctrl.ctrl_relay('KL63', True)
         sleep(2)
+        self.__mysql_conn.progress_level(0.0)
         in_b1 = self.__inputs_b()
         k = 0
         while in_b1 is False and k <= 10:
@@ -328,13 +332,15 @@ class TestBZMPP(object):
         while in_a5 is True and stop_timer <= 360:
             in_a5 = self.__inputs_a5()
             stop_timer = time() - start_timer
+            self.__mysql_conn.progress_level(stop_timer)
         self.timer_test_6_2 = stop_timer
-        self.__fault.debug_msg(f'таймер тест 6.2: {self.timer_test_6_2}', 2)
+        self.__fault.debug_msg(f'таймер тест 6.2: {self.timer_test_6_2:.1f}', 'orange')
+        self.__mysql_conn.progress_level(0.0)
         in_a1, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a5 is False and in_a6 is True and self.timer_test_6_2 <= 360:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "6")
             self.__reset.sbros_kl63_proc_all()
             return False
@@ -353,7 +359,7 @@ class TestBZMPP(object):
         if in_a1 is True and in_a5 is True and in_a6 is False:
             pass
         else:
-            self.__fault.debug_msg("положение выходов не соответствует", 1)
+            self.__fault.debug_msg("положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("неисправен", "6")
             return False
         self.__mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "6")
