@@ -62,7 +62,7 @@ class TestBTZT(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 1", 3)
+        self.__fault.debug_msg("тест 1", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.__ctrl_kl.ctrl_relay('KL21', True)
         self.__reset.sbros_zashit_kl30()
@@ -72,19 +72,19 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             if in_a1 is True:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(390)
             elif in_a5 is False:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(391)
             elif in_a2 is True:
-                self.__fault.debug_msg("положение входа 2 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 2 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(392)
             elif in_a6 is False:
-                self.__fault.debug_msg("положение входа 6 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(393)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         return True
 
     def st_test_11_btz_t(self) -> bool:
@@ -92,10 +92,9 @@ class TestBTZT(object):
         # 1.1. Проверка вероятности наличия короткого замыкания
         # на входе измерительной цепи блока
         """
-        self.__fault.debug_msg("тест 1.1", 3)
+        self.__fault.debug_msg("тест 1.1", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 1.1', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
-        self.__fault.debug_msg(f'напряжение в процедуре 1 {meas_volt_ust}', 2)
         if meas_volt_ust != 0.0:
             pass
         else:
@@ -104,16 +103,16 @@ class TestBTZT(object):
         meas_volt = self.__read_mb.read_analog()
         min_volt = 0.4 * meas_volt_ust
         max_volt = 1.1 * meas_volt_ust
-        self.__fault.debug_msg(f'напряжение после подключения KL63 {meas_volt}', 2)
+        self.__fault.debug_msg(f'напряжение после подключения KL63 {meas_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
-            self.__fault.debug_msg("напряжение не соответствует", 1)
+            self.__fault.debug_msg("напряжение не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             self.__mysql_conn.mysql_error(394)
             self.__reset.sbros_kl63_proc_1_21_31()
             return False
-        self.__fault.debug_msg("напряжение соответствует", 4)
+        self.__fault.debug_msg("напряжение соответствует", 'green')
         self.__reset.sbros_kl63_proc_1_21_31()
         return True
 
@@ -121,7 +120,7 @@ class TestBTZT(object):
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.__fault.debug_msg("тест 1.2", 3)
+        self.__fault.debug_msg("тест 1.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 1.2', '1')
         self.coef_volt = self.__proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
@@ -129,10 +128,9 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '1')
             return False
-        self.__fault.debug_msg(f'коэффициент {self.coef_volt}', 2)
         self.__mysql_conn.mysql_ins_result('исправен', '1')
         self.__reset.stop_procedure_32()
-        self.__fault.debug_msg("тест 1 завершен", 3)
+        self.__fault.debug_msg("тест 1 завершен", 'blue')
         return True
 
     def st_test_20_btz_t(self) -> bool:
@@ -144,7 +142,7 @@ class TestBTZT(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 2", 3)
+        self.__fault.debug_msg("тест 2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.1', '2')
         if self.__proc.start_procedure_1():
             calc_volt = self.__proc.start_procedure_23(self.coef_volt)
@@ -158,7 +156,7 @@ class TestBTZT(object):
         """
         2.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.__fault.debug_msg("тест 2.2", 3)
+        self.__fault.debug_msg("тест 2.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.2', '2')
         self.__ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
@@ -169,19 +167,19 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(395)
             elif in_a5 is False:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(396)
             elif in_a2 is False:
-                self.__fault.debug_msg("положение входа 2 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 2 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(397)
             elif in_a6 is True:
-                self.__fault.debug_msg("положение входа 6 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(398)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__reset.stop_procedure_3()
         return True
 
@@ -189,7 +187,7 @@ class TestBTZT(object):
         """
         2.4.2. Сброс защит после проверки
         """
-        self.__fault.debug_msg("тест 2.4", 3)
+        self.__fault.debug_msg("тест 2.4", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.4', '2')
         self.__reset.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
@@ -198,21 +196,21 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(399)
             elif in_a5 is False:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(400)
             elif in_a2 is True:
-                self.__fault.debug_msg("положение входа 2 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 2 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(401)
             elif in_a6 is False:
-                self.__fault.debug_msg("положение входа 6 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(402)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
-        self.__fault.debug_msg("тест 2 завершен", 3)
+        self.__fault.debug_msg("тест 2 завершен", 'blue')
         msg_9 = "Переключите тумблер ПМЗ (1-11) в положение «Работа»"
         if my_msg(msg_9):
             pass
@@ -229,7 +227,7 @@ class TestBTZT(object):
             pass
         else:
             return False
-        self.__fault.debug_msg("тест 3", 3)
+        self.__fault.debug_msg("тест 3", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 3.1', '3')
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
@@ -237,26 +235,26 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is False:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(403)
             elif in_a5 is True:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(404)
             elif in_a2 is True:
-                self.__fault.debug_msg("положение входа 2 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 2 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(405)
             elif in_a6 is False:
-                self.__fault.debug_msg("положение входа 6 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(406)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         return True
 
     def st_test_31_btz_t(self) -> bool:
         """
         3.2. Сброс защит после проверки
         """
-        self.__fault.debug_msg("тест 3.2", 3)
+        self.__fault.debug_msg("тест 3.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 3.2', '3')
         msg_8 = "Переключите тумблер ТЗП (0.5…1.0) на корпусе блока в положение «Работа»"
         if my_msg(msg_8):
@@ -271,28 +269,28 @@ class TestBTZT(object):
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is True:
-                self.__fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 1 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(407)
             elif in_a5 is False:
-                self.__fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(408)
             elif in_a2 is True:
-                self.__fault.debug_msg("положение входа 2 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 2 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(409)
             elif in_a6 is False:
-                self.__fault.debug_msg("положение входа 6 не соответствует", 1)
+                self.__fault.debug_msg("положение входа 6 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(410)
             return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
+        self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '3')
-        self.__fault.debug_msg("тест 3 завершен", 3)
+        self.__fault.debug_msg("тест 3 завершен", 'blue')
         return True
 
     def st_test_40_btz_t(self) -> bool:
         """
         Тест 4. Проверка срабатывания защиты ПМЗ блока по уставкам
         """
-        self.__fault.debug_msg("тест 4", 3)
+        self.__fault.debug_msg("тест 4", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 4', '4')
         k = 0
         for i in self.list_ust_pmz_volt:
@@ -319,7 +317,7 @@ class TestBTZT(object):
             calc_delta_percent_pmz = 2.7938 * meas_volt_pmz
             self.list_delta_percent_pmz.append(f'{calc_delta_percent_pmz:.2f}')
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
-            self.__fault.debug_msg("тест 4.1", 3)
+            self.__fault.debug_msg("тест 4.1", 'blue')
             self.__mysql_conn.mysql_ins_result('идет тест 4.2', '4')
             qw = 0
             for qw in range(4):
@@ -351,7 +349,7 @@ class TestBTZT(object):
                 self.list_delta_t_pmz.append(f'{self.calc_delta_t_pmz:.1f}')
             self.__reset.stop_procedure_3()
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
-                self.__fault.debug_msg("положение выходов блока соответствует", 4)
+                self.__fault.debug_msg("положение выходов блока соответствует", 'green')
                 if self.__subtest_45():
                     k += 1
                     continue
@@ -359,7 +357,7 @@ class TestBTZT(object):
                     self.__mysql_conn.mysql_ins_result('неисправен', '4')
                     return False
             else:
-                self.__fault.debug_msg("положение выходов блока не соответствует", 1)
+                self.__fault.debug_msg("положение выходов блока не соответствует", 'red')
                 self.__mysql_conn.mysql_ins_result('неисправен', '4')
                 self.__mysql_conn.mysql_error(389)
                 if self.__subtest_42(i, k):
@@ -377,14 +375,14 @@ class TestBTZT(object):
                         self.__mysql_conn.mysql_ins_result('неисправен', '4')
                         return False
         self.__mysql_conn.mysql_ins_result('исправен', '4')
-        self.__fault.debug_msg("тест 4 завершен", 3)
+        self.__fault.debug_msg("тест 4 завершен", 'blue')
         return True
 
     def st_test_50_btz_t(self) -> bool:
         """
         Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         """
-        self.__fault.debug_msg("тест 5", 3)
+        self.__fault.debug_msg("тест 5", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 5', '5')
         m = 0
         for n in self.list_ust_tzp_volt:
@@ -412,7 +410,7 @@ class TestBTZT(object):
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
             # 5.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__mysql_conn.progress_level(0.0)
-            self.__fault.debug_msg("тест 5.4", 3)
+            self.__fault.debug_msg("тест 5.4", 'blue')
             self.__mysql_conn.mysql_ins_result('идет тест 5.4', '5')
             self.__ctrl_kl.ctrl_relay('KL63', True)
             in_b0, in_b1 = self.__inputs_b()
@@ -424,14 +422,14 @@ class TestBTZT(object):
             while in_a5 is True and sub_timer <= 360:
                 sleep(0.2)
                 sub_timer = time() - start_timer_2
-                self.__fault.debug_msg(f'времени прошло {sub_timer:.1f}', 2)
+                self.__fault.debug_msg(f'времени прошло {sub_timer:.1f}', 'orange')
                 self.__mysql_conn.progress_level(sub_timer)
-                self.__fault.debug_msg(f'{in_a5=}', 3)
+                self.__fault.debug_msg(f'{in_a5=}', 'purple')
                 in_a5 = self.__read_in_a5()
             stop_timer_2 = time()
             calc_delta_t_tzp = stop_timer_2 - start_timer_2
             self.__mysql_conn.progress_level(0.0)
-            self.__fault.debug_msg(f'дельта t: {calc_delta_t_tzp:.1f}', 2)
+            self.__fault.debug_msg(f'дельта t: {calc_delta_t_tzp:.1f}', 'orange')
             self.__ctrl_kl.ctrl_relay('KL63', False)
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
@@ -440,7 +438,7 @@ class TestBTZT(object):
                                                 f'дельта %: {calc_delta_percent_tzp:.2f}')
             in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
             if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True and calc_delta_t_tzp <= 360:
-                self.__fault.debug_msg("входа соответствуют ", 4)
+                self.__fault.debug_msg("входа соответствуют ", 'green')
                 if self.__subtest_56():
                     m += 1
                     continue
@@ -448,7 +446,7 @@ class TestBTZT(object):
                     self.__mysql_conn.mysql_ins_result('неисправен', '5')
                     return False
             else:
-                self.__fault.debug_msg("входа не соответствуют ", 1)
+                self.__fault.debug_msg("входа не соответствуют ", 'red')
                 self.__mysql_conn.mysql_ins_result('неисправен', '5')
                 self.__mysql_conn.mysql_error(411)
                 if self.__subtest_55():
@@ -465,7 +463,7 @@ class TestBTZT(object):
         4.2. Формирование нагрузочного сигнала 1,1*calc_volt[i]:
         :return:
         """
-        self.__fault.debug_msg("тест 4.2", 3)
+        self.__fault.debug_msg("тест 4.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 4.2', '4')
         self.__reset.sbros_zashit_kl30()
         sleep(1)
@@ -492,7 +490,7 @@ class TestBTZT(object):
         calc_delta_percent_pmz = 2.7938 * meas_volt_pmz
         self.list_delta_percent_pmz[-1] = f'{calc_delta_percent_pmz:.2f}'
         # 4.2.2.  Проверка срабатывания блока от сигнала нагрузки:
-        self.__fault.debug_msg("тест 4.2.2", 3)
+        self.__fault.debug_msg("тест 4.2.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 4.2.2', '4')
         wq = 0
         for wq in range(4):
@@ -531,7 +529,7 @@ class TestBTZT(object):
         return True
 
     def __subtest_43(self):
-        self.__fault.debug_msg("тест 4.3", 3)
+        self.__fault.debug_msg("тест 4.3", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 4.3', '4')
         self.__reset.sbros_zashit_kl30()
         sleep(1)
@@ -552,12 +550,13 @@ class TestBTZT(object):
         return True
 
     def __subtest_45(self):
-        self.__fault.debug_msg("тест 4.5", 3)
+        self.__fault.debug_msg("тест 4.5", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 4.5', '4')
         self.__reset.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
-        self.__fault.debug_msg(f'{in_a1 = } (False), {in_a2 = } (True), {in_a5 = } (False), {in_a6 = } (True)', 'blue')
+        self.__fault.debug_msg(f'{in_a1 = } (False), {in_a2 = } (True), '
+                               f'{in_a5 = } (False), {in_a6 = } (True)', 'purple')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
@@ -574,7 +573,7 @@ class TestBTZT(object):
         return True
 
     def __subtest_55(self):
-        self.__fault.debug_msg("тест 5.5", 3)
+        self.__fault.debug_msg("тест 5.5", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 5.5', '5')
         self.__reset.stop_procedure_3()
         self.__reset.sbros_zashit_kl30()
@@ -599,7 +598,7 @@ class TestBTZT(object):
         """
         5.6.1. Сброс защит после проверки
         """
-        self.__fault.debug_msg("тест 5.6", 3)
+        self.__fault.debug_msg("тест 5.6", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 5.6', '5')
         self.__reset.stop_procedure_3()
         self.__reset.sbros_zashit_kl30()
