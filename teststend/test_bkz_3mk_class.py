@@ -41,7 +41,7 @@ class TestBKZ3MK(object):
     # Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
     # медленные
     list_ust_tzp_num = (0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1)
-    list_ust_tzp_volt = (4.7, 6.2, 7.7, 9.2, 10.6, 12.0, 13.4, 14.7, 16.6)
+    list_ust_tzp_volt = (4.7, 7.2, 8.7, 10.2, 11.6, 13.0, 14.4, 15.7, 17.6)
     list_delta_t_tzp = []
     list_delta_percent_tzp = []
     list_result_tzp = []
@@ -296,6 +296,7 @@ class TestBKZ3MK(object):
         self.__mysql_conn.mysql_ins_result('идет тест 5', '5')
         m = 0
         for n in self.list_ust_tzp_volt:
+            self.__reset.sbros_zashit_kl30_1s5()
             msg_result_tzp = my_msg_2(f'{self.msg_5} {self.list_ust_tzp_num[m]}')
             if msg_result_tzp == 0:
                 pass
@@ -320,7 +321,9 @@ class TestBKZ3MK(object):
             self.__fault.debug_msg(f'дельта % \t {calc_delta_percent_tzp:.2f}', 'orange')
             # 5.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.__mysql_conn.mysql_ins_result('идет тест 5.4', '5')
+            self.__mysql_conn.progress_level(0.0)
             calc_delta_t_tzp = self.__delta_t_tzp()
+            self.__mysql_conn.progress_level(0.0)
             self.__fault.debug_msg(f'дельта t \t {calc_delta_t_tzp:.1f}', 'orange')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка ТЗП {self.list_ust_tzp_num[m]} '

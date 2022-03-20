@@ -38,6 +38,7 @@ class TestUBTZ(object):
     list_ust_bmz_volt = (6.9, 13.8, 27.4, 41.1, 54.8, 68.5, 82.2)
     list_ust_tzp_volt = (11.2, 15.0, 18.7, 22.4, 26.2, 29.9, 33.6)
     coef_volt: float
+    calc_delta_t_bmz = 0.0
 
     list_delta_t_tzp = []
     list_delta_t_bmz = []
@@ -46,10 +47,10 @@ class TestUBTZ(object):
 
     msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте " \
             "блок в соответствующий разъем панели С"
-    msg_2 = "Переключите регулятор БМЗ на корпусе блока в положение «1», регулятор ТЗП в положение «0»"
-    msg_3 = "Установите регулятор БМЗ, расположенный на корпусе блока, в положение\t"
-    msg_4 = "Установите регулятор БМЗ, расположенный на блоке, в положение «0»"
-    msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение\t"
+    msg_2 = "Переключите регулятор МТЗ на корпусе блока в положение «1», регулятор ТЗП в положение «0»"
+    msg_3 = "Установите регулятор МТЗ, расположенный на корпусе блока, в положение"
+    # msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
+    msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
 
     def __init__(self):
         pass
@@ -65,7 +66,7 @@ class TestUBTZ(object):
         self.__mysql_conn.mysql_ins_result("идёт тест 1.1", '1')
         self.__ctrl_kl.ctrl_relay('KL22', True)
         self.__ctrl_kl.ctrl_relay('KL66', True)
-        self.__sbros_zashit()
+        self.sbros_zashit()
         sleep(2)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
@@ -158,14 +159,28 @@ class TestUBTZ(object):
                 self.__mysql_conn.mysql_ins_result('неисправен TV1', '1')
                 return False
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
-            calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
-            self.__fault.debug_msg(f'тест 2, дельта t\t{calc_delta_t_bmz:.1f}', 'orange')
-            self.list_delta_t_bmz.append(f'{calc_delta_t_bmz:.1f}')
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} дельта t: {calc_delta_t_bmz:.1f}')
+            for qw in range(4):
+                self.calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
+                self.__fault.debug_msg(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', 'orange')
+                if 500 < self.calc_delta_t_bmz <= 9999:
+                    self.sbros_zashit()
+                    qw += 1
+                    continue
+                else:
+                    break
             in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
+            self.__reset.stop_procedure_3()
+            if self.calc_delta_t_bmz < 10:
+                self.list_delta_t_bmz.append(f'< 10')
+            elif 500 < self.calc_delta_t_bmz <= 9999:
+                self.list_delta_t_bmz.append(f'> 500')
+            else:
+                self.list_delta_t_bmz.append(f'{self.calc_delta_t_bmz:.1f}')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
+                                                f'дельта t: {self.calc_delta_t_bmz:.1f}')
+            self.__fault.debug_msg(f'{in_a1 = } (T), {in_a2 = } (F), {in_a5 = } (F), {in_a6 = } (T)', 'purple')
             if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
                 self.__fault.debug_msg('тест 2 положение выходов соответствует', 'green')
-                self.__reset.stop_procedure_3()
                 if self.__subtest_33_or_45(num_test=2):
                     k += 1
                     continue
@@ -205,10 +220,6 @@ class TestUBTZ(object):
         Тест 3. Проверка срабатывания защиты ТЗП блока по уставкам
         :return:
         """
-        if my_msg(self.msg_4):
-            pass
-        else:
-            return False
         m = 0
         for n in self.list_ust_tzp_volt:
             msg_result_tzp = my_msg_2(f'{self.msg_5} {self.list_ust_tzp_num[m]}')
@@ -243,14 +254,15 @@ class TestUBTZ(object):
                 sleep(0.2)
                 in_a6 = self.__inputs_a6()
             stop_timer = time()
+            in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
+            self.__fault.debug_msg(f'{in_a1 = } (F), {in_a2 = } (F), {in_a5 = } (T), {in_a6 = } (T)', 'purple')
             self.__reset.stop_procedure_3()
             self.__mysql_conn.progress_level(0.0)
             calc_delta_t_tzp = stop_timer - start_timer
             self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_tzp:.1f}', 'orange')
-            self.list_delta_t_tzp.append(calc_delta_t_tzp)
+            self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
                                                 f'дельта t: {calc_delta_t_tzp:.1f}')
-            in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
             if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True and calc_delta_t_tzp <= 360:
                 if self.__subtest_33_or_45(num_test=3):
                     m += 1
@@ -272,6 +284,9 @@ class TestUBTZ(object):
                     continue
                 else:
                     return False
+        self.__ctrl_kl.ctrl_relay('KL22', False)
+        self.__ctrl_kl.ctrl_relay('KL66', False)
+        self.__fault.debug_msg(f"ТЗП дельта t: {self.list_delta_t_tzp}", 'blue')
         self.__mysql_conn.mysql_ins_result("исправен", '1')
         return True
     
@@ -281,9 +296,10 @@ class TestUBTZ(object):
         3.2.1. Сброс защит после проверки
         :return:
         """
-        self.__sbros_zashit()
+        self.sbros_zashit()
         sleep(2)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f'{in_a1 = }, {in_a2 = }, {in_a5 = }, {in_a6 = }', 'purple')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
@@ -305,12 +321,25 @@ class TestUBTZ(object):
             self.__mysql_conn.mysql_ins_result("неисправен TV1", '1')
             return False
         # 3.2.2.  Проверка срабатывания блока от сигнала нагрузки:
-        calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
-        self.__fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_bmz:.1f}', 'orange')
-        self.list_delta_t_bmz[-1] = f'{calc_delta_t_bmz:.1f}'
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
-                                            f'дельта t: {calc_delta_t_bmz:.1f}')
+        for wq in range(4):
+            self.calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
+            self.__fault.debug_msg(f'тест 3 delta t:\t{self.calc_delta_t_bmz:.1f}', 'orange')
+            if 500 < self.calc_delta_t_bmz <= 9999:
+                self.sbros_zashit()
+                wq += 1
+                continue
+            else:
+                break
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
+        if self.calc_delta_t_bmz < 10:
+            self.list_delta_t_bmz[-1] = f'< 10'
+        elif self.calc_delta_t_bmz > 500:
+            self.list_delta_t_bmz[-1] = f'> 500'
+        else:
+            self.list_delta_t_bmz[-1] = f'{self.calc_delta_t_bmz:.1f}'
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
+                                            f'дельта t: {self.calc_delta_t_bmz:.1f}')
+        self.__fault.debug_msg(f'{in_a1 = }, {in_a2 = }, {in_a5 = }, {in_a6 = }', 'purple')
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
             pass
         else:
@@ -334,9 +363,10 @@ class TestUBTZ(object):
         3.3. Сброс защит после проверки
         :return:
         """
-        self.__sbros_zashit()
+        self.sbros_zashit()
         sleep(2)
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
+        self.__fault.debug_msg(f'{in_a1 = }, {in_a2 = }, {in_a5 = }, {in_a6 = }', 'purple')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             return True
         else:
@@ -351,10 +381,10 @@ class TestUBTZ(object):
                 self.__mysql_conn.mysql_error(463)
             return False
     
-    def __sbros_zashit(self):
+    def sbros_zashit(self):
         self.__ctrl_kl.ctrl_relay('KL1', True)
         self.__ctrl_kl.ctrl_relay('KL31', True)
-        sleep(1.5)
+        sleep(12)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__ctrl_kl.ctrl_relay('KL31', False)
 
@@ -386,14 +416,6 @@ class TestUBTZ(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
 
-    def result_test_ubtz(self):
-        for g1 in range(len(self.list_delta_t_bmz)):
-            self.list_bmz_result.append((self.list_ust_bmz_num[g1], self.list_delta_t_bmz[g1]))
-        for g2 in range(len(self.list_delta_t_tzp)):
-            self.list_tzp_result.append((self.list_ust_tzp_num[g2], self.list_delta_t_tzp[g2]))
-        self.__mysql_conn.mysql_ubtz_btz_result(self.list_bmz_result)
-        self.__mysql_conn.mysql_ubtz_tzp_result(self.list_tzp_result)
-
     def st_test_ubtz(self) -> bool:
         if self.st_test_10():
             if self.st_test_11():
@@ -402,6 +424,18 @@ class TestUBTZ(object):
                         if self.st_test_30():
                             return True
         return False
+
+    def result_test_ubtz(self):
+        for g1 in range(len(self.list_delta_t_bmz)):
+            self.list_bmz_result.append((self.list_ust_bmz_num[g1], self.list_delta_t_bmz[g1]))
+            self.__fault.debug_msg(f"запись уставок МТЗ в БД: {self.list_ust_bmz_num[g1]} "
+                                   f"{self.list_delta_t_bmz[g1]}", 'blue')
+        self.__mysql_conn.mysql_ubtz_btz_result(self.list_bmz_result)
+        for g2 in range(len(self.list_delta_t_tzp)):
+            self.list_tzp_result.append((self.list_ust_tzp_num[g2], self.list_delta_t_tzp[g2]))
+            self.__fault.debug_msg(f"запись уставок ТЗП в БД: {self.list_ust_tzp_num[g2]} "
+                                   f"{self.list_delta_t_tzp[g2]}", 'blue')
+        self.__mysql_conn.mysql_ubtz_tzp_result(self.list_tzp_result)
 
 
 if __name__ == '__main__':
