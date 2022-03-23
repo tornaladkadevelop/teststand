@@ -22,24 +22,22 @@ __all__ = ["TestBKI6"]
 
 class TestBKI6(object):
 
-    __resist = Resistor()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
     def __init__(self):
-        pass
-    
+        self.__resist = Resistor()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+        self.msg_1 = 'Убедитесь в отсутствии других блоков или соединительных кабелей в панели разъемов А'
+        self.msg_2 = 'Подключите в разъем, расположенный на панели разъемов А ' \
+                     'соединительный кабель для проверки блока БКИ-6-3Ш'
+
     def st_test_1_bki6(self) -> bool:
         """
         Тест 1. Проверка исходного состояния контактов блока при отсутствии напряжения питания
         """
-        msg_1 = 'Убедитесь в отсутствии других блоков или соединительных кабелей в панели разъемов А'
-        msg_2 = 'Подключите в разъем, расположенный на панели разъемов А ' \
-                'соединительный кабель для проверки блока БКИ-6-3Ш'
-        if my_msg(msg_1):
-            if my_msg(msg_2):
+        if my_msg(self.msg_1):
+            if my_msg(self.msg_2):
                 pass
             else:
                 return False
@@ -273,20 +271,17 @@ class TestBKI6(object):
         self.__fault.debug_msg('тест 5.2 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '5')
         return True
-    
+
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a4 = self.__read_mb.read_discrete(4)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
-        in_a7 = self.__read_mb.read_discrete(7)
+        in_a1, in_a4, in_a5, in_a6, in_a7 = self.__read_mb.read_discrete_v1('in_a1', 'in_a4',
+                                                                            'in_a5', 'in_a6',
+                                                                            'in_a7')
         if in_a1 is None or in_a4 is None or in_a5 is None or in_a6 is None or in_a7 in None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a4, in_a5, in_a6, in_a7
-    
+
     def __inputs_a1_a7(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a7 = self.__read_mb.read_discrete(7)
+        in_a1, in_a7 = self.__read_mb.read_discrete_v1('in_a1', 'in_a7')
         if in_a1 is None or in_a7 in None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a7

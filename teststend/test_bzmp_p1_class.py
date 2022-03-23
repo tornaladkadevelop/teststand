@@ -20,29 +20,33 @@ __all__ = ["TestBZMPP1"]
 
 
 class TestBZMPP1(object):
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __read_mb = ReadMB()
-    __mb_ctrl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    ust = 14.64
-
-    coef_volt: float
-    timer_test_5_2: float
-    timer_test_6_2: float
 
     def __init__(self):
-        pass
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__read_mb = ReadMB()
+        self.__mb_ctrl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
 
-    @staticmethod
-    def st_test_10_bzmp_p1() -> bool:
+        self.ust = 14.64
+
+        self.coef_volt: float = 0.0
+        self.timer_test_5_2: float = 0.0
+        self.timer_test_6_2: float = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БЗМП-П1 в соответствующий разъем"
+        self.msg_2 = "С помощью кнопок SB1…SB3, расположенных на панели разъемов, " \
+                     "установите следующие параметры блока: - Iном=200А; Iпер=1.2; Iпуск=7.5»"
+        self.msg_3 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
+        self.msg_4 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
+        self.msg_5 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
+
+    def st_test_10_bzmp_p1(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БЗМП-П1 в соответствующий разъем"
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             return True
         return False
 
@@ -114,16 +118,12 @@ class TestBZMPP1(object):
         self.__mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
-    @staticmethod
-    def st_test_20_bzmp_p1() -> bool:
+    def st_test_20_bzmp_p1(self) -> bool:
         """
         Тест 2. Проверка защиты ПМЗ
         """
-        msg_2 = "С помощью кнопок SB1…SB3, расположенных на панели разъемов, " \
-                "установите следующие параметры блока: - Iном=200А; Iпер=1.2; Iпуск=7.5»"
-        msg_3 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
-        if my_msg(msg_2):
-            if my_msg(msg_3):
+        if my_msg(self.msg_2):
+            if my_msg(self.msg_3):
                 return True
         return False
 
@@ -176,8 +176,7 @@ class TestBZMPP1(object):
         Тест 3. Проверка защиты от несимметрии фаз
         """
         self.__fault.debug_msg("идёт тест 3.0", 'blue')
-        msg_4 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
-        if my_msg(msg_4):
+        if my_msg(self.msg_4):
             pass
         else:
             return False
@@ -246,8 +245,7 @@ class TestBZMPP1(object):
         Тест 4. Проверка защиты от перегрузки
         """
         self.__fault.debug_msg("идёт тест 4.0", 'blue')
-        msg_5 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
-        if my_msg(msg_5):
+        if my_msg(self.msg_5):
             pass
         else:
             return False
@@ -311,29 +309,28 @@ class TestBZMPP1(object):
         self.__mb_ctrl.ctrl_relay('KL24', False)
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a6')
         if in_a1 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a6
 
     def __inputs_a5(self):
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_a6(self):
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a6 = self.__read_mb.read_discrete_v1('in_a6')
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
 
     def __inputs_b(self):
-        in_a9 = self.__read_mb.read_discrete(9)
-        if in_a9 is None:
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
+        if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a9
+        return in_b1
 
     def st_test_bzmp_p1(self) -> bool:
         if self.st_test_10_bzmp_p1():

@@ -27,32 +27,30 @@ __all__ = ['TestBMZ2']
 
 class TestBMZ2(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-    # расчетный лист уставок (при тестировании данных напряжений не хватает)
-    # ust = (32.2, 40.2, 48.2, 56.3, 64.3, 72.3, 80.4, 88.4, 96.5, 104.5, 112.5)
-    list_ust_volt = (34.2, 42.2, 50.2, 58.3, 66.3, 74.3, 82.4, 90.4, 98.5, 106.5, 114.5)
-    list_delta_t = []
-    list_delta_percent = []
-    list_result = []
-
-    coef_volt: float
-    calc_delta_t = 0
-
-    msg_1 = "Переключите тумблер на корпусе блока в положение " \
-            "«Работа» и установите регулятор уставок в положение 1"
-    msg_2 = "Переключите тумблер на корпусе блока в положение «Проверка»."
-    msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
-    msg_4 = f'Установите регулятор уставок на блоке в положение '
-
     def __init__(self):
-        pass
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+        # расчетный лист уставок (при тестировании данных напряжений не хватает)
+        # ust = (32.2, 40.2, 48.2, 56.3, 64.3, 72.3, 80.4, 88.4, 96.5, 104.5, 112.5)
+        self.list_ust_volt = (34.2, 42.2, 50.2, 58.3, 66.3, 74.3, 82.4, 90.4, 98.5, 106.5, 114.5)
+        self.list_delta_t = []
+        self.list_delta_percent = []
+        self.list_result = []
+
+        self.coef_volt: float = 0.0
+        self.calc_delta_t: float = 0.0
+
+        self.msg_1 = "Переключите тумблер на корпусе блока в положение " \
+                     "«Работа» и установите регулятор уставок в положение 1"
+        self.msg_2 = "Переключите тумблер на корпусе блока в положение «Проверка»."
+        self.msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
+        self.msg_4 = 'Установите регулятор уставок на блоке в положение '
 
     def st_test_10_bmz_2(self) -> bool:
         """
@@ -374,16 +372,13 @@ class TestBMZ2(object):
             return False
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a2, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5')
         if in_a1 is None or in_a2 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

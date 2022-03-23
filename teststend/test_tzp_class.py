@@ -28,28 +28,26 @@ __all__ = ["TestTZP"]
 
 class TestTZP(object):
     
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-    list_ust_volt = (25.7, 29.8, 34.3, 39.1, 43.7, 48.5)
-    list_delta_t = []
-    list_delta_percent = []
-    list_tzp_result = []
-
-    coef_volt = 0.0
-
-    msg_1 = "Переключите тумблер на корпусе блока в положение «Проверка» "
-    msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
-    msg_3 = f'Установите регулятор уставок на блоке в положение'
-
     def __init__(self):
-        pass
-    
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+        self.list_ust_volt = (25.7, 29.8, 34.3, 39.1, 43.7, 48.5)
+        self.list_delta_t = []
+        self.list_delta_percent = []
+        self.list_tzp_result = []
+
+        self.coef_volt = 0.0
+
+        self.msg_1 = "Переключите тумблер на корпусе блока в положение «Проверка» "
+        self.msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
+        self.msg_3 = f'Установите регулятор уставок на блоке в положение'
+
     def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -278,15 +276,13 @@ class TestTZP(object):
             return False
     
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
     
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

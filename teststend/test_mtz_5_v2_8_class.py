@@ -24,42 +24,40 @@ __all__ = ["TestMTZ5V28"]
 
 class TestMTZ5V28(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_tzp_num = (0.8, 1, 2, 2.5, 3)
-    list_ust_tzp_volt = (22.1, 27.6, 55.1, 68.9, 82.5)
-    list_ust_mtz_num = (2, 3, 4, 5, 6, 7, 8)
-    list_ust_mtz_volt = (36.7, 55.0, 73.4, 91.7, 110.0, 128.4, 146.7)
-    list_delta_t_mtz = []
-    list_delta_t_tzp = []
-    list_delta_percent_mtz = []
-    list_delta_percent_tzp = []
-    list_mtz_result = []
-    list_tzp_result = []
-    ust_mtz = 20.0
-
-    coef_volt: float
-    calc_delta_t_mtz = 0
-
-    msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте блок " \
-            "в соответствующий разъем панели B"
-    msg_2 = "«Переключите тумблер на корпусе блока в положение «Работа» и установите регуляторы уставок " \
-            "в положение 2 (2-8) и в положение 0.8 (0.8-3)»"
-    msg_3 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «Проверка»"
-    msg_4 = "Установите регулятор уставок на блоке в положение \t"
-    msg_5 = "Установите регулятор времени перегруза на блоке в положение «21 сек»"
-    # msg_6 = "Установите регулятор МТЗ, расположенный на блоке, в положение «8»"
-    msg_7 = "Установите регулятор уставок на блоке в положение\t"
-    msg_8 = "Переключите тумблер, расположенный на корпусе блока в положение «Работа»"
-
     def __init__(self):
-        pass
-    
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_tzp_num = (0.8, 1, 2, 2.5, 3)
+        self.list_ust_tzp_volt = (22.1, 27.6, 55.1, 68.9, 82.5)
+        self.list_ust_mtz_num = (2, 3, 4, 5, 6, 7, 8)
+        self.list_ust_mtz_volt = (36.7, 55.0, 73.4, 91.7, 110.0, 128.4, 146.7)
+        self.list_delta_t_mtz = []
+        self.list_delta_t_tzp = []
+        self.list_delta_percent_mtz = []
+        self.list_delta_percent_tzp = []
+        self.list_mtz_result = []
+        self.list_tzp_result = []
+        self.ust_mtz = 20.0
+
+        self.coef_volt: float = 0.0
+        self.calc_delta_t_mtz = 0
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте блок " \
+                     "в соответствующий разъем панели B"
+        self.msg_2 = "«Переключите тумблер на корпусе блока в положение «Работа» и установите регуляторы уставок " \
+                     "в положение 2 (2-8) и в положение 0.8 (0.8-3)»"
+        self.msg_3 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «Проверка»"
+        self.msg_4 = "Установите регулятор уставок на блоке в положение \t"
+        self.msg_5 = "Установите регулятор времени перегруза на блоке в положение «21 сек»"
+        # self.msg_6 = "Установите регулятор МТЗ, расположенный на блоке, в положение «8»"
+        self.msg_7 = "Установите регулятор уставок на блоке в положение\t"
+        self.msg_8 = "Переключите тумблер, расположенный на корпусе блока в положение «Работа»"
+
     def st_test_10(self) -> bool:
         """
 
@@ -261,7 +259,6 @@ class TestMTZ5V28(object):
                                                 f'дельта t: {self.calc_delta_t_mtz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                                 f'дельта %: {calc_delta_percent_mtz:.2f}')
-
             if in_a1 is False and in_a5 is True:
                 self.__reset.stop_procedure_3()
                 self.__subtest_35()
@@ -363,7 +360,7 @@ class TestMTZ5V28(object):
                     return False
         self.__mysql_conn.mysql_ins_result('исправен', '4')
         return True
-    
+
     def __subtest_32(self, i, k):
         """
         3.2. Формирование нагрузочного сигнала 1,15*U3[i]:
@@ -442,7 +439,7 @@ class TestMTZ5V28(object):
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(447)
             return False
-    
+
     def __subtest_46(self) -> bool:
         """
         4.6.1. Сброс защит после проверки
@@ -462,7 +459,7 @@ class TestMTZ5V28(object):
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(450)
             return False
-    
+
     def __sbros_zashit(self):
         """
         Сброс защит.
@@ -478,18 +475,17 @@ class TestMTZ5V28(object):
         Считывание положения выходов блока из ПЛК.
         :return: in_a1, in_a5
         """
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
-    
+
     def __inputs_a5(self):
         """
         Считывание положения выходов блока из ПЛК.
         :return: in_a5
         """
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
@@ -499,13 +495,13 @@ class TestMTZ5V28(object):
         Считывание положения выходов блока из ПЛК.
         :return: in_b1
         """
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
     def st_test_mtz(self) -> bool:
-        if self. st_test_10():
+        if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
                     if self.st_test_13():

@@ -21,13 +21,13 @@ __all__ = ["TestBRU2S"]
 
 class TestBRU2S(object):
 
-    __resist = Resistor()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-
     def __init__(self):
-        pass
+        self.__resist = Resistor()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.msg_1 = "Переведите тумблер «П/А» на блоке в положение «П» и нажмите кнопку «ОК» " \
+                     "Если на блоке нет тумблера «П/А» нажмите кнопку «Отмена»"
 
     def st_test_10_bru_2s(self) -> bool:
         """
@@ -177,9 +177,8 @@ class TestBRU2S(object):
         Тест 6.0
         :return: bool:
         """
-        msg_1 = "Переведите тумблер «П/А» на блоке в положение «П» и нажмите кнопку «ОК» " \
-                "Если на блоке нет тумблера «П/А» нажмите кнопку «Отмена»"
-        if my_msg(msg_1):
+
+        if my_msg(self.msg_1):
             if self.__subtest_6():
                 self.__mysql_conn.mysql_ins_result('исправен', '6')
                 if self.__subtest_7():
@@ -199,7 +198,7 @@ class TestBRU2S(object):
                 self.__mysql_conn.mysql_ins_result('неисправен', '7')
                 return False
         return True
-    
+
     def __subtest_22(self, subtest_0_num: float, test_0_num: int) -> bool:
         """
         2.2. Включение блока от кнопки «Пуск»
@@ -236,7 +235,7 @@ class TestBRU2S(object):
             self.__mysql_conn.mysql_ins_result('неисправен', f'{test_1_num}')
             return False
         return True
-    
+
     def __subtest_6(self) -> bool:
         """
         Тест 6. Блокировка включения блока при снижении сопротивления изоляции
@@ -252,8 +251,8 @@ class TestBRU2S(object):
         else:
             self.__mysql_conn.mysql_error(55)
             return False
-    
-    def __subtest_7(self):
+
+    def __subtest_7(self) -> bool:
         """
         Тест 7. Блокировка включения блока при снижении сопротивления изоляции
         контролируемого присоединения до уровня аварийной уставки
@@ -268,9 +267,9 @@ class TestBRU2S(object):
         else:
             self.__mysql_conn.mysql_error(56)
             return False
-    
+
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a1 = self.__read_mb.read_discrete_v1('in_a1')
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1

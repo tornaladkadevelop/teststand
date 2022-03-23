@@ -26,35 +26,34 @@ __all__ = ["TestUBTZ"]
 
 class TestUBTZ(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __fault = Bug(True)
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-
-    list_ust_bmz_num = (1, 2, 3, 4, 5, 6, 7)
-    list_ust_tzp_num = (1, 2, 3, 4, 5, 6, 7)
-    list_ust_bmz_volt = (6.9, 13.8, 27.4, 41.1, 54.8, 68.5, 82.2)
-    list_ust_tzp_volt = (11.2, 15.0, 18.7, 22.4, 26.2, 29.9, 33.6)
-    coef_volt: float
-    calc_delta_t_bmz = 0.0
-
-    list_delta_t_tzp = []
-    list_delta_t_bmz = []
-    list_bmz_result = []
-    list_tzp_result = []
-
-    msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте " \
-            "блок в соответствующий разъем панели С"
-    msg_2 = "Переключите регулятор МТЗ на корпусе блока в положение «1», регулятор ТЗП в положение «0»"
-    msg_3 = "Установите регулятор МТЗ, расположенный на корпусе блока, в положение"
-    # msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
-    msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
-
     def __init__(self):
-        pass
-    
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__fault = Bug(True)
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+
+        self.list_ust_bmz_num = (1, 2, 3, 4, 5, 6, 7)
+        self.list_ust_tzp_num = (1, 2, 3, 4, 5, 6, 7)
+        self.list_ust_bmz_volt = (6.9, 13.8, 27.4, 41.1, 54.8, 68.5, 82.2)
+        self.list_ust_tzp_volt = (11.2, 15.0, 18.7, 22.4, 26.2, 29.9, 33.6)
+
+        self.coef_volt: float = 0.0
+        self.calc_delta_t_bmz = 0.0
+
+        self.list_delta_t_tzp = []
+        self.list_delta_t_bmz = []
+        self.list_bmz_result = []
+        self.list_tzp_result = []
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте " \
+                     "блок в соответствующий разъем панели С"
+        self.msg_2 = "Переключите регулятор МТЗ на корпусе блока в положение «1», регулятор ТЗП в положение «0»"
+        self.msg_3 = "Установите регулятор МТЗ, расположенный на корпусе блока, в положение"
+        # self.msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
+        self.msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
+
     def st_test_10(self) -> bool:
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
@@ -289,7 +288,7 @@ class TestUBTZ(object):
         self.__fault.debug_msg(f"ТЗП дельта t: {self.list_delta_t_tzp}", 'blue')
         self.__mysql_conn.mysql_ins_result("исправен", '1')
         return True
-    
+
     def __subtest_32(self, i, k):
         """
         3.2. Формирование нагрузочного сигнала 1,1*U3[i]:
@@ -357,7 +356,7 @@ class TestUBTZ(object):
         self.__fault.debug_msg("тест 3.2 положение выходов соответствует", 'green')
         self.__reset.stop_procedure_3()
         return True
-    
+
     def __subtest_33_or_45(self, num_test) -> bool:
         """
         3.3. Сброс защит после проверки
@@ -380,7 +379,7 @@ class TestUBTZ(object):
             elif in_a6 is False:
                 self.__mysql_conn.mysql_error(463)
             return False
-    
+
     def sbros_zashit(self):
         self.__ctrl_kl.ctrl_relay('KL1', True)
         self.__ctrl_kl.ctrl_relay('KL31', True)
@@ -389,29 +388,25 @@ class TestUBTZ(object):
         self.__ctrl_kl.ctrl_relay('KL31', False)
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a2, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
-    
+
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
-    
+
     def __inputs_b1(self):
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
-    
+
     def __inputs_a6(self):
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a6 = self.__read_mb.read_discrete_v1('in_a6')
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6

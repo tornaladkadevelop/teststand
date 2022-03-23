@@ -26,39 +26,45 @@ __all__ = ["TestBTZT"]
 
 
 class TestBTZT(object):
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    # ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
-    list_ust_tzp_volt = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
-    # list_ust_pmz_volt = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
-    list_ust_pmz_volt = (70.9, 89.4, 103.1, 121.2, 144.7, 150.4, 160.6, 168.2, 179.7, 187.7, 196.1)
-    list_delta_t_pmz = []
-    list_delta_t_tzp = []
-    list_delta_percent_pmz = []
-    list_delta_percent_tzp = []
-    list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-    list_ust_pmz_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-    list_result_pmz = []
-    list_result_tzp = []
-
-    coef_volt: float
-    calc_delta_t_pmz = 0
 
     def __init__(self):
-        pass
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        # self.ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
+        self.list_ust_tzp_volt = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
+        # self.list_ust_pmz_volt = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
+        self.list_ust_pmz_volt = (70.9, 89.4, 103.1, 121.2, 144.7, 150.4, 160.6, 168.2, 179.7, 187.7, 196.1)
+        self.list_delta_t_pmz = []
+        self.list_delta_t_tzp = []
+        self.list_delta_percent_pmz = []
+        self.list_delta_percent_tzp = []
+        self.list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+        self.list_ust_pmz_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+        self.list_result_pmz = []
+        self.list_result_tzp = []
+
+        self.coef_volt: float = 0.0
+        self.calc_delta_t_pmz = 0
+
+        self.msg_1 = "Переключите оба тумблера на корпусе блока в положение «Работа» и установите " \
+                     "регуляторы уставок в положение 1 (1-11) и положение 1.0 (0.5-1.0)"
+        self.msg_2 = "Переключите тумблер ПМЗ (1-11) на корпусе блока в положение «Проверка»"
+        self.msg_9 = "Переключите тумблер ПМЗ (1-11) в положение «Работа»"
+        self.msg_3 = "«Переключите тумблер ТЗП (0.5-1.0) в положение «Проверка»"
+        self.msg_8 = "Переключите тумблер ТЗП (0.5…1.0) на корпусе блока в положение «Работа»"
+        self.msg_5 = f'Установите регулятор уставок ПМЗ (1-11) на блоке в положение'
+        self.msg_7 = f'Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение'
 
     def st_test_10_btz_t(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        msg_1 = "Переключите оба тумблера на корпусе блока в положение «Работа» и установите " \
-                "регуляторы уставок в положение 1 (1-11) и положение 1.0 (0.5-1.0)"
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             pass
         else:
             return False
@@ -137,8 +143,7 @@ class TestBTZT(object):
         """
         Тест 2. Проверка работоспособности защиты ПМЗ блока в режиме «Проверка»
         """
-        msg_2 = "Переключите тумблер ПМЗ (1-11) на корпусе блока в положение «Проверка»"
-        if my_msg(msg_2):
+        if my_msg(self.msg_2):
             pass
         else:
             return False
@@ -211,8 +216,7 @@ class TestBTZT(object):
         self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         self.__mysql_conn.mysql_ins_result('исправен', '2')
         self.__fault.debug_msg("тест 2 завершен", 'blue')
-        msg_9 = "Переключите тумблер ПМЗ (1-11) в положение «Работа»"
-        if my_msg(msg_9):
+        if my_msg(self.msg_9):
             pass
         else:
             return False
@@ -222,8 +226,7 @@ class TestBTZT(object):
         """
         Тест 3. Проверка работоспособности защиты ТЗП блока в режиме «Проверка»
         """
-        msg_3 = "«Переключите тумблер ТЗП (0.5-1.0) в положение «Проверка»"
-        if my_msg(msg_3):
+        if my_msg(self.msg_3):
             pass
         else:
             return False
@@ -256,8 +259,7 @@ class TestBTZT(object):
         """
         self.__fault.debug_msg("тест 3.2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 3.2', '3')
-        msg_8 = "Переключите тумблер ТЗП (0.5…1.0) на корпусе блока в положение «Работа»"
-        if my_msg(msg_8):
+        if my_msg(self.msg_8):
             pass
         else:
             return False
@@ -294,8 +296,7 @@ class TestBTZT(object):
         self.__mysql_conn.mysql_ins_result('идет тест 4', '4')
         k = 0
         for i in self.list_ust_pmz_volt:
-            msg_5 = f'Установите регулятор уставок ПМЗ (1-11) на блоке в положение'
-            msg_result = my_msg_2(f'{msg_5} {self.list_ust_pmz_num[k]}')
+            msg_result = my_msg_2(f'{self.msg_5} {self.list_ust_pmz_num[k]}')
             if msg_result == 0:
                 pass
             elif msg_result == 1:
@@ -386,8 +387,7 @@ class TestBTZT(object):
         self.__mysql_conn.mysql_ins_result('идет тест 5', '5')
         m = 0
         for n in self.list_ust_tzp_volt:
-            msg_7 = f'Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение'
-            msg_result = my_msg_2(f'{msg_7} {self.list_ust_tzp_num[m]}')
+            msg_result = my_msg_2(f'{self.msg_7} {self.list_ust_tzp_num[m]}')
             if msg_result == 0:
                 pass
             elif msg_result == 1:
@@ -620,23 +620,19 @@ class TestBTZT(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a2, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
 
     def __read_in_a5(self):
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

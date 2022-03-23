@@ -24,24 +24,24 @@ __all__ = ["TestBP"]
 
 
 class TestBP(object):
-    __mb_ctrl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    emkost_kond: float
-    emkost_kond_d: float
 
     def __init__(self):
-        pass
+        self.__mb_ctrl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.emkost_kond: float = 0.0
+        self.emkost_kond_d: float = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БП в соответствующий разъем"
 
     def st_test_10_bp(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         Переключение АЦП на AI.1 канал
         """
-        msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БП в соответствующий разъем"
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             pass
         else:
             return False
@@ -203,10 +203,7 @@ class TestBP(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a6 = self.__read_mb.read_discrete(6)
-        in_a7 = self.__read_mb.read_discrete(7)
+        in_a1, in_a2, in_a6, in_a7 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a6', 'in_a7')
         if in_a1 is None or in_a2 is None or in_a6 is None or in_a7 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a6, in_a7

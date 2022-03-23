@@ -25,27 +25,22 @@ __all__ = ["TestBDZ"]
 
 class TestBDZ(object):
 
-    __mb_ctrl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
     def __init__(self):
-        pass
-    
+        self.__mb_ctrl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+        self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
+                     "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"
+        self.msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26 и блок БУЗ-2 в разъем Х17, " \
+                     "расположенные на панели B"
+
     def st_test_10_bdz(self) -> bool:
         """
         Тест 1. Включение/выключение блока при нормальном уровне сопротивления изоляции:
         """
-        # Сообщение	Убедитесь в отсутствии блоков в панелях разъемов.
-        # Вставьте испытуемый блок БДЗ в разъем Х16 на панели B.
-        # Вставьте заведомо исправные блок БИ в разъем Х26 и блок БУЗ-2 в разъем Х17, расположенные на панели B.
-        msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
-                "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"
-        msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26 и блок БУЗ-2 в разъем Х17, " \
-                "расположенные на панели B"
-        if my_msg(msg_1):
-            if my_msg(msg_2):
+        if my_msg(self.msg_1):
+            if my_msg(self.msg_2):
                 pass
             else:
                 return False
@@ -114,10 +109,9 @@ class TestBDZ(object):
         self.__fault.debug_msg("положение выходов блока соответствует", 4)
         self.__mysql_conn.mysql_ins_result("исправен", "2")
         return True
-    
+
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
+        in_a1, in_a2 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2')
         if in_a1 is None or in_a2 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2

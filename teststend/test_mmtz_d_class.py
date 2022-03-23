@@ -26,32 +26,30 @@ __all__ = ["TestMMTZD"]
 
 class TestMMTZD(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_num = (10, 20, 30, 40, 50)
-    # ust = (7.7, 16.5, 25.4, 31.9, 39.4)
-    list_ust_volt = (8.0, 16.5, 25.4, 31.9, 39.4)
-    list_num_yach_test_2 = (3, 4, 5, 6, 7)
-    list_num_yach_test_3 = (9, 10, 11, 12, 13)
-
-    meas_volt_ust = 0.0
-    coef_volt = 0.0
-
-    msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков. " \
-            "Подключите блок в разъем Х21 на панели С"
-    msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
-    msg_3 = "Установите регулятор уставок III канала, расположенного на блоке в положение «50»"
-    msg_4 = "Установите регулятор уставок II канала, расположенного на блоке в положение\t"
-    msg_5 = "Установите регулятор уставок II канала, расположенного на блоке в положение «50»"
-    msg_6 = "Установите регулятор уставок III канала, расположенного на блоке в положение\t"
-
     def __init__(self):
-        pass
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_num = (10, 20, 30, 40, 50)
+        # self.ust = (7.7, 16.5, 25.4, 31.9, 39.4)
+        self.list_ust_volt = (8.0, 16.5, 25.4, 31.9, 39.4)
+        self.list_num_yach_test_2 = (3, 4, 5, 6, 7)
+        self.list_num_yach_test_3 = (9, 10, 11, 12, 13)
+
+        self.meas_volt_ust = 0.0
+        self.coef_volt = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков. " \
+                     "Подключите блок в разъем Х21 на панели С"
+        self.msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
+        self.msg_3 = "Установите регулятор уставок III канала, расположенного на блоке в положение «50»"
+        self.msg_4 = "Установите регулятор уставок II канала, расположенного на блоке в положение\t"
+        self.msg_5 = "Установите регулятор уставок II канала, расположенного на блоке в положение «50»"
+        self.msg_6 = "Установите регулятор уставок III канала, расположенного на блоке в положение\t"
 
     def st_test_10(self) -> bool:
         """
@@ -374,8 +372,7 @@ class TestMMTZD(object):
             return False
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5

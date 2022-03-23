@@ -23,15 +23,13 @@ __all__ = ["TestBRU2SR"]
 
 class TestBRU2SR(object):
 
-    __resist = Resistor()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(None)
-
     def __init__(self):
-        pass
-    
+        self.__resist = Resistor()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(None)
+
     def st_test_10_bru_2sr(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -473,8 +471,7 @@ class TestBRU2SR(object):
         return True
     
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
+        in_a1, in_a2 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2')
         if in_a1 is None or in_a2 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2

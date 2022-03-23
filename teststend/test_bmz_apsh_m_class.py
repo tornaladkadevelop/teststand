@@ -24,25 +24,24 @@ __all__ = ["TestBMZAPSHM"]
 
 
 class TestBMZAPSHM(object):
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    coef_volt: float
 
     def __init__(self):
-        pass
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.coef_volt: float = 0.0
+        self.msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
+                     "Вставьте блок в соответствующий испытательный разъем»"
 
     def st_test_10_bmz_apsh_m(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
-                "Вставьте блок в соответствующий испытательный разъем»"
-        if my_msg(msg_1):
+        if my_msg(self.msg_1):
             pass
         else:
             return False
@@ -258,10 +257,7 @@ class TestBMZAPSHM(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a2, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6

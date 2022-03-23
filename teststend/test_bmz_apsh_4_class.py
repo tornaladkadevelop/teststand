@@ -25,23 +25,22 @@ __all__ = ["TestBMZAPSH4"]
 
 
 class TestBMZAPSH4(object):
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_num = (1, 2, 3, 4, 5)
-    list_ust = (9.84, 16.08, 23.28, 34.44, 50.04)
-
-    list_delta_t = []
-    list_result = []
-
-    coef_volt: float
 
     def __init__(self):
-        pass
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_num = (1, 2, 3, 4, 5)
+        self.list_ust = (9.84, 16.08, 23.28, 34.44, 50.04)
+
+        self.list_delta_t = []
+        self.list_result = []
+
+        self.coef_volt: float = 0.0
 
     def st_test_10_bmz_apsh_4(self) -> bool:
         """
@@ -205,14 +204,13 @@ class TestBMZAPSH4(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a1 = self.__read_mb.read_discrete_v1('in_a1')
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

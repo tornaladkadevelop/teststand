@@ -27,30 +27,29 @@ __all__ = ["TestBTZ3"]
 
 
 class TestBTZ3(object):
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
-    list_ust_tzp = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
-    list_ust_pmz_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-    list_ust_pmz = (67.9, 86.4, 100.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
-    ust_prov = 80.0
-    list_delta_t_tzp = []
-    list_delta_t_pmz = []
-    list_delta_percent_tzp = []
-    list_delta_percent_pmz = []
-    list_result_tzp = []
-    list_result_pmz = []
-
-    coef_volt: float
-    calc_delta_t_pmz = 0.0
 
     def __init__(self):
-        pass
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+        self.list_ust_tzp = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
+        self.list_ust_pmz_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+        self.list_ust_pmz = (67.9, 86.4, 100.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
+        self.ust_prov = 80.0
+        self.list_delta_t_tzp = []
+        self.list_delta_t_pmz = []
+        self.list_delta_percent_tzp = []
+        self.list_delta_percent_pmz = []
+        self.list_result_tzp = []
+        self.list_result_pmz = []
+
+        self.coef_volt: float = 0.0
+        self.calc_delta_t_pmz: float = 0.0
 
     def st_test_10_btz_3(self) -> bool:
         """
@@ -538,29 +537,25 @@ class TestBTZ3(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a2, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
 
     def __inputs_a5(self):
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
     def __inputs_b1(self):
-        in_b1 = self.__read_mb.read_discrete(9)
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1

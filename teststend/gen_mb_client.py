@@ -321,7 +321,12 @@ class ReadMB(object):
         else:
             return None
 
-    def read_discrete_v1(self, *args) -> [bool, None]:
+    def read_discrete_v1(self, *args: str) -> [bool, None]:
+        """
+
+        :param args:
+        :return: bool | None
+        """
         list_result = []
         val = []
         for i in args:

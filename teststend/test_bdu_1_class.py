@@ -23,15 +23,13 @@ __all__ = ["TestBDU1"]
 
 class TestBDU1(object):
 
-    __resist = Resistor()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
     def __init__(self):
-        pass
-    
+        self.__resist = Resistor()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
     def st_test_1_bdu_1(self) -> bool:
         """
             Тест 1. Проверка исходного состояния блока
@@ -189,7 +187,7 @@ class TestBDU1(object):
         return True
     
     def __inputs_a(self) -> bool:
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a1 = self.__read_mb.read_discrete_v1('in_a1')
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1

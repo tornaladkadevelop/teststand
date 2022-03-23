@@ -23,17 +23,16 @@ __all__ = ["TestBKIP"]
 
 
 class TestBKIP(object):
-    __resist = Resistor()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
-    msg_2 = 'Переведите тумблер на блоке в режим «Аварийный»'
 
     def __init__(self):
-        pass
+        self.__resist = Resistor()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
+        self.msg_2 = 'Переведите тумблер на блоке в режим «Аварийный»'
 
     def st_test_1_bki_p(self):
         """
@@ -129,15 +128,13 @@ class TestBKIP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             self.__mysql_conn.mysql_error(34)
-
             return False
         self.__ctrl_kl.ctrl_relay('KL21', False)
         self.__mysql_conn.mysql_ins_result("исправен", "5")
         return True
 
     def __inputs_a(self):
-        in_a0 = self.__read_mb.read_discrete(0)
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a0, in_a1 = self.__read_mb.read_discrete_v1('in_a0', 'in_a1')
         if in_a0 is None or in_a1 is None:
             raise ModbusConnectException('нет связи с контроллером')
         return in_a0, in_a1

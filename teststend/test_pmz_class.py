@@ -28,31 +28,29 @@ from gen_mysql_connect import *
 
 class TestPMZ(object):
 
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9)
-    list_ust_volt = (75.4, 92, 114, 125, 141, 156.4, 172, 182.4, 196)
-    list_delta_t = []
-    list_delta_percent = []
-    list_result = []
-
-    meas_volt_ust = 0.0
-    coef_volt = 0.0
-    calc_delta_t = 0.0
-
-    msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
-            "блок ПМЗ в разъем Х14 на панели B"
-    msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
-    msg_3 = 'Установите регулятор уставок на блоке в положение'
-    msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
-
     def __init__(self):
-        pass
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+        self.list_ust_volt = (75.4, 92, 114, 125, 141, 156.4, 172, 182.4, 196)
+        self.list_delta_t = []
+        self.list_delta_percent = []
+        self.list_result = []
+
+        self.meas_volt_ust = 0.0
+        self.coef_volt = 0.0
+        self.calc_delta_t = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
+                     "блок ПМЗ в разъем Х14 на панели B"
+        self.msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
+        self.msg_3 = 'Установите регулятор уставок на блоке в положение'
+        self.msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
 
     def st_test_10(self) -> bool:
         if my_msg(self.msg_1):
@@ -345,15 +343,13 @@ class TestPMZ(object):
         return True
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a2, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5')
         if in_a1 is None or in_a2 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete(8)
+        in_b0 = self.__read_mb.read_discrete_v1('in_b0')
         if in_b0 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0

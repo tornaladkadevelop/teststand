@@ -26,32 +26,31 @@ from gen_mysql_connect import *
 
 class TestBUZ2(object):
 
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __read_mb = ReadMB()
-    __mb_ctrl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    ust_1 = 75.8
-    ust_2 = 20.3
-
-    coef_volt: float
-
     def __init__(self):
-        pass
-    
-    @staticmethod
-    def st_test_10_buz_2() -> bool:
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__read_mb = ReadMB()
+        self.__mb_ctrl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.ust_1 = 75.8
+        self.ust_2 = 20.3
+
+        self.coef_volt: float = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
+                     "Вставьте испытуемый блок БУЗ-2 в разъем Х17 на панели B."
+        self.msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26  и блок БДЗ в разъем Х16, " \
+                     "расположенные на панели B."
+        self.msg_3 = "Установите с помощью кнопок SB1, SB2 следующие уровни уставок: ПМЗ – 2000 А; ТЗП – 400 А"
+
+    def st_test_10_buz_2(self) -> bool:
         """
         Тест 1. Включение/выключение блока в нормальном режиме:
         """
-        msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
-                "Вставьте испытуемый блок БУЗ-2 в разъем Х17 на панели B."
-        msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26  и блок БДЗ в разъем Х16, " \
-                "расположенные на панели B."
-        if my_msg(msg_1):
-            if my_msg(msg_2):
+        if my_msg(self.msg_1):
+            if my_msg(self.msg_2):
                 return True
         return False
 
@@ -152,8 +151,7 @@ class TestBUZ2(object):
         self.__mb_ctrl.ctrl_relay('KL82', True)
         sleep(0.3)
         self.__mb_ctrl.ctrl_relay('KL66', True)
-        msg_3 = "Установите с помощью кнопок SB1, SB2 следующие уровни уставок: ПМЗ – 2000 А; ТЗП – 400 А"
-        if my_msg(msg_3):
+        if my_msg(self.msg_3):
             pass
         else:
             return False
@@ -270,25 +268,24 @@ class TestBUZ2(object):
         self.__reset.sbros_kl63_proc_all()
         self.__mysql_conn.mysql_ins_result(f'исправен, {timer_test_3:.1f} сек', "3")
         return True
-    
+
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
+        in_a1, in_a2 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2')
         if in_a1 is None or in_a2 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2
-    
+
     def __inputs_a1(self):
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a1 = self.__read_mb.read_discrete_v1('in_a1')
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1
 
     def __inputs_b(self):
-        in_a9 = self.__read_mb.read_discrete(9)
-        if in_a9 is None:
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
+        if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a9
+        return in_b1
 
     def st_test_buz_2(self) -> bool:
         if self.st_test_10_buz_2():

@@ -25,38 +25,36 @@ __all__ = ["TestUMZ"]
 
 class TestUMZ(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_volt = (22.6, 27.1, 31.9, 36.5, 41.3, 46.4, 50.2, 54.7, 59.3, 63.8, 68.4)
-    list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-    list_delta_t_ab = []
-    list_delta_t_vg = []
-    list_delta_percent_ab = []
-    list_delta_percent_vg = []
-    list_result = []
-    meas_volt_ab = 0
-    meas_volt_vg = 0
-    test_setpoint_ab = False
-    test_setpoint_vg = False
-    coef_volt: float
-    calc_delta_t_ab = 0.0
-    calc_delta_t_vg = 0.0
-
-    msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
-            "блок УМЗ в разъем Х8 на панели B с помощью соответствующей кабельной сборки"
-    msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
-    msg_3 = "Переведите оба регулятора уставок на корпусе блока в положение «1»"
-    msg_4 = "Произведите взвод защит, нажав на корпусе блока на кнопку «Взвод»"
-    msg_5 = 'Установите оба регулятора уставок на блоке в положение'
-
     def __init__(self):
-        pass
-    
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_volt = (22.6, 27.1, 31.9, 36.5, 41.3, 46.4, 50.2, 54.7, 59.3, 63.8, 68.4)
+        self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+        self.list_delta_t_ab = []
+        self.list_delta_t_vg = []
+        self.list_delta_percent_ab = []
+        self.list_delta_percent_vg = []
+        self.list_result = []
+        self.meas_volt_ab = 0
+        self.meas_volt_vg = 0
+        self.test_setpoint_ab = False
+        self.test_setpoint_vg = False
+        self.coef_volt: float = 0.0
+        self.calc_delta_t_ab = 0.0
+        self.calc_delta_t_vg = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
+                     "блок УМЗ в разъем Х8 на панели B с помощью соответствующей кабельной сборки"
+        self.msg_2 = "Переключите тумблер режимов, расположенный на корпусе блока, в положение «Работа»"
+        self.msg_3 = "Переведите оба регулятора уставок на корпусе блока в положение «1»"
+        self.msg_4 = "Произведите взвод защит, нажав на корпусе блока на кнопку «Взвод»"
+        self.msg_5 = 'Установите оба регулятора уставок на блоке в положение'
+
     def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
@@ -379,10 +377,9 @@ class TestUMZ(object):
         elif in_a5 is False:
             self.__mysql_conn.mysql_error(481)
             return False
-    
+
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5

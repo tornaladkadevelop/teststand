@@ -21,14 +21,13 @@ __all__ = ["TestBUPMVIR"]
 
 
 class TestBUPMVIR(object):
-    __resist = Resistor()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
 
     def __init__(self):
-        pass
+        self.__resist = Resistor()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
 
     def st_test_10_bu_pmvir(self) -> bool:
         """
@@ -221,7 +220,7 @@ class TestBUPMVIR(object):
             return False
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
+        in_a1 = self.__read_mb.read_discrete_v1('in_a1')
         if in_a1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1

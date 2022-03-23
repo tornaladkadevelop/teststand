@@ -31,14 +31,13 @@ __all__ = ["TestBDU014TP"]
 
 
 class TestBDU014TP(object):
-    __resist = Resistor()
-    __ctrl_kl = CtrlKL()
-    __read_mb = ReadMB()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
 
     def __init__(self):
-        pass
+        self.__resist = Resistor()
+        self.__ctrl_kl = CtrlKL()
+        self.__read_mb = ReadMB()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
 
     def st_test_1_bdu_014tp(self) -> bool:
         """
@@ -223,9 +222,8 @@ class TestBDU014TP(object):
         return True
 
     def __inputs_a(self):
-        in_a0 = self.__read_mb.read_discrete(0)
-        in_a1 = self.__read_mb.read_discrete(1)
-        self.__fault.debug_msg(f'{in_a0 = }  {in_a1 = }', 4)
+        in_a0, in_a1 = self.__read_mb.read_discrete_v1('in_a0', 'in_a1')
+        # self.__fault.debug_msg(f'{in_a0 = }  {in_a1 = }', 4)
         if in_a1 is None or in_a0 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a0, in_a1

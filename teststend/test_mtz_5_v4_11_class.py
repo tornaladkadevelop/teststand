@@ -24,39 +24,38 @@ __all__ = ["TestMTZ5V411"]
 
 class TestMTZ5V411(object):
 
-    __reset = ResetRelay()
-    __proc = Procedure()
-    __read_mb = ReadMB()
-    __ctrl_kl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    list_ust_tzp_num = (0.8, 1, 1.5, 2, 2.25, 2.5, 3)
-    list_ust_tzp_volt = (15.4, 19.3, 29.0, 38.5, 43.4, 48.2, 57.9)
-    list_ust_mtz_num = (2, 3, 4, 5, 6, 7, 8)
-    list_ust_mtz_volt = (38.5, 57.8, 77.1, 96.3, 115.5, 134.8, 154.0)
-    list_delta_t_mtz = []
-    list_delta_t_tzp = []
-    list_delta_percent_mtz = []
-    list_delta_percent_tzp = []
-    list_mtz_result = []
-    list_tzp_result = []
-    # ust_mtz_volt = 30.0
-
-    coef_volt: float
-
-    msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте блок в соответствующий разъем панели B"
-    msg_2 = "Переключите регулятор МТЗ на корпусе блока в положение «8», регулятор «Перегруз» в положение 3"
-    msg_3 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «Проверка»"
-    msg_4 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «2»"
-    msg_5 = "Установите регулятор уставок на блоке в положение \t"
-    msg_6 = "Установите регулятор времени перегруза на блоке в положение «20 сек»"
-    # msg_7 = "Установите регулятор МТЗ, расположенный на блоке, в положение «8»"
-    msg_8 = "Установите регулятор уставок на блоке в положение\t"
-
     def __init__(self):
-        pass
-    
+        self.__reset = ResetRelay()
+        self.__proc = Procedure()
+        self.__read_mb = ReadMB()
+        self.__ctrl_kl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.list_ust_tzp_num = (0.8, 1, 1.5, 2, 2.25, 2.5, 3)
+        self.list_ust_tzp_volt = (15.4, 19.3, 29.0, 38.5, 43.4, 48.2, 57.9)
+        self.list_ust_mtz_num = (2, 3, 4, 5, 6, 7, 8)
+        self.list_ust_mtz_volt = (38.5, 57.8, 77.1, 96.3, 115.5, 134.8, 154.0)
+        self.list_delta_t_mtz = []
+        self.list_delta_t_tzp = []
+        self.list_delta_percent_mtz = []
+        self.list_delta_percent_tzp = []
+        self.list_mtz_result = []
+        self.list_tzp_result = []
+        # self.ust_mtz_volt = 30.0
+
+        self.coef_volt: float = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов " \
+                     "и вставьте блок в соответствующий разъем панели B"
+        self.msg_2 = "Переключите регулятор МТЗ на корпусе блока в положение «8», регулятор «Перегруз» в положение 3"
+        self.msg_3 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «Проверка»"
+        self.msg_4 = "Переключите регулятор МТЗ, расположенный на корпусе блока в положение «2»"
+        self.msg_5 = "Установите регулятор уставок на блоке в положение "
+        self.msg_6 = "Установите регулятор времени перегруза на блоке в положение «20 сек»"
+        # self.msg_7 = "Установите регулятор МТЗ, расположенный на блоке, в положение «8»"
+        self.msg_8 = "Установите регулятор уставок на блоке в положение "
+
     def st_test_10(self) -> bool:
         """
 
@@ -430,20 +429,19 @@ class TestMTZ5V411(object):
         sleep(2)
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
     
     def __inputs_a5(self):
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_b(self):
-        in_b1 = self.__read_mb.read_discrete(1)
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1

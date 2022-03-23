@@ -24,33 +24,32 @@ from gen_mysql_connect import *
 
 class TestBZMPD(object):
 
-    __proc = Procedure()
-    __reset = ResetRelay()
-    __resist = Resistor()
-    __read_mb = ReadMB()
-    __mb_ctrl = CtrlKL()
-    __mysql_conn = MySQLConnect()
-    __fault = Bug(True)
-
-    ust_1 = 22.6
-    ust_2 = 15.0
-
-    coef_volt = 0.0
-    timer_test_5 = 0.0
-
-    msg_1 = "Убедитесь в отсутствии других блоков и подключите блок БЗМП-Д к испытательной панели"
-    msg_2 = "С помощью кнопок SB1…SB3, расположенных на панели разъемов, установите следующие параметры блока, " \
-            "при их наличии в зависимости от исполнения блока:\n" \
-            "- Номинальный ток: 160А (все исполнения);- Кратность пускового тока: 7.5 (все исполнения);\n" \
-            "- Номинальное рабочее напряжение: 1140В (все исполнения);\n" \
-            "- Перекос фаз по току: 0% (все исполнения); - Датчик тока: ДТК-1 (некоторые исполнения);\n" \
-            "- Режим работы: пускатель (некоторые исполнения) или БРУ ВКЛ, БКИ ВКЛ (некоторые исполнения)"
-    msg_3 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
-    msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
-    msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
-
     def __init__(self):
-        pass
+        self.__proc = Procedure()
+        self.__reset = ResetRelay()
+        self.__resist = Resistor()
+        self.__read_mb = ReadMB()
+        self.__mb_ctrl = CtrlKL()
+        self.__mysql_conn = MySQLConnect()
+        self.__fault = Bug(True)
+
+        self.ust_1 = 22.6
+        self.ust_2 = 15.0
+
+        self.coef_volt = 0.0
+        self.timer_test_5 = 0.0
+
+        self.msg_1 = "Убедитесь в отсутствии других блоков и подключите блок БЗМП-Д к испытательной панели"
+        self.msg_2 = "С помощью кнопок SB1…SB3, расположенных на панели разъемов, " \
+                     "установите следующие параметры блока, " \
+                     "при их наличии в зависимости от исполнения блока:\n" \
+                     "- Номинальный ток: 160А (все исполнения);- Кратность пускового тока: 7.5 (все исполнения);\n" \
+                     "- Номинальное рабочее напряжение: 1140В (все исполнения);\n" \
+                     "- Перекос фаз по току: 0% (все исполнения); - Датчик тока: ДТК-1 (некоторые исполнения);\n" \
+                     "- Режим работы: пускатель (некоторые исполнения) или БРУ ВКЛ, БКИ ВКЛ (некоторые исполнения)"
+        self.msg_3 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
+        self.msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
+        self.msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
 
     def st_test_10_bzmp_d(self) -> bool:
         """
@@ -368,30 +367,28 @@ class TestBZMPD(object):
         sleep(0.7)
 
     def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a5 = self.__read_mb.read_discrete(5)
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a1, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5', 'in_a6')
         if in_a1 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5, in_a6
 
     def __inputs_a5(self):
-        in_a5 = self.__read_mb.read_discrete(5)
+        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_a6(self):
-        in_a6 = self.__read_mb.read_discrete(6)
+        in_a6 = self.__read_mb.read_discrete_v1('in_a6')
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
 
     def __inputs_b(self):
-        in_a9 = self.__read_mb.read_discrete(9)
-        if in_a9 is None:
+        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
+        if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a9
+        return in_b1
 
     def st_test_bzmp_d(self) -> bool:
         if self.st_test_10_bzmp_d():
