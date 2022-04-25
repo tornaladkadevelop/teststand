@@ -22,6 +22,12 @@ class MySQLConnect(object):
         self.mysql_err = mysql.connector.Error
 
     def mysql_ins_result(self, my_result, num_test):
+        """
+        запись в БД результата подтеста, (исправен/не исправен и номер подтеста)
+        :param my_result: исправен/не исправен
+        :param num_test: номер теста
+        :return:
+        """
         self.my_result = my_result
         self.num_test = num_test
         try:
@@ -37,6 +43,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_pmz_result(self, my_result):
+        """
+        запись в БД результатов теста блока ПМЗ
+        :param my_result:
+        :return:
+        """
         self.my_result = my_result
         sql = 'insert into pmz_result(pmz_set, pmz_proc, pmz_time) values(%s, %s, %s)'
 
@@ -55,6 +66,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_tzp_result(self, my_result):
+        """
+        запись в БД результатов теста блока ТЗП
+        :param my_result:
+        :return:
+        """
         self.my_result = my_result
         sql = 'insert into tzp_result(tzp_set, tzp_proc, tzp_time) values(%s, %s, %s)'
 
@@ -72,6 +88,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_umz_result(self, my_result):
+        """
+        запись в БД результатов теста блока УМЗ
+        :param my_result:
+        :return:
+        """
         self.my_result = my_result
         sql = 'insert into umz_result(umz_set_ab, umz_proc_ab, umz_time_ab, umz_set_vg, umz_proc_vg, umz_time_vg) ' + \
               'values(%s, %s, %s, %s, %s, %s)'
@@ -89,6 +110,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_ubtz_btz_result(self, my_result):
+        """
+        запись в БД результатов теста блока УБТЗ
+        :param my_result:
+        :return:
+        """
         self.my_result = my_result
         sql = 'insert into ubtz_btz_result(ubtz_btz_ust, ubtz_btz_time) ' + 'values(%s, %s)'
         try:
@@ -105,6 +131,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_ubtz_tzp_result(self, my_result):
+        """
+        запись в БД результатов теста проверки ТЗП, блока УБТЗ
+        :param my_result:
+        :return:
+        """
         self.my_result = my_result
         sql = 'insert into ubtz_tzp_result(ubtz_tzp_ust, ubtz_tzp_time) ' + 'values(%s, %s)'
         try:
@@ -121,6 +152,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_connect(self, request: str):
+        """
+        подключение к БД
+        :param request:
+        :return:
+        """
         self.request = request
         try:
             conn = mysql.connector.connect(host=self.host, user=self.user, password=self.password,
@@ -133,23 +169,41 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def mysql_block_bad(self):
+        """
+        Запись в БД если блок неисправен.
+        :return:
+        """
         upd_bad = ('UPDATE simple_database.python_message SET pyth_block_bad = 1 WHERE id_pyth_mes = 1')
         upd_good = ('UPDATE simple_database.python_message SET pyth_block_good = 0 WHERE id_pyth_mes = 1')
         self.mysql_connect(upd_bad)
         self.mysql_connect(upd_good)
 
     def mysql_block_good(self):
+        """
+        Запись в БД если блок исправен.
+        :return:
+        """
         upd_bad = ('UPDATE simple_database.python_message SET pyth_block_bad = 0 WHERE id_pyth_mes = 1')
         upd_good = ('UPDATE simple_database.python_message SET pyth_block_good = 1 WHERE id_pyth_mes = 1')
         self.mysql_connect(upd_bad)
         self.mysql_connect(upd_good)
 
     def mysql_error(self, n_err: int):
+        """
+        Запись в БД номера неисправности
+        :param n_err: номер неисправности
+        :return:
+        """
         self.n_err = n_err
         upd = ('UPDATE simple_database.python_message SET pyth_error = "' + str(n_err) + '" WHERE id_pyth_mes = 1')
         self.mysql_connect(upd)
 
     def mysql_add_message(self, mess: str):
+        """
+        Запись в БД для динамического отслеживания прогресса испытания
+        :param mess: текстовое сообщение
+        :return:
+        """
         self.mess = mess
         mytime = datetime.now()
         self.mess = self.mess[:170]
@@ -167,6 +221,11 @@ class MySQLConnect(object):
             print('Error! Ошибка связи с базой данных MySQL.')
 
     def progress_level(self, level: float):
+        """
+        Запись в БД времени прогресса выполнения испытания
+        :param level: число с пл. точкой
+        :return:
+        """
         level = f'{level:.1f}'
         upd = f'UPDATE simple_database.progress SET level_progress = {level} WHERE (id_pro = 1);'
         self.mysql_connect(upd)
