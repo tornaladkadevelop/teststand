@@ -224,21 +224,21 @@ class TestPMZ(object):
                                                     f'дельта t: {self.calc_delta_t:.1f}')
                 if self.calc_delta_t == 9999:
                     sleep(3)
-                    qw += 1
+                    # qw += 1
                     self.__reset.sbros_zashit_kl30_1s5()
                     continue
-                elif 100 < self.calc_delta_t < 9999:
-                    sleep(3)
-                    qw += 1
-                    self.__reset.sbros_zashit_kl30_1s5()
-                    continue
+                # elif 100 < self.calc_delta_t < 9999:
+                #     sleep(3)
+                #     # qw += 1
+                #     self.__reset.sbros_zashit_kl30_1s5()
+                #     continue
                 else:
                     break
             self.__fault.debug_msg(f'время срабатывания: {self.calc_delta_t:.1f} мс', 'orange')
             if self.calc_delta_t < 10:
                 self.list_delta_t.append(f'< 10')
-            elif self.calc_delta_t > 100:
-                self.list_delta_t.append(f'> 100')
+            elif self.calc_delta_t == 9999:
+                self.list_delta_t.append(f'неисправен')
             else:
                 self.list_delta_t.append(f'{self.calc_delta_t:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {self.calc_delta_t:.1f}')
@@ -343,13 +343,15 @@ class TestPMZ(object):
         return True
 
     def __inputs_a(self):
-        in_a1, in_a2, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a2 = self.__read_mb.read_discrete(2)
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a2 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5
 
     def __inputs_b(self):
-        in_b0 = self.__read_mb.read_discrete_v1('in_b0')
+        in_b0 = self.__read_mb.read_discrete(0)
         if in_b0 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0

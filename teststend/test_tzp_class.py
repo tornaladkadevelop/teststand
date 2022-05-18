@@ -239,17 +239,25 @@ class TestTZP(object):
                     # Если в период времени до 6 минут входа DI.A1, DI.A5 занимают
                     # состояние, указанное в таблице выше, то переходим к п.3.6.
                     self.__fault.debug_msg("время переключения соответствует", 'green')
-                    self.__subtest_35()
-                    k += 1
-                    continue
+                    if self.__subtest_35():
+                        k += 1
+                        continue
+                    else:
+                        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]}: '
+                                                            f'не срабатывает сброс защит')
+                        return False
                 else:
                     # Если в период времени до 6 минут входа DI.A1, DI.A5 не занимают
                     # состояние, указанное в таблице выше, то переходим к п.3.5.
                     self.__fault.debug_msg("время переключения не соответствует", 'red')
                     self.__mysql_conn.mysql_error(287)
-                    self.__subtest_35()
-                    k += 1
-                    continue
+                    if self.__subtest_35():
+                        k += 1
+                        continue
+                    else:
+                        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]}: '
+                                                            f'не срабатывает сброс защит')
+                        return False
             else:
                 self.__fault.debug_msg("напряжение U4 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(286)
@@ -276,13 +284,15 @@ class TestTZP(object):
             return False
     
     def __inputs_a(self):
-        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
     
     def __inputs_b(self):
-        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
+        in_b0 = self.__read_mb.read_discrete(8)
+        in_b1 = self.__read_mb.read_discrete(9)
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

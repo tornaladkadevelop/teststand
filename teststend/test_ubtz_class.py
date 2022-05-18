@@ -161,9 +161,9 @@ class TestUBTZ(object):
             for qw in range(4):
                 self.calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
                 self.__fault.debug_msg(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', 'orange')
-                if 500 < self.calc_delta_t_bmz <= 9999:
+                if self.calc_delta_t_bmz == 9999:
                     self.sbros_zashit()
-                    qw += 1
+                    # qw += 1
                     continue
                 else:
                     break
@@ -171,8 +171,8 @@ class TestUBTZ(object):
             self.__reset.stop_procedure_3()
             if self.calc_delta_t_bmz < 10:
                 self.list_delta_t_bmz.append(f'< 10')
-            elif 500 < self.calc_delta_t_bmz <= 9999:
-                self.list_delta_t_bmz.append(f'> 500')
+            elif self.calc_delta_t_bmz == 9999:
+                self.list_delta_t_bmz.append(f'неисправен')
             else:
                 self.list_delta_t_bmz.append(f'{self.calc_delta_t_bmz:.1f}')
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
@@ -185,7 +185,10 @@ class TestUBTZ(object):
                     continue
                 else:
                     self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
-                    return False
+                    self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]}: '
+                                                        f'не срабатывает сброс защит')
+                    k += 1
+                    continue
             else:
                 self.__fault.debug_msg('тест 2 положение выходов не соответствует', 'red')
                 if in_a1 is False:
@@ -196,13 +199,14 @@ class TestUBTZ(object):
                     self.__mysql_conn.mysql_error(458)
                 elif in_a6 is False:
                     self.__mysql_conn.mysql_error(459)
-                self.__reset.stop_procedure_3()
                 if self.__subtest_32(i=i, k=k):
                     if self.__subtest_33_or_45(num_test=2):
                         k += 1
                         continue
                     else:
                         self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
+                        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]}: '
+                                                            f'не срабатывает сброс защит')
                         return False
                 else:
                     if self.__subtest_33_or_45(num_test=2):
@@ -210,6 +214,8 @@ class TestUBTZ(object):
                         continue
                     else:
                         self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
+                        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]}: '
+                                                            f'не срабатывает сброс защит')
                         return False
         self.__mysql_conn.mysql_ins_result("тест 2 исправен", '1')
         return True
@@ -267,6 +273,8 @@ class TestUBTZ(object):
                     m += 1
                     continue
                 else:
+                    self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]}: '
+                                                        f'не срабатывает сброс защит')
                     return False
             else:
                 if in_a1 is True:
@@ -282,6 +290,8 @@ class TestUBTZ(object):
                     m += 1
                     continue
                 else:
+                    self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]}: '
+                                                        f'не срабатывает сброс защит')
                     return False
         self.__ctrl_kl.ctrl_relay('KL22', False)
         self.__ctrl_kl.ctrl_relay('KL66', False)
@@ -304,6 +314,8 @@ class TestUBTZ(object):
         else:
             self.__fault.debug_msg("тест 3.1 положение выходов не соответствует", 'red')
             self.__mysql_conn.mysql_ins_result("тест 2 неисправен", '1')
+            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]}: '
+                                                f'не срабатывает сброс защит')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(460)
             elif in_a5 is False:
@@ -323,27 +335,26 @@ class TestUBTZ(object):
         for wq in range(4):
             self.calc_delta_t_bmz = self.__ctrl_kl.ctrl_ai_code_v0(109)
             self.__fault.debug_msg(f'тест 3 delta t:\t{self.calc_delta_t_bmz:.1f}', 'orange')
-            if 500 < self.calc_delta_t_bmz <= 9999:
+            if self.calc_delta_t_bmz == 9999:
                 self.sbros_zashit()
-                wq += 1
                 continue
             else:
                 break
+        self.__reset.stop_procedure_3()
         in_a1, in_a2, in_a5, in_a6 = self.__inputs_a()
         if self.calc_delta_t_bmz < 10:
             self.list_delta_t_bmz[-1] = f'< 10'
-        elif self.calc_delta_t_bmz > 500:
-            self.list_delta_t_bmz[-1] = f'> 500'
+        elif self.calc_delta_t_bmz == 9999:
+            self.list_delta_t_bmz[-1] = f'неисправен'
         else:
             self.list_delta_t_bmz[-1] = f'{self.calc_delta_t_bmz:.1f}'
-        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]} '
+        self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_bmz_num[k]}: '
                                             f'дельта t: {self.calc_delta_t_bmz:.1f}')
         self.__fault.debug_msg(f'{in_a1 = }, {in_a2 = }, {in_a5 = }, {in_a6 = }', 'purple')
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
             pass
         else:
             self.__fault.debug_msg("тест 3.2 положение выходов не соответствует", 'red')
-            self.__reset.stop_procedure_3()
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(464)
             elif in_a5 is True:
@@ -354,7 +365,6 @@ class TestUBTZ(object):
                 self.__mysql_conn.mysql_error(467)
             return False
         self.__fault.debug_msg("тест 3.2 положение выходов соответствует", 'green')
-        self.__reset.stop_procedure_3()
         return True
 
     def __subtest_33_or_45(self, num_test) -> bool:
@@ -370,6 +380,7 @@ class TestUBTZ(object):
             return True
         else:
             self.__mysql_conn.mysql_ins_result(f"тест {num_test} неисправен", f'{num_test}')
+            self.__mysql_conn.mysql_add_message(f'тест {num_test}: не срабатывает сброс защит')
             if in_a1 is True:
                 self.__mysql_conn.mysql_error(460)
             elif in_a5 is False:
@@ -388,25 +399,29 @@ class TestUBTZ(object):
         self.__ctrl_kl.ctrl_relay('KL31', False)
 
     def __inputs_a(self):
-        in_a1, in_a2, in_a5, in_a6 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5', 'in_a6')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a2 = self.__read_mb.read_discrete(2)
+        in_a5 = self.__read_mb.read_discrete(5)
+        in_a6 = self.__read_mb.read_discrete(6)
         if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
 
     def __inputs_b(self):
-        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
+        in_b0 = self.__read_mb.read_discrete(8)
+        in_b1 = self.__read_mb.read_discrete(9)
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
     def __inputs_b1(self):
-        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
+        in_b1 = self.__read_mb.read_discrete(9)
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
     def __inputs_a6(self):
-        in_a6 = self.__read_mb.read_discrete_v1('in_a6')
+        in_a6 = self.__read_mb.read_discrete(6)
         if in_a6 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6

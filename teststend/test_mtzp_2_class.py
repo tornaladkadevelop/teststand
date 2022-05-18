@@ -485,7 +485,8 @@ class TestMTZP2(object):
         Считывает из OPC сервера положение входов ПЛК
         :return: вход а1 и вход b2
         """
-        in_a1, in_b2 = self.__read_mb.read_discrete_v1('in_a1', 'in_b2')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_b2 = self.__read_mb.read_discrete(10)
         if in_a1 is None or in_b2 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_b2

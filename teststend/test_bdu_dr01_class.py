@@ -25,7 +25,7 @@ class TestBDUDR01(object):
 
     def __init__(self):
         self.__resist = Resistor()
-        self.__mb_read = ReadMB()
+        self.__read_mb = ReadMB()
         self.__ctrl_kl = CtrlKL()
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
@@ -533,7 +533,10 @@ class TestBDUDR01(object):
         return True
 
     def __inputs_a(self):
-        in_a1, in_a2, in_a3, in_a4 = self.__mb_read.read_discrete_v1('in_a1', 'in_a2', 'in_a3', 'in_a4')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a2 = self.__read_mb.read_discrete(2)
+        in_a3 = self.__read_mb.read_discrete(3)
+        in_a4 = self.__read_mb.read_discrete(4)
         if in_a1 is None or in_a2 is None or in_a3 is None or in_a4 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a3, in_a4

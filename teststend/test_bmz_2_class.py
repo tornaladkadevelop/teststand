@@ -226,7 +226,7 @@ class TestBMZ2(object):
             for qw in range(4):
                 self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
                 self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
-                if 100 < self.calc_delta_t <= 9999:
+                if self.calc_delta_t == 9999:
                     self.__reset.sbros_zashit_kl30()
                     sleep(3)
                     qw += 1
@@ -236,8 +236,8 @@ class TestBMZ2(object):
             self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 2)
             if self.calc_delta_t < 10:
                 self.list_delta_t.append(f'< 10')
-            elif self.calc_delta_t > 100:
-                self.list_delta_t.append(f'> 100')
+            elif self.calc_delta_t == 9999:
+                self.list_delta_t.append(f'неисправен')
             else:
                 self.list_delta_t.append(f'{self.calc_delta_t:.1f}')
             # Δ%= 6,1085*U4
@@ -256,7 +256,8 @@ class TestBMZ2(object):
                     continue
                 else:
                     self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                    return False
+                    k += 1
+                    continue
             else:
                 self.__fault.debug_msg("не соответствие выходов блока, переходим к тесту 3.2", 2)
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')
@@ -267,14 +268,16 @@ class TestBMZ2(object):
                         continue
                     else:
                         self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                        return False
+                        k += 1
+                        continue
                 else:
                     if self.__subtest_35():
                         k += 1
                         continue
                     else:
                         self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                        return False
+                        k += 1
+                        continue
         self.__mysql_conn.mysql_ins_result('исправен', '3')
         return True
 
@@ -317,7 +320,7 @@ class TestBMZ2(object):
         for wq in range(4):
             self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
             self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
-            if 100 < self.calc_delta_t <= 9999:
+            if self.calc_delta_t == 9999:
                 self.__reset.sbros_zashit_kl30()
                 sleep(3)
                 wq += 1
@@ -327,8 +330,8 @@ class TestBMZ2(object):
         self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 2)
         if self.calc_delta_t < 10:
             self.list_delta_t[-1] = f'< 10'
-        elif self.calc_delta_t > 100:
-            self.list_delta_t[-1] = f'> 100'
+        elif self.calc_delta_t == 9999:
+            self.list_delta_t[-1] = f'неисправен'
         else:
             self.list_delta_t[-1] = f'{self.calc_delta_t:.1f}'
         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {self.calc_delta_t:.1f}')
@@ -372,13 +375,16 @@ class TestBMZ2(object):
             return False
 
     def __inputs_a(self):
-        in_a1, in_a2, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2', 'in_a5')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a2 = self.__read_mb.read_discrete(2)
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a2 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5
 
     def __inputs_b(self):
-        in_b0, in_b1 = self.__read_mb.read_discrete_v1('in_b0', 'in_b1')
+        in_b0 = self.__read_mb.read_discrete(8)
+        in_b1 = self.__read_mb.read_discrete(9)
         if in_b0 is None or in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1

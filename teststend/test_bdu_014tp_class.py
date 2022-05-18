@@ -39,12 +39,12 @@ class TestBDU014TP(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
-    def st_test_1_bdu_014tp(self) -> bool:
+    def test_1(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         :return:
         """
-        self.__fault.debug_msg(f'тест 1', 4)
+        self.__fault.debug_msg(f'тест 1', 'blue')
         self.__mysql_conn.mysql_ins_result("идет тест 1", "1")
         in_a0, in_a1 = self.__inputs_a()
         if in_a1 is False:
@@ -52,40 +52,44 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "1")
             self.__mysql_conn.mysql_error(476)
+            self.__fault.debug_msg('тест 1.0 положение выходов не соответствует', 'red')
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "1")
+        self.__fault.debug_msg('тест 1.0 положение выходов соответствует', 'green')
         return True
 
-    def st_test_20_bdu_014tp(self) -> bool:
+    def test_20(self) -> bool:
         """
         Тест 2. Проверка включения / выключения блока от кнопки «Пуск / Стоп».
         2.1. Проверка исходного состояния блока
         """
-        self.__fault.debug_msg(f'тест 2.0', 4)
+        self.__fault.debug_msg(f'тест 2.0', 'blue')
         self.__mysql_conn.mysql_ins_result("идет тест 2.1", "2")
         self.__ctrl_kl.ctrl_relay('KL2', True)
-        in_a0, in_a1 = self.__inputs_a()
         sleep(1)
+        in_a0, in_a1 = self.__inputs_a()
         if in_a1 is False:
+            self.__fault.debug_msg('тест 2.0 положение выходов соответствует', 'green')
             return True
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
+            self.__fault.debug_msg('тест 2.0 положение выходов не соответствует', 'red')
             return False
 
-    def st_test_21_bdu_014tp(self) -> bool:
+    def test_21(self) -> bool:
         """
         2.2. Включение канала блока от кнопки «Пуск» при сопротивлении 10 Ом
         """
-        self.__fault.debug_msg(f'тест 2.1', 4)
+        self.__fault.debug_msg(f'тест 2.1', 'blue')
         if self.subtest_22(2.2, 2):
             return True
         return False
 
-    def st_test_22_bdu_014tp(self) -> bool:
+    def test_22(self) -> bool:
         """
         2.3. Выключение канала блока от кнопки «Пуск» при сопротивлении 10 Ом
         """
-        self.__fault.debug_msg(f'тест 2.2', 4)
+        self.__fault.debug_msg(f'тест 2.2', 'blue')
         self.__mysql_conn.mysql_ins_result("идет тест 2.3", "2")
         self.__ctrl_kl.ctrl_relay('KL12', False)
         sleep(1)
@@ -95,24 +99,26 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
             self.__mysql_conn.mysql_error(27)
+            self.__fault.debug_msg('тест 2.2 положение выходов не соответствует', 'red')
             return False
+        self.__fault.debug_msg('тест 2.2 положение выходов соответствует', 'green')
         self.__mysql_conn.mysql_ins_result("исправен", "2")
         return True
 
-    def st_test_30_bdu_014tp(self) -> bool:
+    def test_30(self) -> bool:
         """
         повтор теста 2.2
         """
-        self.__fault.debug_msg(f'тест 3.0', 4)
+        self.__fault.debug_msg(f'тест 3.0', 'blue')
         if self.subtest_22(3.1, 3):
             return True
         return False
 
-    def st_test_31_bdu_014tp(self) -> bool:
+    def test_31(self) -> bool:
         """
         3. Удержание исполнительного элемента при сопротивлении цепи заземления до 35 Ом
         """
-        self.__fault.debug_msg(f'тест 3.1', 4)
+        self.__fault.debug_msg(f'тест 3.1', 'blue')
         self.__resist.resist_10_to_35_ohm()
         sleep(1)
         in_a0, in_a1 = self.__inputs_a()
@@ -121,15 +127,17 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "3")
             self.__mysql_conn.mysql_error(28)
+            self.__fault.debug_msg('тест 3.1 положение выходов не соответствует', 'red')
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "3")
+        self.__fault.debug_msg('тест 3.1 положение выходов соответствует', 'green')
         return True
 
-    def st_test_40_bdu_014tp(self) -> bool:
+    def test_40(self) -> bool:
         """
         4. Отключение исполнительного элемента при сопротивлении цепи заземления свыше 50 Ом
         """
-        self.__fault.debug_msg(f'тест 4.0', 4)
+        self.__fault.debug_msg(f'тест 4.0', 'blue')
         self.__mysql_conn.mysql_ins_result("идет тест 4", "4")
         self.__resist.resist_35_to_110_ohm()
         sleep(1)
@@ -139,26 +147,28 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
             self.__mysql_conn.mysql_error(29)
+            self.__fault.debug_msg('тест 4.0 положение выходов не соответствует', 'red')
             return False
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__mysql_conn.mysql_ins_result("исправен", "4")
+        self.__fault.debug_msg('тест 4.0 положение выходов соответствует', 'green')
         return True
 
-    def st_test_50_bdu_014tp(self) -> bool:
+    def test_50(self) -> bool:
         """
         повтор теста 2.2
         """
-        self.__fault.debug_msg(f'тест 5.0', 4)
+        self.__fault.debug_msg(f'тест 5.0', 'blue')
         if self.subtest_22(5.1, 5):
             return True
         return False
 
-    def st_test_51_bdu_014tp(self) -> bool:
+    def test_51(self) -> bool:
         """
         5. Защита от потери управляемости при замыкании проводов ДУ
         """
-        self.__fault.debug_msg(f'тест 5.1', 4)
+        self.__fault.debug_msg(f'тест 5.1', 'blue')
         self.__ctrl_kl.ctrl_relay('KL11', True)
         sleep(2)
         in_a0, in_a1 = self.__inputs_a()
@@ -167,27 +177,29 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "5")
             self.__mysql_conn.mysql_error(3)
+            self.__fault.debug_msg('тест 5.1 положение выходов не соответствует', 'red')
             return False
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__ctrl_kl.ctrl_relay('KL11', False)
         self.__mysql_conn.mysql_ins_result("исправен", "5")
+        self.__fault.debug_msg('тест 5.1 положение выходов соответствует', 'green')
         return True
 
-    def st_test_60_bdu_014tp(self) -> bool:
+    def test_60(self) -> bool:
         """
         повтор теста 2.2
         """
-        self.__fault.debug_msg(f'тест 6.0', 4)
+        self.__fault.debug_msg(f'тест 6.0', 'blue')
         if self.subtest_22(6.1, 6):
             return True
         return False
 
-    def st_test_61_bdu_014tp(self) -> bool:
+    def test_61(self) -> bool:
         """
         Тест 6. Защита от потери управляемости при обрыве проводов ДУ
         """
-        self.__fault.debug_msg(f'тест 6.1', 4)
+        self.__fault.debug_msg(f'тест 6.1', 'blue')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         sleep(1)
         in_a0, in_a1 = self.__inputs_a()
@@ -196,16 +208,18 @@ class TestBDU014TP(object):
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "6")
             self.__mysql_conn.mysql_error(4)
+            self.__fault.debug_msg('тест 6.1 положение выходов не соответствует', 'red')
             return False
         self.__mysql_conn.mysql_ins_result("исправен", "6")
+        self.__fault.debug_msg('тест 6.1 положение выходов соответствует', 'green')
         return True
 
     def subtest_22(self, subtest_2_num: float, test_2_num: int) -> bool:
         self.__mysql_conn.mysql_ins_result(f'идёт тест {subtest_2_num}', f'{test_2_num}')
         self.__resist.resist_ohm(255)
-        # sleep(1)
+        sleep(1)
         self.__resist.resist_ohm(10)
-        # sleep(2)
+        sleep(2)
         self.__ctrl_kl.ctrl_relay('KL1', True)
         sleep(1)
         self.__ctrl_kl.ctrl_relay('KL12', True)
@@ -215,15 +229,16 @@ class TestBDU014TP(object):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", f'{test_2_num}')
-            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 1)
+            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 'red')
             self.__mysql_conn.mysql_error(26)
             return False
-        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 3)
+        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 'green')
         return True
 
     def __inputs_a(self):
-        in_a0, in_a1 = self.__read_mb.read_discrete_v1('in_a0', 'in_a1')
-        # self.__fault.debug_msg(f'{in_a0 = }  {in_a1 = }', 4)
+        in_a0 = self.__read_mb.read_discrete(0)
+        in_a1 = self.__read_mb.read_discrete(1)
+        self.__fault.debug_msg(f'{in_a0 = }  {in_a1 = }', 'blue')
         if in_a1 is None or in_a0 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a0, in_a1
@@ -232,17 +247,17 @@ class TestBDU014TP(object):
         """
             Главная функция которая собирает все остальные
         """
-        if self.st_test_1_bdu_014tp():
-            if self.st_test_20_bdu_014tp():
-                if self.st_test_21_bdu_014tp():
-                    if self.st_test_22_bdu_014tp():
-                        if self.st_test_30_bdu_014tp():
-                            if self.st_test_31_bdu_014tp():
-                                if self.st_test_40_bdu_014tp():
-                                    if self.st_test_50_bdu_014tp():
-                                        if self.st_test_51_bdu_014tp():
-                                            if self.st_test_60_bdu_014tp():
-                                                if self.st_test_61_bdu_014tp():
+        if self.test_1():
+            if self.test_20():
+                if self.test_21():
+                    if self.test_22():
+                        if self.test_30():
+                            if self.test_31():
+                                if self.test_40():
+                                    if self.test_50():
+                                        if self.test_51():
+                                            if self.test_60():
+                                                if self.test_61():
                                                     return True
         return False
 

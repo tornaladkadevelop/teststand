@@ -251,7 +251,8 @@ class TestBDUD42(object):
         return True
 
     def __inputs_a(self):
-        in_a1, in_a2 = self.__read_mb.read_discrete_v1('in_a1', 'in_a2')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a2 = self.__read_mb.read_discrete(2)
         if in_a1 is None or in_a2 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2

@@ -414,7 +414,8 @@ class TestUMZ(object):
             self.list_delta_t_vg[-1] = f'неисправен'
 
     def __inputs_a(self):
-        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5

@@ -429,19 +429,20 @@ class TestMTZ5V411(object):
         sleep(2)
 
     def __inputs_a(self):
-        in_a1, in_a5 = self.__read_mb.read_discrete_v1('in_a1', 'in_a5')
+        in_a1 = self.__read_mb.read_discrete(1)
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
     
     def __inputs_a5(self):
-        in_a5 = self.__read_mb.read_discrete_v1('in_a5')
+        in_a5 = self.__read_mb.read_discrete(5)
         if in_a5 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a5
 
     def __inputs_b(self):
-        in_b1 = self.__read_mb.read_discrete_v1('in_b1')
+        in_b1 = self.__read_mb.read_discrete(9)
         if in_b1 is None:
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1

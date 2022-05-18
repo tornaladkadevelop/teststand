@@ -134,7 +134,8 @@ class TestBKIP(object):
         return True
 
     def __inputs_a(self):
-        in_a0, in_a1 = self.__read_mb.read_discrete_v1('in_a0', 'in_a1')
+        in_a0 = self.__read_mb.read_discrete(0)
+        in_a1 = self.__read_mb.read_discrete(1)
         if in_a0 is None or in_a1 is None:
             raise ModbusConnectException('нет связи с контроллером')
         return in_a0, in_a1
