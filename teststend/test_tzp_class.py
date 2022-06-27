@@ -46,7 +46,7 @@ class TestTZP(object):
 
         self.msg_1 = "Переключите тумблер на корпусе блока в положение «Проверка» "
         self.msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
-        self.msg_3 = f'Установите регулятор уставок на блоке в положение'
+        self.msg_3 = "Установите регулятор уставок на блоке в положение"
 
     def st_test_10(self) -> bool:
         """
@@ -319,7 +319,6 @@ if __name__ == '__main__':
     mysql_conn_tzp = MySQLConnect()
     fault = Bug(True)
     try:
-
         if test_tzp.st_test_tzp():
             test_tzp.result_test_tzp()
             mysql_conn_tzp.mysql_block_good()
