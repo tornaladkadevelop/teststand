@@ -46,6 +46,9 @@ class TestBMZAPSH4(object):
         """
         # Тест 1. Проверка исходного состояния блока:
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         msg_1 = "Установите переключатель уставок на блоке в положение 1"
         if my_msg(msg_1):
             pass
@@ -203,6 +206,13 @@ class TestBMZAPSH4(object):
             return False
         self.__fault.debug_msg("вход 1 соответствует", 4)
         return True
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)

@@ -63,6 +63,9 @@ class TestMTZ5V27(object):
         Тест 1.0
         :return: bool
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
@@ -462,6 +465,13 @@ class TestMTZ5V27(object):
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(450)
             return False
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         """

@@ -51,6 +51,9 @@ class TestBZMPP(object):
         Тест 1. Проверка исходного состояния блока:
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             pass
         else:
@@ -369,6 +372,13 @@ class TestBZMPP(object):
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(3)
         self.__mb_ctrl.ctrl_relay('KL24', False)
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)

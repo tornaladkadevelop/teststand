@@ -36,6 +36,9 @@ class TestBKI6(object):
         """
         Тест 1. Проверка исходного состояния контактов блока при отсутствии напряжения питания
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
@@ -271,6 +274,13 @@ class TestBKI6(object):
         self.__fault.debug_msg('тест 5.2 положение выходов соответствует', 4)
         self.__mysql_conn.mysql_ins_result('исправен', '5')
         return True
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)

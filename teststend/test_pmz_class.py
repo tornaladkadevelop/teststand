@@ -53,6 +53,9 @@ class TestPMZ(object):
         self.msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
 
     def st_test_10(self) -> bool:
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 return True
@@ -341,6 +344,13 @@ class TestPMZ(object):
             return False
         self.__fault.debug_msg("положение выходов блока соответствует", 'green')
         return True
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)

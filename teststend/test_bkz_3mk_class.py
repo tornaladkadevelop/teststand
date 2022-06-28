@@ -67,6 +67,9 @@ class TestBKZ3MK(object):
         self.msg_5 = "Установите регулятор ТЗП (0.3-1.1), расположенный на блоке в положение"
 
     def st_test_0_bkz_3mk(self) -> bool:
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 self.__mysql_conn.mysql_ins_result('---', '1')
@@ -503,6 +506,13 @@ class TestBKZ3MK(object):
         elif in_a6 is False:
             self.__mysql_conn.mysql_error(330)
             return False
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a5 = self.__read_mb.read_discrete(5)

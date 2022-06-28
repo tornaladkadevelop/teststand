@@ -55,6 +55,9 @@ class TestBTZ3(object):
         """
         Тест 1. Проверка исходного состояния блока:
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         msg_1 = "Переключите оба тумблера на корпусе блока в положение «Работа» и установите " \
                 "регуляторы уставок в положение 1 (1-11) и положение 1 (0.5-1)"
         if my_msg(msg_1):
@@ -535,6 +538,13 @@ class TestBTZ3(object):
                 self.__mysql_conn.mysql_error(380)
             return False
         return True
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)

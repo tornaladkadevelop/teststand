@@ -13,6 +13,7 @@
 """
 
 import sys
+import logging
 
 from time import time, sleep
 
@@ -48,15 +49,23 @@ class TestTZP(object):
         self.msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
         self.msg_3 = "Установите регулятор уставок на блоке в положение"
 
+        logging.basicConfig(filename="TestTZP.log", level=logging.DEBUG, encoding="utf-8")
+
     def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         :return:
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         self.__mysql_conn.mysql_ins_result('идет тест 1', '1')
+        logging.info("тест 1")
         self.__ctrl_kl.ctrl_relay('KL21', True)
+        logging.info("включение KL21")
         self.__reset.sbros_zashit_kl30_1s5()
         in_a1, in_a5 = self.__inputs_a()
+        logging.info(f'in_a1 = {in_a1} (False), in_a5 = {in_a5} (True)')
         if in_a1 is False and in_a5 is True:
             pass
         else:
@@ -282,11 +291,19 @@ class TestTZP(object):
                 self.__fault.debug_msg("положение входа 5 не соответствует", 'red')
                 self.__mysql_conn.mysql_error(285)
             return False
-    
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
+
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
         in_a5 = self.__read_mb.read_discrete(5)
         if in_a1 is None or in_a5 is None:
+            logging.error(f'нет связи с контроллером')
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
     
@@ -294,6 +311,7 @@ class TestTZP(object):
         in_b0 = self.__read_mb.read_discrete(8)
         in_b1 = self.__read_mb.read_discrete(9)
         if in_b0 is None or in_b1 is None:
+            logging.error(f'нет связи с контроллером')
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
