@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+
 from time import sleep
+
 from gen_func_tv1 import *
 from gen_func_utils import *
 from gen_mb_client import *
@@ -19,46 +22,63 @@ class Procedure(object):
         # primary winding
         # secondary winding
     """
-    perv_obm = PervObmTV1()
-    vtor_obm = VtorObmTV1()
-    reset = ResetRelay()
-    ctrl_kl = CtrlKL()
-    read_mb = ReadMB()
-    fault = Bug(True)
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        self.perv_obm = PervObmTV1()
+        self.vtor_obm = VtorObmTV1()
+        self.reset = ResetRelay()
+        self.ctrl_kl = CtrlKL()
+        self.read_mb = ReadMB()
+        self.fault = Bug(True)
 
-    coef_volt: float
-    setpoint_volt: float
-    calc_volt: float
+        self.coef_volt: float
+        self.setpoint_volt: float
+        self.calc_volt: float
 
     def start_procedure_1(self) -> bool:
         """
         Процедура 1. сброс реле первичной и вторичной обмотки, проверка отсутствия напряжения на первичной обмотке.
         :return: bool
         """
+        self.logger.debug("процедура 1")
         self.reset.sbros_vtor_obm()
+        self.logger.debug("сброс вторичной обмотки")
         self.reset.sbros_perv_obm()
+        self.logger.debug("сброс первичной обмотки")
         self.ctrl_kl.ctrl_relay('KL62', True)
+        self.logger.debug("включение KL62")
         sleep(1)
         self.ctrl_kl.ctrl_relay('KL37', True)
+        self.logger.debug("включение KL37")
         sleep(1)
         for i in range(3):
             in_b0 = self.read_mb.read_discrete(8)
+            self.logger.debug(f"in_b0 = {in_b0} (False)")
             if in_b0 is False:
                 self.fault.debug_msg("процедура 1 пройдена", 'green')
+                self.logger.debug("процедура 1 пройдена")
                 return True
             elif in_b0 is True:
+                self.logger.debug("процедура 1 не пройдена")
                 if self.reset.sbros_perv_obm():
+                    self.logger.debug("сбрасываем первичную обмотку, и пробуем еще раз")
                     i += 1
                     continue
             else:
+                self.logger.debug("процедура 1 не пройдена")
                 self.fault.debug_msg("процедура 1 не пройдена", 'red')
                 self.ctrl_kl.ctrl_relay('KL62', False)
+                self.logger.debug("отключение KL62")
                 self.ctrl_kl.ctrl_relay('KL37', False)
+                self.logger.debug("отключение KL37")
                 return False
         else:
+            self.logger.debug("процедура 1 не пройдена")
             self.fault.debug_msg("процедура 1 не пройдена", 'red')
             self.ctrl_kl.ctrl_relay('KL62', False)
+            self.logger.debug("отключение KL62")
             self.ctrl_kl.ctrl_relay('KL37', False)
+            self.logger.debug("отключение KL37")
             return False
 
     def start_procedure_21(self) -> bool:
@@ -66,12 +86,16 @@ class Procedure(object):
         Включение контакта первичной обмотки
         :return: bool
         """
+        self.logger.debug("процедура 2.1")
         self.ctrl_kl.ctrl_relay('KL43', True)
+        self.logger.debug("включение KL43")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.1 пройдена")
             self.fault.debug_msg("процедура 2.1 пройдена", 'green')
             return True
         else:
+            self.logger.debug("процедура 2.1 не пройдена")
             self.fault.debug_msg("процедура 2.1 не пройдена", 'red')
             self.reset.stop_procedure_21()
             return False
@@ -81,12 +105,16 @@ class Procedure(object):
         Включение контакта первичной обмотки
         :return: bool
         """
+        self.logger.debug("процедура 2.2")
         self.ctrl_kl.ctrl_relay('KL44', True)
+        self.logger.debug("включение KL44")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.2 пройдена")
             self.fault.debug_msg("процедура 2.2 пройдена", 'green')
             return True
         else:
+            self.logger.debug("процедура 2.2 не пройдена")
             self.fault.debug_msg("процедура 2.2 не пройдена", 'red')
             self.reset.stop_procedure_22()
             return False
@@ -99,13 +127,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.3")
         calc_volt = 80.0 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.3 пройдена")
             self.fault.debug_msg(f"процедура 2.3 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.3 не пройдена")
             self.fault.debug_msg(f"процедура 2.3 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -119,13 +152,18 @@ class Procedure(object):
         :param setpoint_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.4")
         calc_volt = setpoint_volt / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.4 пройдена")
             self.fault.debug_msg(f"процедура 2.4 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.4 не пройдена")
             self.fault.debug_msg(f"процедура 2.4 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -139,13 +177,18 @@ class Procedure(object):
         :param setpoint_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.5")
         calc_volt = 1.1 * setpoint_volt / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.5 пройдена")
             self.fault.debug_msg(f"процедура 2.5 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.5 не пройдена")
             self.fault.debug_msg(f"процедура 2.5 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -158,13 +201,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.6")
         calc_volt = 85.6 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.6 пройдена")
             self.fault.debug_msg(f"процедура 2.6 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.6 не пройдена")
             self.fault.debug_msg(f"процедура 2.6 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -177,13 +225,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.7")
         calc_volt = 20 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.7 пройдена")
             self.fault.debug_msg(f"процедура 2.7 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.7 не пройдена")
             self.fault.debug_msg(f"процедура 2.7 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -197,13 +250,18 @@ class Procedure(object):
         :param setpoint_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.8")
         calc_volt = 1.15 * setpoint_volt / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.8 пройдена")
             self.fault.debug_msg(f"процедура 2.8 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.8 не пройдена")
             self.fault.debug_msg(f"процедура 2.8 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -216,13 +274,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.9")
         calc_volt = 25.2 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.9 пройдена")
             self.fault.debug_msg(f"процедура 2.9 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.9 не пройдена")
             self.fault.debug_msg(f"процедура 2.9 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -235,13 +298,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.10")
         calc_volt = 8.2 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.10 пройдена")
             self.fault.debug_msg(f"процедура 2.10 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.10 не пройдена")
             self.fault.debug_msg(f"процедура 2.10 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -254,13 +322,18 @@ class Procedure(object):
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.11")
         calc_volt = 10.7 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.11 пройдена")
             self.fault.debug_msg(f"процедура 2.11 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.11 не пройдена")
             self.fault.debug_msg(f"процедура 2.11 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -268,18 +341,23 @@ class Procedure(object):
     def start_procedure_212(self, coef_volt: float) -> float:
         """
         Включение контакта первичной обмотки, соответствующей напряжению U3=U2/Кс.
-        Где U2 =38В.
+        Где U2 =38В. изменено на 80В
         Сочетание контактов берем из файла «(Тор) TV1.xls»
         :param coef_volt: float
         :return: float
         """
+        self.logger.debug("процедура 2.12")
         calc_volt = 80.0 / coef_volt
+        self.logger.debug(f"вычисленное U: {calc_volt}")
         self.perv_obm.perv_obm_tv1(calc_volt)
+        self.logger.debug("включение первичной обмотки")
         sleep(1)
         if self.__subtest_meas_volt():
+            self.logger.debug("процедура 2.12 пройдена")
             self.fault.debug_msg(f"процедура 2.12 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
+            self.logger.debug("процедура 2.12 не пройдена")
             self.fault.debug_msg(f"процедура 2.12 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -289,14 +367,20 @@ class Procedure(object):
         Функция измерения напряжения, после включения первичной обмотки.
         :return: bool
         """
+        self.logger.debug("измерение U в процедуре 2.х")
         for i in range(3):
             meas_volt = self.read_mb.read_analog()
-            self.fault.debug_msg(f'измеренное напряжение в процедуре 2х:\t {meas_volt:.2f}', 'orange')
+            self.logger.debug(f"измерение U: {meas_volt}")
+            self.fault.debug_msg(f'измеренное напряжение в процедуре 2.х:\t {meas_volt:.2f}', 'orange')
             if meas_volt <= 1.1:
+                self.logger.debug("напряжение соответствует")
                 return True
             if meas_volt > 1.1:
+                self.logger.debug("напряжение не соответствует")
                 self.sbros_vtor_obm()
+                self.logger.debug("сброс вторичной обмотки")
                 i += 1
+                self.logger.debug("повторение измерения")
                 continue
             return False
 
@@ -308,17 +392,22 @@ class Procedure(object):
         KL60 – ВКЛ
         :return: float: напряжение
         """
+        self.logger.debug("процедура 3.1")
         min_volt = 4.768
         max_volt = 7.152
         self.ctrl_kl.ctrl_relay('KL60', True)
+        self.logger.debug("включение KL60")
         sleep(2)
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.1 напряжение:\t  '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.1 пройдена")
             self.fault.debug_msg("процедура 3.1 пройдена", 'green')
             return meas_volt
         else:
+            self.logger.debug(f"процедура 3.1 не пройдена")
             self.fault.debug_msg("процедура 3.1 не пройдена", 'red')
             self.reset.stop_procedure_31()
             return 0.0
@@ -337,13 +426,16 @@ class Procedure(object):
         min_volt = 41.232
         max_volt = 61.848
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.2 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.2 пройдена")
             self.fault.debug_msg("процедура 3.2 пройдена", 'green')
             coef_volt = meas_volt / 51.54
             return coef_volt
         else:
+            self.logger.debug(f"процедура 3.2 не пройдена")
             self.fault.debug_msg("процедура 3.2 не пройдена", 'red')
             self.reset.stop_procedure_32()
             return 0.0
@@ -363,12 +455,15 @@ class Procedure(object):
         min_volt = 77.04
         max_volt = 94.17
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.3 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.3 пройдена")
             self.fault.debug_msg("процедура 3.3 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.3 не пройдена")
             self.fault.debug_msg("процедура 3.3 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -389,12 +484,15 @@ class Procedure(object):
         min_volt = 0.9 * setpoint_volt
         max_volt = 1.1 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.4 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.4 пройдена")
             self.fault.debug_msg("процедура 3.4 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.4 не пройдена")
             self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -415,12 +513,15 @@ class Procedure(object):
         min_volt = 0.99 * setpoint_volt
         max_volt = 1.21 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.5 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.5 пройдена")
             self.fault.debug_msg("процедура 3.5 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.5 не пройдена")
             self.fault.debug_msg("процедура 3.5 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -440,12 +541,15 @@ class Procedure(object):
         min_volt = 18.0
         max_volt = 22.0
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.6 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.6 пройдена")
             self.fault.debug_msg("процедура 3.6 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.6 не пройдена")
             self.fault.debug_msg("процедура 3.6 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -465,12 +569,15 @@ class Procedure(object):
         min_volt = 72.0
         max_volt = 88.0
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.7 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.7 пройдена")
             self.fault.debug_msg("процедура 3.7 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.7 не пройдена")
             self.fault.debug_msg("процедура 3.7 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -492,12 +599,15 @@ class Procedure(object):
         min_volt = 22.68
         max_volt = 27.72
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.8 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.8 пройдена")
             self.fault.debug_msg("процедура 3.8 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.8 не пройдена")
             self.fault.debug_msg("процедура 3.8 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -519,12 +629,15 @@ class Procedure(object):
         min_volt = 7.38
         max_volt = 9.02
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.9 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
+            self.logger.debug(f"процедура 3.9 пройдена")
             self.fault.debug_msg("процедура 3.9 пройдена", 'green')
             return True
         else:
+            self.logger.debug(f"процедура 3.9 не пройдена")
             self.fault.debug_msg("процедура 3.9 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -546,13 +659,16 @@ class Procedure(object):
         min_volt = 9.63
         max_volt = 11.77
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.10 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
-            self.fault.debug_msg("процедура 3.9 пройдена", 'green')
+            self.logger.debug(f"процедура 3.10 пройдена")
+            self.fault.debug_msg("процедура 3.10 пройдена", 'green')
             return True
         else:
-            self.fault.debug_msg("процедура 3.9 не пройдена", 'red')
+            self.logger.debug(f"процедура 3.10 не пройдена")
+            self.fault.debug_msg("процедура 3.10 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
 
@@ -572,13 +688,16 @@ class Procedure(object):
         min_volt = 0.85 * setpoint_volt
         max_volt = 1.1 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.11 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
-            self.fault.debug_msg("процедура 3.4 пройдена", 'green')
+            self.logger.debug(f"процедура 3.11 пройдена")
+            self.fault.debug_msg("процедура 3.11 пройдена", 'green')
             return True
         else:
-            self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
+            self.logger.debug(f"процедура 3.11 не пройдена")
+            self.fault.debug_msg("процедура 3.11 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
 
@@ -597,13 +716,16 @@ class Procedure(object):
         min_volt = 72.0
         max_volt = 88.0
         meas_volt = self.read_mb.read_analog()
+        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.12 напряжение: '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
-            self.fault.debug_msg("процедура 3.4 пройдена", 'green')
+            self.logger.debug(f"процедура 3.12 пройдена")
+            self.fault.debug_msg("процедура 3.12 пройдена", 'green')
             return True
         else:
-            self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
+            self.logger.debug(f"процедура 3.12 не пройдена")
+            self.fault.debug_msg("процедура 3.12 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
 
@@ -633,6 +755,7 @@ class Procedure(object):
             if self.start_procedure_22():
                 coef_volt = self.start_procedure_32()
                 if coef_volt != 0.0:
+                    self.logger.debug(f"коэффициент сети:\t {coef_volt:.2f}")
                     self.fault.debug_msg(f'коэффициент сети:\t {coef_volt:.2f}', 'orange')
                     return coef_volt
         return 0.0
