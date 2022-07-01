@@ -39,6 +39,9 @@ class TestBDZ(object):
         """
         Тест 1. Включение/выключение блока при нормальном уровне сопротивления изоляции:
         """
+        in_a0 = self.__inputs_a0()
+        if in_a0 is None:
+            return False
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
@@ -109,6 +112,13 @@ class TestBDZ(object):
         self.__fault.debug_msg("положение выходов блока соответствует", 4)
         self.__mysql_conn.mysql_ins_result("исправен", "2")
         return True
+
+    def __inputs_a0(self):
+        in_a0 = self.__read_mb.read_discrete(0)
+        if in_a0 is None:
+            # logging.error(f'нет связи с контроллером')
+            raise ModbusConnectException(f'нет связи с контроллером')
+        return in_a0
 
     def __inputs_a(self):
         in_a1 = self.__read_mb.read_discrete(1)
