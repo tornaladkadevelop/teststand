@@ -2,16 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import ctypes
+import logging
+
 from time import time, sleep
+
 from my_msgbox import *
 from gen_mb_client import *
 
 __all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectException", "ResultMsg"]
-
-kernel32 = ctypes.windll.kernel32
-kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-ctrl_kl = CtrlKL()
-read_mb = ReadMB()
 
 
 class DeltaTimeNoneKL63(object):
@@ -23,9 +21,13 @@ class DeltaTimeNoneKL63(object):
         Остановка таймера происходит по условию размыкания DI.a6 T1[i]
 
     """
+    def __init__(self):
+        self.ctrl_kl = CtrlKL()
+        self.read_mb = ReadMB()
+        self.logger = logging.getLogger(__name__)
 
     def calc_dt(self):
-        ctrl_kl.ctrl_relay('KL63', True)
+        self.ctrl_kl.ctrl_relay('KL63', True)
         in_b1 = self.__inputs_b1()
         while in_b1 is False:
             in_b1 = self.__inputs_b1()
@@ -37,14 +39,12 @@ class DeltaTimeNoneKL63(object):
         delta_t_calc = stop_timer - start_timer
         return delta_t_calc
 
-    @staticmethod
-    def __inputs_a6():
-        in_a6 = read_mb.read_discrete(6)
+    def __inputs_a6(self):
+        in_a6 = self.read_mb.read_discrete(6)
         return in_a6
 
-    @staticmethod
-    def __inputs_b1():
-        in_b1 = read_mb.read_discrete(9)
+    def __inputs_b1(self):
+        in_b1 = self.read_mb.read_discrete(9)
         return in_b1
 
 
@@ -54,6 +54,8 @@ class Bug(object):
     """
     def __init__(self, dbg=None):
         self.dbg = dbg
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
 
     def debug_msg(self, *args):
         """
@@ -89,175 +91,193 @@ class ResetRelay(object):
     """
         сбросы реле в различных вариациях в зависимости от алгоритма
     """
+    def __init__(self):
+        self.ctrl_kl = CtrlKL()
+        self.logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def sbros_zashit_kl1():
-        ctrl_kl.ctrl_relay('KL1', True)
+    def sbros_zashit_kl1(self):
+        self.logger.debug("сброс защит KL1 1.5сек")
+        self.ctrl_kl.ctrl_relay('KL1', True)
+        self.logger.debug('включение KL1')
         sleep(1.5)
-        ctrl_kl.ctrl_relay('KL1', False)
+        self.ctrl_kl.ctrl_relay('KL1', False)
+        self.logger.debug('отключение KL1')
         sleep(2)
+        self.logger.debug('таймаут 2сек')
 
-    @staticmethod
-    def sbros_zashit_kl30():
-        ctrl_kl.ctrl_relay('KL30', True)
+    def sbros_zashit_kl30(self):
+        self.logger.debug("сброс защит KL30 0.5сек")
+        self.ctrl_kl.ctrl_relay('KL30', True)
+        self.logger.debug('включение KL30')
         sleep(0.5)
-        ctrl_kl.ctrl_relay('KL30', False)
+        self.ctrl_kl.ctrl_relay('KL30', False)
+        self.logger.debug('отключение KL30')
         sleep(0.5)
+        self.logger.debug('таймаут 0.5сек')
 
-    @staticmethod
-    def sbros_zashit_kl30_1s5():
-        ctrl_kl.ctrl_relay('KL30', True)
+    def sbros_zashit_kl30_1s5(self):
+        self.logger.debug("сброс защит KL30 1.5сек")
+        self.ctrl_kl.ctrl_relay('KL30', True)
+        self.logger.debug('включение KL30')
         sleep(1.5)
-        ctrl_kl.ctrl_relay('KL30', False)
+        self.ctrl_kl.ctrl_relay('KL30', False)
+        self.logger.debug('отключение KL30')
         sleep(2.0)
+        self.logger.debug('таймаут 2сек')
 
     def reset_all(self):
-        ctrl_kl.ctrl_relay('KL1', False)
-        ctrl_kl.ctrl_relay('KL2', False)
-        ctrl_kl.ctrl_relay('KL3', False)
-        ctrl_kl.ctrl_relay('KL4', False)
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL6', False)
-        ctrl_kl.ctrl_relay('KL7', False)
-        ctrl_kl.ctrl_relay('KL8', False)
-        ctrl_kl.ctrl_relay('KL9', False)
-        ctrl_kl.ctrl_relay('KL10', False)
-        ctrl_kl.ctrl_relay('KL11', False)
-        ctrl_kl.ctrl_relay('KL12', False)
-        ctrl_kl.ctrl_relay('KL13', False)
-        ctrl_kl.ctrl_relay('KL14', False)
-        ctrl_kl.ctrl_relay('KL15', False)
-        ctrl_kl.ctrl_relay('KL16', False)
-        ctrl_kl.ctrl_relay('KL17', False)
-        ctrl_kl.ctrl_relay('KL18', False)
-        ctrl_kl.ctrl_relay('KL19', False)
-        ctrl_kl.ctrl_relay('KL20', False)
-        ctrl_kl.ctrl_relay('KL21', False)
-        ctrl_kl.ctrl_relay('KL22', False)
-        ctrl_kl.ctrl_relay('KL23', False)
-        ctrl_kl.ctrl_relay('KL24', False)
-        ctrl_kl.ctrl_relay('KL25', False)
-        ctrl_kl.ctrl_relay('KL26', False)
-        ctrl_kl.ctrl_relay('KL27', False)
-        ctrl_kl.ctrl_relay('KL28', False)
-        ctrl_kl.ctrl_relay('KL29', False)
-        ctrl_kl.ctrl_relay('KL30', False)
-        ctrl_kl.ctrl_relay('KL31', False)
-        ctrl_kl.ctrl_relay('KL32', False)
-        ctrl_kl.ctrl_relay('KL33', False)
+        self.logger.debug("отключение всех реле")
+        self.ctrl_kl.ctrl_relay('KL1', False)
+        self.ctrl_kl.ctrl_relay('KL2', False)
+        self.ctrl_kl.ctrl_relay('KL3', False)
+        self.ctrl_kl.ctrl_relay('KL4', False)
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL6', False)
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.ctrl_kl.ctrl_relay('KL10', False)
+        self.ctrl_kl.ctrl_relay('KL11', False)
+        self.ctrl_kl.ctrl_relay('KL12', False)
+        self.ctrl_kl.ctrl_relay('KL13', False)
+        self.ctrl_kl.ctrl_relay('KL14', False)
+        self.ctrl_kl.ctrl_relay('KL15', False)
+        self.ctrl_kl.ctrl_relay('KL16', False)
+        self.ctrl_kl.ctrl_relay('KL17', False)
+        self.ctrl_kl.ctrl_relay('KL18', False)
+        self.ctrl_kl.ctrl_relay('KL19', False)
+        self.ctrl_kl.ctrl_relay('KL20', False)
+        self.ctrl_kl.ctrl_relay('KL21', False)
+        self.ctrl_kl.ctrl_relay('KL22', False)
+        self.ctrl_kl.ctrl_relay('KL23', False)
+        self.ctrl_kl.ctrl_relay('KL24', False)
+        self.ctrl_kl.ctrl_relay('KL25', False)
+        self.ctrl_kl.ctrl_relay('KL26', False)
+        self.ctrl_kl.ctrl_relay('KL27', False)
+        self.ctrl_kl.ctrl_relay('KL28', False)
+        self.ctrl_kl.ctrl_relay('KL29', False)
+        self.ctrl_kl.ctrl_relay('KL30', False)
+        self.ctrl_kl.ctrl_relay('KL31', False)
+        self.ctrl_kl.ctrl_relay('KL32', False)
+        self.ctrl_kl.ctrl_relay('KL33', False)
         # #
-        ctrl_kl.ctrl_relay('KL36', False)
-        ctrl_kl.ctrl_relay('KL37', False)
+        self.ctrl_kl.ctrl_relay('KL36', False)
+        self.ctrl_kl.ctrl_relay('KL37', False)
         self.sbros_perv_obm()
         self.sbros_vtor_obm()
-        ctrl_kl.ctrl_relay('KL60', False)
+        self.ctrl_kl.ctrl_relay('KL60', False)
         # #
-        ctrl_kl.ctrl_relay('KL62', False)
-        ctrl_kl.ctrl_relay('KL63', False)
-        ctrl_kl.ctrl_relay('KL65', False)
-        ctrl_kl.ctrl_relay('KL66', False)
-        ctrl_kl.ctrl_relay('KL67', False)
-        ctrl_kl.ctrl_relay('KL68', False)
-        ctrl_kl.ctrl_relay('KL69', False)
+        self.ctrl_kl.ctrl_relay('KL62', False)
+        self.ctrl_kl.ctrl_relay('KL63', False)
+        self.ctrl_kl.ctrl_relay('KL65', False)
+        self.ctrl_kl.ctrl_relay('KL66', False)
+        self.ctrl_kl.ctrl_relay('KL67', False)
+        self.ctrl_kl.ctrl_relay('KL68', False)
+        self.ctrl_kl.ctrl_relay('KL69', False)
         # #
-        ctrl_kl.ctrl_relay('KL70', False)
-        ctrl_kl.ctrl_relay('KL71', False)
-        ctrl_kl.ctrl_relay('KL72', False)
-        ctrl_kl.ctrl_relay('KL73', False)
-        ctrl_kl.ctrl_relay('KL74', False)
-        ctrl_kl.ctrl_relay('KL75', False)
-        ctrl_kl.ctrl_relay('KL76', False)
-        ctrl_kl.ctrl_relay('KL77', False)
-        ctrl_kl.ctrl_relay('KL78', False)
-        ctrl_kl.ctrl_relay('KL79', False)
-        ctrl_kl.ctrl_relay('KL80', False)
-        ctrl_kl.ctrl_relay('KL81', False)
-        ctrl_kl.ctrl_relay('KL82', False)
-        ctrl_kl.ctrl_relay('KL83', False)
-        ctrl_kl.ctrl_relay('KL84', False)
-        ctrl_kl.ctrl_relay('KL88', False)
-        ctrl_kl.ctrl_relay('KL89', False)
-        ctrl_kl.ctrl_relay('KL90', False)
-        ctrl_kl.ctrl_relay('KL91', False)
-        ctrl_kl.ctrl_relay('KL92', False)
-        ctrl_kl.ctrl_relay('KL93', False)
-        ctrl_kl.ctrl_relay('KL94', False)
-        ctrl_kl.ctrl_relay('KL95', False)
-        ctrl_kl.ctrl_relay('KL97', False)
-        ctrl_kl.ctrl_relay('KL98', False)
-        ctrl_kl.ctrl_relay('KL99', False)
-        ctrl_kl.ctrl_relay('KL100', False)
-        ctrl_kl.ctrl_relay('Q113_4', False)
-        ctrl_kl.ctrl_relay('Q113_5', False)
-        ctrl_kl.ctrl_relay('Q113_6', False)
-        ctrl_kl.ctrl_relay('Q113_7', False)
+        self.ctrl_kl.ctrl_relay('KL70', False)
+        self.ctrl_kl.ctrl_relay('KL71', False)
+        self.ctrl_kl.ctrl_relay('KL72', False)
+        self.ctrl_kl.ctrl_relay('KL73', False)
+        self.ctrl_kl.ctrl_relay('KL74', False)
+        self.ctrl_kl.ctrl_relay('KL75', False)
+        self.ctrl_kl.ctrl_relay('KL76', False)
+        self.ctrl_kl.ctrl_relay('KL77', False)
+        self.ctrl_kl.ctrl_relay('KL78', False)
+        self.ctrl_kl.ctrl_relay('KL79', False)
+        self.ctrl_kl.ctrl_relay('KL80', False)
+        self.ctrl_kl.ctrl_relay('KL81', False)
+        self.ctrl_kl.ctrl_relay('KL82', False)
+        self.ctrl_kl.ctrl_relay('KL83', False)
+        self.ctrl_kl.ctrl_relay('KL84', False)
+        self.ctrl_kl.ctrl_relay('KL88', False)
+        self.ctrl_kl.ctrl_relay('KL89', False)
+        self.ctrl_kl.ctrl_relay('KL90', False)
+        self.ctrl_kl.ctrl_relay('KL91', False)
+        self.ctrl_kl.ctrl_relay('KL92', False)
+        self.ctrl_kl.ctrl_relay('KL93', False)
+        self.ctrl_kl.ctrl_relay('KL94', False)
+        self.ctrl_kl.ctrl_relay('KL95', False)
+        self.ctrl_kl.ctrl_relay('KL97', False)
+        self.ctrl_kl.ctrl_relay('KL98', False)
+        self.ctrl_kl.ctrl_relay('KL99', False)
+        self.ctrl_kl.ctrl_relay('KL100', False)
+        self.ctrl_kl.ctrl_relay('Q113_4', False)
+        self.ctrl_kl.ctrl_relay('Q113_5', False)
+        self.ctrl_kl.ctrl_relay('Q113_6', False)
+        self.ctrl_kl.ctrl_relay('Q113_7', False)
+        self.logger.debug("все реле отключены")
         
-    @staticmethod
-    def sbros_perv_obm():
-        ctrl_kl.ctrl_relay('KL38', False)
-        ctrl_kl.ctrl_relay('KL39', False)
-        ctrl_kl.ctrl_relay('KL40', False)
-        ctrl_kl.ctrl_relay('KL41', False)
-        ctrl_kl.ctrl_relay('KL42', False)
-        ctrl_kl.ctrl_relay('KL43', False)
-        ctrl_kl.ctrl_relay('KL44', False)
-        ctrl_kl.ctrl_relay('KL45', False)
-        ctrl_kl.ctrl_relay('KL46', False)
-        ctrl_kl.ctrl_relay('KL47', False)
+    def sbros_perv_obm(self):
+        self.logger.debug("отключение реле первичной обмотки")
+        self.ctrl_kl.ctrl_relay('KL38', False)
+        self.ctrl_kl.ctrl_relay('KL39', False)
+        self.ctrl_kl.ctrl_relay('KL40', False)
+        self.ctrl_kl.ctrl_relay('KL41', False)
+        self.ctrl_kl.ctrl_relay('KL42', False)
+        self.ctrl_kl.ctrl_relay('KL43', False)
+        self.ctrl_kl.ctrl_relay('KL44', False)
+        self.ctrl_kl.ctrl_relay('KL45', False)
+        self.ctrl_kl.ctrl_relay('KL46', False)
+        self.ctrl_kl.ctrl_relay('KL47', False)
         
-    @staticmethod
-    def sbros_vtor_obm():
-        ctrl_kl.ctrl_relay('KL48', False)
-        ctrl_kl.ctrl_relay('KL49', False)
-        ctrl_kl.ctrl_relay('KL50', False)
-        ctrl_kl.ctrl_relay('KL51', False)
-        ctrl_kl.ctrl_relay('KL52', False)
-        ctrl_kl.ctrl_relay('KL53', False)
-        ctrl_kl.ctrl_relay('KL54', False)
-        ctrl_kl.ctrl_relay('KL55', False)
-        ctrl_kl.ctrl_relay('KL56', False)
-        ctrl_kl.ctrl_relay('KL57', False)
-        ctrl_kl.ctrl_relay('KL58', False)
-        ctrl_kl.ctrl_relay('KL59', False)
-        ctrl_kl.ctrl_relay('KL60', False)
+    def sbros_vtor_obm(self):
+        self.logger.debug("отключение реле вторичной обмотки")
+        self.ctrl_kl.ctrl_relay('KL48', False)
+        self.ctrl_kl.ctrl_relay('KL49', False)
+        self.ctrl_kl.ctrl_relay('KL50', False)
+        self.ctrl_kl.ctrl_relay('KL51', False)
+        self.ctrl_kl.ctrl_relay('KL52', False)
+        self.ctrl_kl.ctrl_relay('KL53', False)
+        self.ctrl_kl.ctrl_relay('KL54', False)
+        self.ctrl_kl.ctrl_relay('KL55', False)
+        self.ctrl_kl.ctrl_relay('KL56', False)
+        self.ctrl_kl.ctrl_relay('KL57', False)
+        self.ctrl_kl.ctrl_relay('KL58', False)
+        self.ctrl_kl.ctrl_relay('KL59', False)
+        self.ctrl_kl.ctrl_relay('KL60', False)
 
-    @staticmethod
-    def stop_procedure_1():
-        ctrl_kl.ctrl_relay('KL62', False)
-        ctrl_kl.ctrl_relay('KL37', False)
+    def stop_procedure_1(self):
+        self.logger.debug("отключение реле процедуры 1")
+        self.ctrl_kl.ctrl_relay('KL62', False)
+        self.ctrl_kl.ctrl_relay('KL37', False)
 
     def stop_procedure_21(self):
         self.stop_procedure_1()
-        ctrl_kl.ctrl_relay('KL43', False)
+        self.logger.debug("отключение реле процедуры 2.1")
+        self.ctrl_kl.ctrl_relay('KL43', False)
 
     def stop_procedure_22(self):
         self.stop_procedure_1()
-        ctrl_kl.ctrl_relay('KL44', False)
+        self.logger.debug("отключение реле процедуры 2.2")
+        self.ctrl_kl.ctrl_relay('KL44', False)
 
     def stop_procedure_2(self):
         self.stop_procedure_1()
+        self.logger.debug("отключение реле процедуры 2")
         self.sbros_perv_obm()
 
-    @staticmethod
-    def stop_procedure_31():
-        ctrl_kl.ctrl_relay('KL62', False)
+    def stop_procedure_31(self):
+        self.logger.debug("отключение реле процедуры 3.1")
+        self.ctrl_kl.ctrl_relay('KL62', False)
         sleep(1)
-        ctrl_kl.ctrl_relay('KL37', False)
-        ctrl_kl.ctrl_relay('KL43', False)
-        ctrl_kl.ctrl_relay('KL60', False)
+        self.ctrl_kl.ctrl_relay('KL37', False)
+        self.ctrl_kl.ctrl_relay('KL43', False)
+        self.ctrl_kl.ctrl_relay('KL60', False)
 
-    @staticmethod
-    def stop_procedure_32():
-        ctrl_kl.ctrl_relay('KL62', False)
+    def stop_procedure_32(self):
+        self.logger.debug("отключение реле процедуры 3.2")
+        self.ctrl_kl.ctrl_relay('KL62', False)
         sleep(1)
-        ctrl_kl.ctrl_relay('KL37', False)
-        ctrl_kl.ctrl_relay('KL44', False)
-        ctrl_kl.ctrl_relay('KL54', False)
+        self.ctrl_kl.ctrl_relay('KL37', False)
+        self.ctrl_kl.ctrl_relay('KL44', False)
+        self.ctrl_kl.ctrl_relay('KL54', False)
 
     def stop_procedure_3(self):
-        ctrl_kl.ctrl_relay('KL62', False)
+        self.logger.debug("отключение реле процедуры 3")
+        self.ctrl_kl.ctrl_relay('KL62', False)
         sleep(1)
-        ctrl_kl.ctrl_relay('KL37', False)
+        self.ctrl_kl.ctrl_relay('KL37', False)
         self.sbros_perv_obm()
         self.sbros_vtor_obm()
 
@@ -266,7 +286,8 @@ class ResetRelay(object):
         используется для сброса после процедуры 1 -> 2.1 -> 3.1
         :return:
         """
-        ctrl_kl.ctrl_relay('KL63', False)
+        self.ctrl_kl.ctrl_relay('KL63', False)
+        self.logger.debug("отключение реле KL63")
         sleep(0.1)
         self.stop_procedure_31()
 
@@ -275,12 +296,14 @@ class ResetRelay(object):
         используется для сброса после процедуры 1 -> 2.2 -> 3.2
         :return:
         """
-        ctrl_kl.ctrl_relay('KL63', False)
+        self.ctrl_kl.ctrl_relay('KL63', False)
+        self.logger.debug("отключение реле KL63")
         sleep(0.1)
         self.stop_procedure_32()
 
     def sbros_kl63_proc_all(self):
-        ctrl_kl.ctrl_relay('KL63', False)
+        self.ctrl_kl.ctrl_relay('KL63', False)
+        self.logger.debug("отключение реле KL63")
         sleep(0.1)
         self.stop_procedure_3()
 
@@ -306,289 +329,312 @@ class Resistor(object):
         R17		295,5	кОм	KL20
         R18		183,3	кОм	
     """
+    def __init__(self):
+        self.ctrl_kl = CtrlKL()
+        self.logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def resist_ohm(ohm):
+    def resist_ohm(self, ohm):
 
         if ohm == 0:
-            ctrl_kl.ctrl_relay('KL3', True)
-            ctrl_kl.ctrl_relay('KL4', True)
-            ctrl_kl.ctrl_relay('KL5', True)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', True)
-            ctrl_kl.ctrl_relay('KL8', True)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', True)
+            self.ctrl_kl.ctrl_relay('KL4', True)
+            self.ctrl_kl.ctrl_relay('KL5', True)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', True)
+            self.ctrl_kl.ctrl_relay('KL8', True)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 0 ом")
         elif ohm == 10:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', True)
-            ctrl_kl.ctrl_relay('KL6', False)
-            ctrl_kl.ctrl_relay('KL7', True)
-            ctrl_kl.ctrl_relay('KL8', True)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', True)
+            self.ctrl_kl.ctrl_relay('KL6', False)
+            self.ctrl_kl.ctrl_relay('KL7', True)
+            self.ctrl_kl.ctrl_relay('KL8', True)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 10 ом")
         elif ohm == 15:
-            ctrl_kl.ctrl_relay('KL3', True)
-            ctrl_kl.ctrl_relay('KL4', True)
-            ctrl_kl.ctrl_relay('KL5', True)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', True)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', True)
+            self.ctrl_kl.ctrl_relay('KL4', True)
+            self.ctrl_kl.ctrl_relay('KL5', True)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', True)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 15 ом")
         elif ohm == 20:
-            ctrl_kl.ctrl_relay('KL3', True)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', True)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', True)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', True)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 20 ом")
         elif ohm == 35:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', True)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', True)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 35 ом")
         elif ohm == 46:
-            ctrl_kl.ctrl_relay('KL3', True)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', True)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', True)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', True)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 46 ом")
         elif ohm == 50:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 50 ом")
         elif ohm == 100:
-            ctrl_kl.ctrl_relay('KL3', True)
-            ctrl_kl.ctrl_relay('KL4', True)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', False)
-            ctrl_kl.ctrl_relay('KL7', True)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', False)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', True)
+            self.ctrl_kl.ctrl_relay('KL4', True)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', False)
+            self.ctrl_kl.ctrl_relay('KL7', True)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', False)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 100 ом")
         elif ohm == 110:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', True)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', True)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', False)
-            ctrl_kl.ctrl_relay('KL10', True)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', True)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', True)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', False)
+            self.ctrl_kl.ctrl_relay('KL10', True)
+            self.logger.debug("включение 110 ом")
         elif ohm == 150:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', True)
-            ctrl_kl.ctrl_relay('KL5', True)
-            ctrl_kl.ctrl_relay('KL6', False)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', True)
-            ctrl_kl.ctrl_relay('KL9', True)
-            ctrl_kl.ctrl_relay('KL10', False)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', True)
+            self.ctrl_kl.ctrl_relay('KL5', True)
+            self.ctrl_kl.ctrl_relay('KL6', False)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', True)
+            self.ctrl_kl.ctrl_relay('KL9', True)
+            self.ctrl_kl.ctrl_relay('KL10', False)
+            self.logger.debug("включение 150 ом")
         elif ohm == 255:
-            ctrl_kl.ctrl_relay('KL3', False)
-            ctrl_kl.ctrl_relay('KL4', False)
-            ctrl_kl.ctrl_relay('KL5', False)
-            ctrl_kl.ctrl_relay('KL6', False)
-            ctrl_kl.ctrl_relay('KL7', False)
-            ctrl_kl.ctrl_relay('KL8', False)
-            ctrl_kl.ctrl_relay('KL9', False)
-            ctrl_kl.ctrl_relay('KL10', False)
+            self.ctrl_kl.ctrl_relay('KL3', False)
+            self.ctrl_kl.ctrl_relay('KL4', False)
+            self.ctrl_kl.ctrl_relay('KL5', False)
+            self.ctrl_kl.ctrl_relay('KL6', False)
+            self.ctrl_kl.ctrl_relay('KL7', False)
+            self.ctrl_kl.ctrl_relay('KL8', False)
+            self.ctrl_kl.ctrl_relay('KL9', False)
+            self.ctrl_kl.ctrl_relay('KL10', False)
+            self.logger.debug("включение 255 ом")
         
-    @staticmethod
-    def resist_kohm(kohm):
+    def resist_kohm(self, kohm):
 
         if kohm == 0:
-            ctrl_kl.ctrl_relay('KL13', True)
-            ctrl_kl.ctrl_relay('KL14', True)
-            ctrl_kl.ctrl_relay('KL15', True)
-            ctrl_kl.ctrl_relay('KL16', True)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', True)
+            self.ctrl_kl.ctrl_relay('KL14', True)
+            self.ctrl_kl.ctrl_relay('KL15', True)
+            self.ctrl_kl.ctrl_relay('KL16', True)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 0 ком")
         if kohm == 12:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', True)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', True)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', True)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', True)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 12 ком")
         if kohm == 21:
-            ctrl_kl.ctrl_relay('KL13', True)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', True)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', True)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', True)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 21 ком")
         elif kohm == 26:
-            ctrl_kl.ctrl_relay('KL13', True)
-            ctrl_kl.ctrl_relay('KL14', True)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', True)
+            self.ctrl_kl.ctrl_relay('KL14', True)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 26 ком")
         elif kohm == 30:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', True)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', True)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 30 ком")
         elif kohm == 61:
-            ctrl_kl.ctrl_relay('KL13', True)
-            ctrl_kl.ctrl_relay('KL14', True)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', False)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', True)
+            self.ctrl_kl.ctrl_relay('KL14', True)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', False)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 61 ком")
         elif kohm == 65:
-            ctrl_kl.ctrl_relay('KL13', True)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', False)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', True)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', False)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 65 ком")
         elif kohm == 100:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', True)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', True)
-            ctrl_kl.ctrl_relay('KL18', False)
-            ctrl_kl.ctrl_relay('KL19', True)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', True)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', True)
+            self.ctrl_kl.ctrl_relay('KL18', False)
+            self.ctrl_kl.ctrl_relay('KL19', True)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 100 ком")
         elif kohm == 200:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', True)
-            ctrl_kl.ctrl_relay('KL17', False)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', False)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', True)
+            self.ctrl_kl.ctrl_relay('KL17', False)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', False)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 200 ком")
         elif kohm == 220:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', False)
-            ctrl_kl.ctrl_relay('KL18', True)
-            ctrl_kl.ctrl_relay('KL19', False)
-            ctrl_kl.ctrl_relay('KL20', True)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', False)
+            self.ctrl_kl.ctrl_relay('KL18', True)
+            self.ctrl_kl.ctrl_relay('KL19', False)
+            self.ctrl_kl.ctrl_relay('KL20', True)
+            self.logger.debug("включение 220 ком")
         elif kohm == 590:
-            ctrl_kl.ctrl_relay('KL13', False)
-            ctrl_kl.ctrl_relay('KL14', False)
-            ctrl_kl.ctrl_relay('KL15', False)
-            ctrl_kl.ctrl_relay('KL16', False)
-            ctrl_kl.ctrl_relay('KL17', False)
-            ctrl_kl.ctrl_relay('KL18', False)
-            ctrl_kl.ctrl_relay('KL19', False)
-            ctrl_kl.ctrl_relay('KL20', False)
+            self.ctrl_kl.ctrl_relay('KL13', False)
+            self.ctrl_kl.ctrl_relay('KL14', False)
+            self.ctrl_kl.ctrl_relay('KL15', False)
+            self.ctrl_kl.ctrl_relay('KL16', False)
+            self.ctrl_kl.ctrl_relay('KL17', False)
+            self.ctrl_kl.ctrl_relay('KL18', False)
+            self.ctrl_kl.ctrl_relay('KL19', False)
+            self.ctrl_kl.ctrl_relay('KL20', False)
+            self.logger.debug("включение 590 ком")
         
-    @staticmethod
-    def resist_10_to_20_ohm():
-        ctrl_kl.ctrl_relay('KL3', True)
-        ctrl_kl.ctrl_relay('KL6', True)
-        ctrl_kl.ctrl_relay('KL8', True)
-        ctrl_kl.ctrl_relay('KL9', True)
-        ctrl_kl.ctrl_relay('KL10', True)
+    def resist_10_to_20_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL3', True)
+        self.ctrl_kl.ctrl_relay('KL6', True)
+        self.ctrl_kl.ctrl_relay('KL8', True)
+        self.ctrl_kl.ctrl_relay('KL9', True)
+        self.ctrl_kl.ctrl_relay('KL10', True)
+        self.logger.debug("переключение с 10 ом на 20 ом")
 
-    @staticmethod
-    def resist_10_to_35_ohm():
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL6', True)
-        ctrl_kl.ctrl_relay('KL8', False)
+    def resist_10_to_35_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL6', True)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.logger.debug("переключение с 10 ом на 35 ом")
         
-    @staticmethod
-    def resist_10_to_100_ohm():
-        ctrl_kl.ctrl_relay('KL9', False)
-        ctrl_kl.ctrl_relay('KL8', False)
+    def resist_10_to_100_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.logger.debug("переключение с 10 ом на 100 ом")
 
-    @staticmethod
-    def resist_10_to_46_ohm():
-        ctrl_kl.ctrl_relay('KL7', False)
-        ctrl_kl.ctrl_relay('KL6', True)
-        ctrl_kl.ctrl_relay('KL8', False)
+    def resist_10_to_46_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.ctrl_kl.ctrl_relay('KL6', True)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.logger.debug("переключение с 10 ом на 46 ом")
 
-    @staticmethod
-    def resist_10_to_50_ohm():
-        ctrl_kl.ctrl_relay('KL7', False)
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL6', True)
-        ctrl_kl.ctrl_relay('KL8', False)
+    def resist_10_to_50_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL6', True)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.logger.debug("переключение с 10 ом на 50 ом")
 
-    @staticmethod
-    def resist_10_to_110_ohm():
-        ctrl_kl.ctrl_relay('KL9', False)
-        ctrl_kl.ctrl_relay('KL4', True)
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL8', False)
-        ctrl_kl.ctrl_relay('KL6', True)
-        ctrl_kl.ctrl_relay('KL7', False)
+    def resist_10_to_110_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.ctrl_kl.ctrl_relay('KL4', True)
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.ctrl_kl.ctrl_relay('KL6', True)
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.logger.debug("переключение с 10 ом на 110 ом")
 
-    @staticmethod
-    def resist_35_to_110_ohm():
-        ctrl_kl.ctrl_relay('KL9', False)
-        ctrl_kl.ctrl_relay('KL7', False)
+    def resist_35_to_110_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.logger.debug("переключение с 35 ом на 110 ом")
 
-    @staticmethod
-    def resist_10_to_137_ohm():
-        ctrl_kl.ctrl_relay('KL10', False)
+    def resist_10_to_137_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL10', False)
+        self.logger.debug("переключение с 10 ом на 137 ом")
 
-    @staticmethod
-    def resist_0_to_50_ohm():
-        ctrl_kl.ctrl_relay('KL3', False)
-        ctrl_kl.ctrl_relay('KL4', False)
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL7', False)
-        ctrl_kl.ctrl_relay('KL8', False)
+    def resist_0_to_50_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL3', False)
+        self.ctrl_kl.ctrl_relay('KL4', False)
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL7', False)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.logger.debug("переключение с 0 ом на 50 ом")
 
-    @staticmethod
-    def resist_0_to_100_ohm():
-        ctrl_kl.ctrl_relay('KL5', False)
-        ctrl_kl.ctrl_relay('KL6', False)
-        ctrl_kl.ctrl_relay('KL8', False)
-        ctrl_kl.ctrl_relay('KL9', False)
+    def resist_0_to_100_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL5', False)
+        self.ctrl_kl.ctrl_relay('KL6', False)
+        self.ctrl_kl.ctrl_relay('KL8', False)
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.logger.debug("переключение с 0 ом на 100 ом")
 
-    @staticmethod
-    def resist_0_to_63_ohm():
-        ctrl_kl.ctrl_relay('KL9', False)
-        ctrl_kl.ctrl_relay('KL4', False)
+    def resist_0_to_63_ohm(self):
+        self.ctrl_kl.ctrl_relay('KL9', False)
+        self.ctrl_kl.ctrl_relay('KL4', False)
+        self.logger.debug("переключение с 0 ом на 63 ом")
 
-    @staticmethod
-    def resist_220_to_100_kohm():
-        ctrl_kl.ctrl_relay('KL18', False)
-        ctrl_kl.ctrl_relay('KL19', True)
-        ctrl_kl.ctrl_relay('KL17', True)
-        ctrl_kl.ctrl_relay('KL15', True)
+    def resist_220_to_100_kohm(self):
+        self.ctrl_kl.ctrl_relay('KL18', False)
+        self.ctrl_kl.ctrl_relay('KL19', True)
+        self.ctrl_kl.ctrl_relay('KL17', True)
+        self.ctrl_kl.ctrl_relay('KL15', True)
+        self.logger.debug("переключение с 220 ком на 100 ком")
         
 
 class ModbusConnectException(Exception):
@@ -600,7 +646,8 @@ class ResultMsg(object):
     """
     исправность/неисправность блока
     """
-    reset = ResetRelay()
+    def __init__(self):
+        self.reset = ResetRelay()
 
     def test_error(self, test_number):
         msg = (f'Тест: {test_number} не пройден')
