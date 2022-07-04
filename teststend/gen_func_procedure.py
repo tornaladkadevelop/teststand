@@ -95,7 +95,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 2.1 пройдена", 'green')
             return True
         else:
-            self.logger.debug("процедура 2.1 не пройдена")
+            self.logger.warning("процедура 2.1 не пройдена")
             self.fault.debug_msg("процедура 2.1 не пройдена", 'red')
             self.reset.stop_procedure_21()
             return False
@@ -114,7 +114,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 2.2 пройдена", 'green')
             return True
         else:
-            self.logger.debug("процедура 2.2 не пройдена")
+            self.logger.warning("процедура 2.2 не пройдена")
             self.fault.debug_msg("процедура 2.2 не пройдена", 'red')
             self.reset.stop_procedure_22()
             return False
@@ -138,7 +138,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.3 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.3 не пройдена")
+            self.logger.warning("процедура 2.3 не пройдена")
             self.fault.debug_msg(f"процедура 2.3 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -163,7 +163,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.4 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.4 не пройдена")
+            self.logger.warning("процедура 2.4 не пройдена")
             self.fault.debug_msg(f"процедура 2.4 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -188,7 +188,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.5 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.5 не пройдена")
+            self.logger.warning("процедура 2.5 не пройдена")
             self.fault.debug_msg(f"процедура 2.5 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -212,7 +212,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.6 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.6 не пройдена")
+            self.logger.warning("процедура 2.6 не пройдена")
             self.fault.debug_msg(f"процедура 2.6 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -236,7 +236,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.7 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.7 не пройдена")
+            self.logger.warning("процедура 2.7 не пройдена")
             self.fault.debug_msg(f"процедура 2.7 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -261,7 +261,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.8 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.8 не пройдена")
+            self.logger.warning("процедура 2.8 не пройдена")
             self.fault.debug_msg(f"процедура 2.8 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -285,7 +285,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.9 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.9 не пройдена")
+            self.logger.warning("процедура 2.9 не пройдена")
             self.fault.debug_msg(f"процедура 2.9 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -309,7 +309,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.10 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.10 не пройдена")
+            self.logger.warning("процедура 2.10 не пройдена")
             self.fault.debug_msg(f"процедура 2.10 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -333,7 +333,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.11 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.11 не пройдена")
+            self.logger.warning("процедура 2.11 не пройдена")
             self.fault.debug_msg(f"процедура 2.11 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -357,7 +357,7 @@ class Procedure(object):
             self.fault.debug_msg(f"процедура 2.12 пройдена, {calc_volt = :.2f}", 'green')
             return calc_volt
         else:
-            self.logger.debug("процедура 2.12 не пройдена")
+            self.logger.warning("процедура 2.12 не пройдена")
             self.fault.debug_msg(f"процедура 2.12 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             return 0.0
@@ -375,8 +375,8 @@ class Procedure(object):
             if meas_volt <= 1.1:
                 self.logger.debug("напряжение соответствует")
                 return True
-            if meas_volt > 1.1:
-                self.logger.debug("напряжение не соответствует")
+            elif meas_volt > 1.1:
+                self.logger.warning("напряжение не соответствует")
                 self.sbros_vtor_obm()
                 self.logger.debug("сброс вторичной обмотки")
                 i += 1
@@ -407,7 +407,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.1 пройдена", 'green')
             return meas_volt
         else:
-            self.logger.debug(f"процедура 3.1 не пройдена")
+            self.logger.warning(f"процедура 3.1 не пройдена")
             self.fault.debug_msg("процедура 3.1 не пройдена", 'red')
             self.reset.stop_procedure_31()
             return 0.0
@@ -435,7 +435,7 @@ class Procedure(object):
             coef_volt = meas_volt / 51.54
             return coef_volt
         else:
-            self.logger.debug(f"процедура 3.2 не пройдена")
+            self.logger.warning(f"процедура 3.2 не пройдена")
             self.fault.debug_msg("процедура 3.2 не пройдена", 'red')
             self.reset.stop_procedure_32()
             return 0.0
@@ -463,7 +463,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.3 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.3 не пройдена")
+            self.logger.warning(f"процедура 3.3 не пройдена")
             self.fault.debug_msg("процедура 3.3 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -492,7 +492,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.4 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.4 не пройдена")
+            self.logger.warning(f"процедура 3.4 не пройдена")
             self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -521,7 +521,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.5 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.5 не пройдена")
+            self.logger.warning(f"процедура 3.5 не пройдена")
             self.fault.debug_msg("процедура 3.5 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -549,7 +549,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.6 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.6 не пройдена")
+            self.logger.warning(f"процедура 3.6 не пройдена")
             self.fault.debug_msg("процедура 3.6 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -577,7 +577,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.7 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.7 не пройдена")
+            self.logger.warning(f"процедура 3.7 не пройдена")
             self.fault.debug_msg("процедура 3.7 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -607,7 +607,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.8 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.8 не пройдена")
+            self.logger.warning(f"процедура 3.8 не пройдена")
             self.fault.debug_msg("процедура 3.8 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -637,7 +637,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.9 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.9 не пройдена")
+            self.logger.warning(f"процедура 3.9 не пройдена")
             self.fault.debug_msg("процедура 3.9 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -667,7 +667,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.10 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.10 не пройдена")
+            self.logger.warning(f"процедура 3.10 не пройдена")
             self.fault.debug_msg("процедура 3.10 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -696,7 +696,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.11 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.11 не пройдена")
+            self.logger.warning(f"процедура 3.11 не пройдена")
             self.fault.debug_msg("процедура 3.11 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
@@ -724,7 +724,7 @@ class Procedure(object):
             self.fault.debug_msg("процедура 3.12 пройдена", 'green')
             return True
         else:
-            self.logger.debug(f"процедура 3.12 не пройдена")
+            self.logger.warning(f"процедура 3.12 не пройдена")
             self.fault.debug_msg("процедура 3.12 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
