@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import logging
+
 from OpenOPC import client
 from time import sleep, time
 
@@ -173,6 +175,7 @@ class CtrlKL(object):
                              'Устройство.tg.in_Q113_4', 'Устройство.tg.in_Q113_5',
                              'Устройство.tg.in_Q113_6', 'Устройство.tg.in_Q113_7')
         self.__analog_tags_value = []
+        self.logger = logging.getLogger(__name__)
 
     def ctrl_relay(self, rel, ctrl) -> None:
         kl = self.__dic_relay[f'{rel}']
@@ -211,14 +214,16 @@ class CtrlKL(object):
         list_str[0] = list_str[0][2:-1]
         if list_str[2] == "'Good'":
             analog_inp_fl = float(list_str[1])
+            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            return analog_inp_fl
         else:
             self.__opc['Устройство.tegs.in_num_alg'] = 0
             return 9999
-        self.__opc['Устройство.tegs.in_num_alg'] = 0
-        if analog_inp_fl <= 3000:
-            return analog_inp_fl
-        else:
-            return 9999
+        # self.__opc['Устройство.tegs.in_num_alg'] = 0
+        # if analog_inp_fl <= 3000:
+        #     return analog_inp_fl
+        # else:
+        #     return 9999
 
     def ctrl_ai_code_100(self) -> [int, float]:
         """
