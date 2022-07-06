@@ -61,9 +61,7 @@ class TestTZP(object):
         Тест 1. Проверка исходного состояния блока:
         :return:
         """
-        in_a0 = self.__inputs_a0()
-        if in_a0 is None:
-            return False
+        self.__inputs_a0()
         self.__mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.logger.debug("тест 1")
         self.__ctrl_kl.ctrl_relay('KL21', True)
