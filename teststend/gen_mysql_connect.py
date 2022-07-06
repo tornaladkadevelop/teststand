@@ -8,7 +8,11 @@
 __all__ = ['MySQLConnect']
 
 import mysql.connector
+import logging
+
 from datetime import datetime
+
+from gen_func_utils import Bug
 
 
 class MySQLConnect(object):
@@ -20,6 +24,8 @@ class MySQLConnect(object):
         self.database = 'simple_database'
         self.auth_plugin = 'mysql_native_password'
         self.mysql_err = mysql.connector.Error
+        self.logger = logging.getLogger(__name__)
+        self.__fault = Bug(True)
 
     def mysql_ins_result(self, my_result, num_test):
         """
@@ -40,7 +46,8 @@ class MySQLConnect(object):
             conn.commit()
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_pmz_result(self, my_result):
         """
@@ -59,11 +66,11 @@ class MySQLConnect(object):
             c.execute(aquery)
             c.executemany(sql, my_result)
             conn.commit()
-            print(c.rowcount, "\trecords inserted!")
+            self.__fault.debug_msg(f"записей в БД: {c.rowcount}", "orange")
             conn.close()
         except self.mysql_err:
-            print('result: \t', my_result)
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_tzp_result(self, my_result):
         """
@@ -82,10 +89,11 @@ class MySQLConnect(object):
             c.execute(aquery)
             c.executemany(sql, my_result)
             conn.commit()
-            print(c.rowcount, "\trecords inserted!")
+            self.__fault.debug_msg(f"записей в БД: {c.rowcount}", "orange")
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_umz_result(self, my_result):
         """
@@ -104,10 +112,11 @@ class MySQLConnect(object):
             c.execute(aquery)
             c.executemany(sql, my_result)
             conn.commit()
-            print(c.rowcount, "records inserted!")
+            self.__fault.debug_msg(f"записей в БД: {c.rowcount}", "orange")
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_ubtz_btz_result(self, my_result):
         """
@@ -125,10 +134,11 @@ class MySQLConnect(object):
             c.execute(aquery)
             c.executemany(sql, my_result)
             conn.commit()
-            print(c.rowcount, "records inserted!")
+            self.__fault.debug_msg(f"записей в БД: {c.rowcount}", "orange")
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_ubtz_tzp_result(self, my_result):
         """
@@ -146,10 +156,11 @@ class MySQLConnect(object):
             c.execute(aquery)
             c.executemany(sql, my_result)
             conn.commit()
-            print(c.rowcount, "records inserted!")
+            self.__fault.debug_msg(f"записей в БД: {c.rowcount}", "orange")
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_connect(self, request: str):
         """
@@ -166,7 +177,8 @@ class MySQLConnect(object):
             conn.commit()
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def mysql_block_bad(self):
         """
@@ -209,7 +221,7 @@ class MySQLConnect(object):
         mess = mess[:170]
         request = "INSERT INTO simple_database.messages_alg(mess_alg_time, mess_text) " \
                   "VALUES('" + str(mytime) + "','" + mess + "'); "
-        print(request)
+        self.logger.debug(f"{request}")
         try:
             conn = mysql.connector.connect(host=self.host, user=self.user, password=self.password,
                                            database=self.database, auth_plugin=self.auth_plugin)
@@ -218,7 +230,7 @@ class MySQLConnect(object):
             conn.commit()
             conn.close()
         except self.mysql_err:
-            print('Error! Ошибка связи с базой данных MySQL.')
+            self.logger.error('Ошибка связи с базой данных MySQL.')
 
     def progress_level(self, level: float):
         """
