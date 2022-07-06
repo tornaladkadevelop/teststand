@@ -63,9 +63,7 @@ class TestMTZ5V27(object):
         Тест 1.0
         :return: bool
         """
-        in_a0 = self.__inputs_a0()
-        if in_a0 is None:
-            return False
+        self.__inputs_a0()
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass

@@ -46,9 +46,7 @@ class TestBMZAPSH4(object):
         """
         # Тест 1. Проверка исходного состояния блока:
         """
-        in_a0 = self.__inputs_a0()
-        if in_a0 is None:
-            return False
+        self.__inputs_a0()
         msg_1 = "Установите переключатель уставок на блоке в положение 1"
         if my_msg(msg_1):
             pass

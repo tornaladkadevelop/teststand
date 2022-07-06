@@ -55,9 +55,7 @@ class TestBZMPD(object):
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        in_a0 = self.__inputs_a0()
-        if in_a0 is None:
-            return False
+        self.__inputs_a0()
         self.__mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
         self.__mysql_conn.mysql_ins_result('---', '2')
         self.__mysql_conn.mysql_ins_result('---', '3')

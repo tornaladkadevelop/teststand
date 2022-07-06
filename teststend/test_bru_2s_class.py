@@ -42,6 +42,7 @@ class TestBRU2S(object):
             self.__mysql_conn.mysql_error(47)
             return False
         self.__mysql_conn.mysql_ins_result('исправен', '1')
+        return True
 
     def st_test_20_bru_2s(self) -> bool:
         """
@@ -56,6 +57,7 @@ class TestBRU2S(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(48)
             return False
+        return True
 
     def st_test_21_bru_2s(self) -> bool:
         """

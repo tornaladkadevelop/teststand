@@ -36,9 +36,7 @@ class TestBKI6(object):
         """
         Тест 1. Проверка исходного состояния контактов блока при отсутствии напряжения питания
         """
-        in_a0 = self.__inputs_a0()
-        if in_a0 is None:
-            return False
+        self.__inputs_a0()
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
