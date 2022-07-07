@@ -7,10 +7,10 @@
 
 __all__ = ['MySQLConnect']
 
-import mysql.connector
 import logging
-
 from datetime import datetime
+
+import mysql.connector
 
 from gen_func_utils import Bug
 
