@@ -114,12 +114,13 @@ class TestTZP(object):
             pass
         else:
             self.__fault.debug_msg("напряжение не соответствует", 'red')
-            self.__mysql_conn.mysql_ins_result('неисправен', '1')
-            self.__mysql_conn.mysql_error(281)
+            # self.__mysql_conn.mysql_ins_result('неисправен', '1')
+            # self.__mysql_conn.mysql_error(281)
             self.logger.debug("напряжение не соответствует")
             self.__reset.sbros_kl63_proc_1_21_31()
             self.logger.debug("сброс всех реле")
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию. \n"
+                                    "Неисправность узла формирования напряжения в стенде")
         self.__reset.sbros_kl63_proc_1_21_31()
         self.logger.debug("сброс всех реле")
         return True
@@ -416,6 +417,8 @@ if __name__ == '__main__':
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
+    except HardwareException as hwe:
+        my_msg(f'{hwe}', 'red')
     finally:
         reset_test_tzp.reset_all()
         sys.exit()

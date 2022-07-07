@@ -9,7 +9,8 @@ from time import time, sleep
 from my_msgbox import *
 from gen_mb_client import *
 
-__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectException", "ResultMsg"]
+__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectException", "HardwareException",
+           "ResultMsg"]
 
 
 class DeltaTimeNoneKL63(object):
@@ -639,6 +640,11 @@ class Resistor(object):
 
 class ModbusConnectException(Exception):
     """вываливается когда нет связи по modbus"""
+    pass
+
+
+class HardwareException(Exception):
+    """вываливается при неиспраности стенда"""
     pass
 
 

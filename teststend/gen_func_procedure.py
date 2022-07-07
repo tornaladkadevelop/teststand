@@ -55,23 +55,15 @@ class Procedure(object):
             in_b0 = self.read_mb.read_discrete(8)
             self.logger.debug(f"in_b0 = {in_b0} (False)")
             if in_b0 is False:
-                self.fault.debug_msg("процедура 1 пройдена", 'green')
+                self.fault.debug_msg(f"попытка: {i}, процедура 1 пройдена", 'green')
                 self.logger.debug("процедура 1 пройдена")
                 return True
             elif in_b0 is True:
-                self.logger.debug("процедура 1 не пройдена")
+                self.logger.debug(f"попытка: {i}, процедура 1 не пройдена")
                 if self.reset.sbros_perv_obm():
                     self.logger.debug("сбрасываем первичную обмотку, и пробуем еще раз")
                     i += 1
                     continue
-            else:
-                self.logger.debug("процедура 1 не пройдена")
-                self.fault.debug_msg("процедура 1 не пройдена", 'red')
-                self.ctrl_kl.ctrl_relay('KL62', False)
-                self.logger.debug("отключение KL62")
-                self.ctrl_kl.ctrl_relay('KL37', False)
-                self.logger.debug("отключение KL37")
-                return False
         else:
             self.logger.debug("процедура 1 не пройдена")
             self.fault.debug_msg("процедура 1 не пройдена", 'red')
@@ -79,7 +71,8 @@ class Procedure(object):
             self.logger.debug("отключение KL62")
             self.ctrl_kl.ctrl_relay('KL37', False)
             self.logger.debug("отключение KL37")
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_21(self) -> bool:
         """
@@ -98,7 +91,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.1 не пройдена")
             self.fault.debug_msg("процедура 2.1 не пройдена", 'red')
             self.reset.stop_procedure_21()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_22(self) -> bool:
         """
@@ -117,7 +111,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.2 не пройдена")
             self.fault.debug_msg("процедура 2.2 не пройдена", 'red')
             self.reset.stop_procedure_22()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_23(self, coef_volt: float) -> float:
         """
@@ -141,7 +136,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.3 не пройдена")
             self.fault.debug_msg(f"процедура 2.3 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_24(self, coef_volt: float, setpoint_volt: float) -> float:
         """
@@ -166,7 +162,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.4 не пройдена")
             self.fault.debug_msg(f"процедура 2.4 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_25(self, coef_volt: float, setpoint_volt: float) -> float:
         """
@@ -191,7 +188,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.5 не пройдена")
             self.fault.debug_msg(f"процедура 2.5 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_26(self, coef_volt: float) -> float:
         """
@@ -215,7 +213,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.6 не пройдена")
             self.fault.debug_msg(f"процедура 2.6 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_27(self, coef_volt: float) -> float:
         """
@@ -239,7 +238,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.7 не пройдена")
             self.fault.debug_msg(f"процедура 2.7 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_28(self, coef_volt: float, setpoint_volt: float) -> float:
         """
@@ -264,7 +264,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.8 не пройдена")
             self.fault.debug_msg(f"процедура 2.8 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_29(self, coef_volt: float) -> float:
         """
@@ -288,7 +289,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.9 не пройдена")
             self.fault.debug_msg(f"процедура 2.9 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_210(self, coef_volt: float) -> float:
         """
@@ -312,7 +314,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.10 не пройдена")
             self.fault.debug_msg(f"процедура 2.10 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_211(self, coef_volt: float) -> float:
         """
@@ -336,7 +339,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.11 не пройдена")
             self.fault.debug_msg(f"процедура 2.11 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_212(self, coef_volt: float) -> float:
         """
@@ -360,7 +364,8 @@ class Procedure(object):
             self.logger.warning("процедура 2.12 не пройдена")
             self.fault.debug_msg(f"процедура 2.12 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def __subtest_meas_volt(self) -> bool:
         """
@@ -410,7 +415,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.1 не пройдена")
             self.fault.debug_msg("процедура 3.1 не пройдена", 'red')
             self.reset.stop_procedure_31()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_32(self) -> float:
         """
@@ -438,7 +444,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.2 не пройдена")
             self.fault.debug_msg("процедура 3.2 не пройдена", 'red')
             self.reset.stop_procedure_32()
-            return 0.0
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_33(self, calc_volt: float) -> bool:
         """
@@ -466,7 +473,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.3 не пройдена")
             self.fault.debug_msg("процедура 3.3 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_34(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
@@ -495,7 +503,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.4 не пройдена")
             self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_35(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
@@ -524,7 +533,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.5 не пройдена")
             self.fault.debug_msg("процедура 3.5 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_36(self, calc_volt: float) -> bool:
         """
@@ -552,7 +562,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.6 не пройдена")
             self.fault.debug_msg("процедура 3.6 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_37(self, calc_volt: float) -> bool:
         """
@@ -580,7 +591,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.7 не пройдена")
             self.fault.debug_msg("процедура 3.7 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_38(self, calc_volt: float) -> bool:
         """
@@ -610,7 +622,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.8 не пройдена")
             self.fault.debug_msg("процедура 3.8 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_39(self, calc_volt: float) -> bool:
         """
@@ -640,7 +653,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.9 не пройдена")
             self.fault.debug_msg("процедура 3.9 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_310(self, calc_volt: float) -> bool:
         """
@@ -670,7 +684,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.10 не пройдена")
             self.fault.debug_msg("процедура 3.10 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_311(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
@@ -699,7 +714,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.11 не пройдена")
             self.fault.debug_msg("процедура 3.11 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_312(self, calc_volt: float) -> bool:
         """
@@ -727,7 +743,8 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.12 не пройдена")
             self.fault.debug_msg("процедура 3.12 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            return False
+            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                    "Неисправность узла формирования напряжения в стенде")
 
     def procedure_1_21_31(self) -> float:
         """
@@ -739,7 +756,8 @@ class Procedure(object):
                 meas_volt = self.start_procedure_31()
                 if meas_volt != 0.0:
                     return meas_volt
-        return 0.0
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
 
     def procedure_1_22_32(self) -> float:
         """
@@ -755,10 +773,11 @@ class Procedure(object):
             if self.start_procedure_22():
                 coef_volt = self.start_procedure_32()
                 if coef_volt != 0.0:
-                    self.logger.debug(f"коэффициент сети:\t {coef_volt:.2f}")
+                    self.logger.info(f"коэффициент сети:\t {coef_volt:.2f}")
                     self.fault.debug_msg(f'коэффициент сети:\t {coef_volt:.2f}', 'orange')
                     return coef_volt
-        return 0.0
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
 
     def procedure_1_24_34(self, coef_volt: float, setpoint_volt: float) -> bool:
         """
@@ -770,7 +789,8 @@ class Procedure(object):
             if calc_volt != 0.0:
                 if self.start_procedure_34(calc_volt=calc_volt, setpoint_volt=setpoint_volt):
                     return True
-        return False
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
 
     def procedure_1_25_35(self, coef_volt: float, setpoint_volt: float) -> bool:
         """
@@ -782,7 +802,8 @@ class Procedure(object):
             if calc_volt != 0.0:
                 if self.start_procedure_35(calc_volt=calc_volt, setpoint_volt=setpoint_volt):
                     return True
-        return False
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
 
     # def sbros_perv_obm(self) -> bool:
     #     self.reset.sbros_perv_obm()

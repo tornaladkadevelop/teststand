@@ -253,6 +253,8 @@ if __name__ == '__main__':
     except ModbusConnectException as mce:
         fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
+    except HardwareException as hwe:
+        my_msg(f'{hwe}', 'red')
     finally:
         reset_test_bmz_apsh_4.reset_all()
         sys.exit()

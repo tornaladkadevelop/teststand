@@ -433,6 +433,8 @@ if __name__ == '__main__':
         my_msg("ошибка системы", 'red')
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
+    except HardwareException as hwe:
+        my_msg(f'{hwe}', 'red')
     finally:
         reset_test_mkzp.reset_all()
         sys.exit()
