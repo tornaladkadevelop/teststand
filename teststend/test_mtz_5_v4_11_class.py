@@ -49,6 +49,7 @@ class TestMTZ5V411(object):
         self.delta_t_mtz: float
         self.in_1: bool
         self.in_5: bool
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов " \
                      "и вставьте блок в соответствующий разъем панели B"
@@ -85,12 +86,14 @@ class TestMTZ5V411(object):
         :return: bool
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 1', '1')
+        self.logger.debug("тест 1.1")
         self.__ctrl_kl.ctrl_relay('KL1', True)
         sleep(0.5)
         self.__ctrl_kl.ctrl_relay('KL2', True)
         sleep(1)
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
             pass
         else:
@@ -252,9 +255,11 @@ class TestMTZ5V411(object):
                         k += 1
                         continue
                     else:
+                        self.health_flag = True
                         self.__mysql_conn.mysql_ins_result('неисправен', '3')
                         return False
                 else:
+                    self.health_flag = True
                     if self.__subtest_33():
                         k += 1
                         continue
@@ -336,6 +341,7 @@ class TestMTZ5V411(object):
             else:
                 self.__fault.debug_msg("положение выходов не соответствует", 'red')
                 self.__mysql_conn.mysql_error(448)
+                self.health_flag = True
                 if self.__subtest_45():
                     m += 1
                     continue
@@ -407,7 +413,8 @@ class TestMTZ5V411(object):
             self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]}\t'
                                                 f'дельта t: {calc_delta_t_mtz:.1f}\t'
                                                 f'дельта %: {calc_delta_percent_mtz:.2f}')
-            # self.__mysql_conn.mysql_error(448)
+            self.health_flag = True
+            self.__mysql_conn.mysql_error(448)
             return False
 
     def __subtest_33(self) -> bool:
@@ -481,7 +488,7 @@ class TestMTZ5V411(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
-    def st_test_mtz(self) -> bool:
+    def st_test_mtz(self) -> [bool, bool]:
         """
         функция собирающая все алгоритмы в одну функцию
         :return: bool
@@ -494,8 +501,8 @@ class TestMTZ5V411(object):
                             if self.st_test_21():
                                 if self.st_test_30():
                                     if self.st_test_40():
-                                        return True
-        return False
+                                        return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_mtz(self):
         for g1 in range(len(self.list_delta_percent_mtz)):
@@ -514,7 +521,8 @@ if __name__ == '__main__':
     mysql_conn_mtz = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_mtz.st_test_mtz():
+        test, health_flag = test_mtz.st_test_mtz()
+        if test and not health_flag:
             test_mtz.result_test_mtz()
             mysql_conn_mtz.mysql_block_good()
             my_msg('Блок исправен', 'green')
