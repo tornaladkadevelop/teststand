@@ -10,6 +10,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -59,6 +60,14 @@ class TestUMZ(object):
         self.msg_3 = "Переведите оба регулятора уставок на корпусе блока в положение «1»"
         self.msg_4 = "Произведите взвод защит, нажав на корпусе блока на кнопку «Взвод»"
         self.msg_5 = 'Установите оба регулятора уставок на блоке в положение'
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestUMZ.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
         """

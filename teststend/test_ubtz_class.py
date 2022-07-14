@@ -11,6 +11,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -53,6 +54,14 @@ class TestUBTZ(object):
         self.msg_3 = "Установите регулятор МТЗ, расположенный на корпусе блока, в положение"
         # self.msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
         self.msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestUBTZ.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
         self.__inputs_a0()

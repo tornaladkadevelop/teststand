@@ -9,6 +9,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -57,6 +58,14 @@ class TestMTZ5V28(object):
         # self.msg_6 = "Установите регулятор МТЗ, расположенный на блоке, в положение «8»"
         self.msg_7 = "Установите регулятор уставок на блоке в положение\t"
         self.msg_8 = "Переключите тумблер, расположенный на корпусе блока в положение «Работа»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestMTZ5_v28.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
         """

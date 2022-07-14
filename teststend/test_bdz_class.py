@@ -12,6 +12,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -34,6 +35,14 @@ class TestBDZ(object):
                      "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"
         self.msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26 и блок БУЗ-2 в разъем Х17, " \
                      "расположенные на панели B"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBDZ.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bdz(self) -> bool:
         """

@@ -14,6 +14,7 @@
 __all__ = ["TestBUZ2"]
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -44,6 +45,14 @@ class TestBUZ2(object):
         self.msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26  и блок БДЗ в разъем Х16, " \
                      "расположенные на панели B."
         self.msg_3 = "Установите с помощью кнопок SB1, SB2 следующие уровни уставок: ПМЗ – 2000 А; ТЗП – 400 А"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBUZ2.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_buz_2(self) -> bool:
         """

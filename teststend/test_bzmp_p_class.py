@@ -12,6 +12,7 @@
 __all__ = ["TestBZMPP"]
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -45,6 +46,14 @@ class TestBZMPP(object):
         self.msg_5 = "С помощью кнопки SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         self.msg_6 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         self.msg_7 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBZMPP.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bzmp_p(self) -> bool:
         """

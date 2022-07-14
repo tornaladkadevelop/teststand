@@ -9,6 +9,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -76,6 +77,14 @@ class TestMKZP6(object):
         self.msg_27: str = "Если на дисплее стали активны надписи ПИТАНИЕ, ОТКЛ и на дисплее появилась надпись  " \
                            "«Сработала защита ЗНФ» нажмите кнопку «ОК». Иначе нажмите кнопку «ОТМЕНА»"
         self.msg_28: str = "Тест 5 не пройден. Блок не исправен.Нет отключения от защиты ЗНФ»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestMKZP64Sh.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10(self):
         """

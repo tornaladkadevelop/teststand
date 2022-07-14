@@ -12,6 +12,7 @@
 
 import math
 import sys
+import logging
 
 from time import sleep
 
@@ -35,6 +36,14 @@ class TestBP(object):
         self.emkost_kond_d: float = 0.0
 
         self.msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БП в соответствующий разъем"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBP.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bp(self) -> bool:
         """

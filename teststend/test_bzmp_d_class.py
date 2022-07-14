@@ -12,6 +12,7 @@
 __all__ = ["TestBZMPD"]
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -50,6 +51,14 @@ class TestBZMPD(object):
         self.msg_3 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         self.msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         self.msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBZMPD.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bzmp_d(self) -> bool:
         """

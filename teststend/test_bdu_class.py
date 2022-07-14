@@ -10,6 +10,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -29,6 +30,14 @@ class TestBDU(object):
         self.__read_mb = ReadMB()
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBDU.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_1_bdu(self) -> bool:
         """

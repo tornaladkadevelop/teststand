@@ -10,6 +10,7 @@
 """
 
 import sys
+import logging
 
 from my_msgbox import *
 from gen_func_utils import *
@@ -28,6 +29,14 @@ class TestBRU2S(object):
         self.__mysql_conn = MySQLConnect()
         self.msg_1 = "Переведите тумблер «П/А» на блоке в положение «П» и нажмите кнопку «ОК» " \
                      "Если на блоке нет тумблера «П/А» нажмите кнопку «Отмена»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBRU2S.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bru_2s(self) -> bool:
         """

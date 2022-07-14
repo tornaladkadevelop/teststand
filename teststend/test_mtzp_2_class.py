@@ -9,6 +9,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -52,6 +53,14 @@ class TestMTZP2(object):
         self.msg_5 = "С помощью кнопок на лицевой панели установите следующие значения режима МТЗ-3: \n" \
                      "- Защита введена: ДА; - Уставка по току: 200А; \n" \
                      "- Уставка по времени: 60000 мс; - Отключение КА – ДА."
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestMTZP2.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
         """

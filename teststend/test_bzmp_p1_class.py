@@ -7,6 +7,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep, time
 
@@ -41,6 +42,14 @@ class TestBZMPP1(object):
         self.msg_3 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         self.msg_4 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
         self.msg_5 = "С помощью кнопок SB1…SB3 перейдите к окну на дисплее блока с надписью «Токи фаз»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBZMPP1.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bzmp_p1(self) -> bool:
         """

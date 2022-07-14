@@ -11,6 +11,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -36,6 +37,14 @@ class TestBMZAPSHM(object):
         self.coef_volt: float = 0.0
         self.msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
                      "Вставьте блок в соответствующий испытательный разъем»"
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBMZAPShM.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def st_test_10_bmz_apsh_m(self) -> bool:
         """

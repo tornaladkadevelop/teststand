@@ -19,6 +19,7 @@
 """
 
 import sys
+import logging
 
 from time import sleep
 
@@ -38,6 +39,14 @@ class TestBDU014TP(object):
         self.__read_mb = ReadMB()
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
+
+        logging.basicConfig(filename="C:\Stend\project_class\TestBDU014TP.log",
+                            filemode="w",
+                            level=logging.DEBUG,
+                            encoding="utf-8",
+                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
+        self.logger = logging.getLogger(__name__)
 
     def test_1(self) -> bool:
         """
