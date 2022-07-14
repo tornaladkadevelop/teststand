@@ -277,8 +277,8 @@ class Procedure(object):
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(3)
-        min_volt = 0.9 * setpoint_volt
-        max_volt = 1.1 * setpoint_volt
+        min_volt = 0.88 * setpoint_volt
+        max_volt = 1.11 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.4 напряжение: '
@@ -291,8 +291,7 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.4 не пройдена")
             self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
-                                    "Неисправность узла формирования напряжения в стенде")
+            return False
 
     def start_procedure_35(self, calc_volt: float, setpoint_volt: float) -> bool:
         """
@@ -307,8 +306,8 @@ class Procedure(object):
         """
         self.vtor_obm.vtor_obm_tv1(calc_volt)
         sleep(3)
-        min_volt = 0.99 * setpoint_volt
-        max_volt = 1.21 * setpoint_volt
+        min_volt = 0.9 * setpoint_volt
+        max_volt = 1.1 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
         self.fault.debug_msg(f'процедура 3.5 напряжение: '
@@ -321,8 +320,7 @@ class Procedure(object):
             self.logger.warning(f"процедура 3.5 не пройдена")
             self.fault.debug_msg("процедура 3.5 не пройдена", 'red')
             self.reset.stop_procedure_3()
-            raise HardwareException("Выходное напряжение не соответствует заданию.\n"
-                                    "Неисправность узла формирования напряжения в стенде")
+            return False
 
     def procedure_1_21_31(self) -> float:
         """
