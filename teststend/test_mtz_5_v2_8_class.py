@@ -157,7 +157,7 @@ class TestMTZ5V28(object):
             pass
         else:
             return False
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_mtz, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_mtz, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "2")
@@ -234,7 +234,7 @@ class TestMTZ5V28(object):
                 self.list_delta_t_mtz.append('пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(setpoint_volt=i, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=i, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "3")
@@ -316,7 +316,7 @@ class TestMTZ5V28(object):
                 m += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_tzp_num[m]}', '4')
-            if self.__proc.procedure_1_24_34(setpoint_volt=n, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=n, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
@@ -389,13 +389,8 @@ class TestMTZ5V28(object):
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(447)
             return False
-        if self.__proc.start_procedure_1():
-            calc_vol = self.__proc.start_procedure_28(coef_volt=self.coef_volt, setpoint_volt=i)
-            if self.__proc.start_procedure_35(calc_volt=calc_vol, setpoint_volt=i):
-                pass
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                return False
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=(i * 1.15)):
+            pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False

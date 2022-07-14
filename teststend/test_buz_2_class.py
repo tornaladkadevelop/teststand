@@ -191,7 +191,7 @@ class TestBUZ2(object):
         return True
 
     def st_test_21_buz_2(self) -> bool:
-        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "2")
@@ -247,7 +247,7 @@ class TestBUZ2(object):
         return True
 
     def st_test_31_buz_2(self) -> bool:
-        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "3")

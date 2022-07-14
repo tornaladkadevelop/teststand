@@ -162,7 +162,7 @@ class TestUBTZ(object):
                 k += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка БМЗ {self.list_ust_bmz_num[k]}', '1')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен TV1', '1')
@@ -248,7 +248,7 @@ class TestUBTZ(object):
                 m += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка ТЗП {self.list_ust_tzp_num[m]}', '1')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=n):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=n):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("тест 3 неисправен TV1", '1')

@@ -30,7 +30,9 @@ class TestBZMPP1(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
-        self.ust = 14.64
+        self.ust: float = 14.64
+        self.ust_pmz: float = 25.2
+        self.ust_faz: float = 8.2
 
         self.coef_volt: float = 0.0
         self.timer_test_5_2: float = 0.0
@@ -139,11 +141,8 @@ class TestBZMPP1(object):
 
     def st_test_21_bzmp_p1(self) -> bool:
         self.__fault.debug_msg("идёт тест 2.1", 'blue')
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_29(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_38(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_pmz):
+            return True
         self.__mysql_conn.mysql_ins_result("неисправен TV1", "2")
         return False
 
@@ -190,11 +189,8 @@ class TestBZMPP1(object):
             pass
         else:
             return False
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_210(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_39(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_faz):
+            return True
         self.__mysql_conn.mysql_ins_result("неисправен TV1", "3")
         return False
 
@@ -259,7 +255,7 @@ class TestBZMPP1(object):
             pass
         else:
             return False
-        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust):
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust):
             return True
         self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
         return False

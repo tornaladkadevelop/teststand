@@ -37,6 +37,7 @@ class TestPMZ(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
+        self.ust_1: float = 80.0
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9)
         self.list_ust_volt = (75.4, 92, 114, 125, 141, 156.4, 172, 182.4, 196)
         self.list_delta_t = []
@@ -152,11 +153,8 @@ class TestPMZ(object):
         else:
             return False
         self.__fault.debug_msg("тест 2.3", 'blue')
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_212(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_312(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
+            return True
         self.__mysql_conn.mysql_ins_result('неисправен', '2')
         return False
 
@@ -218,7 +216,7 @@ class TestPMZ(object):
                 self.list_delta_t.append('пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 return False

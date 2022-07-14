@@ -320,7 +320,7 @@ class TestMKZP6(object):
         return True
 
     def st_test_42(self) -> bool:
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_1, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_1, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '4')
@@ -368,7 +368,7 @@ class TestMKZP6(object):
     def st_test_51(self) -> bool:
         self.__fault.debug_msg('тест 5.2', 3)
         self.__mysql_conn.mysql_ins_result("идёт тест 5.2", '5')
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '5')

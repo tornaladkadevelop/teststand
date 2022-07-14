@@ -145,7 +145,7 @@ class TestBTZ3(object):
             return False
         self.__fault.debug_msg("тест 2.1", 'blue')
         self.__mysql_conn.mysql_ins_result('идёт тест 2', '2')
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_prov, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_prov, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "2")
@@ -286,7 +286,7 @@ class TestBTZ3(object):
                 k += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_pmz_num[k]}', "4")
-            if self.__proc.procedure_1_24_34(setpoint_volt=i, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=i, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
@@ -360,7 +360,7 @@ class TestBTZ3(object):
                 m += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_tzp_num[m]}', "5")
-            if self.__proc.procedure_1_24_34(setpoint_volt=n, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=n, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")

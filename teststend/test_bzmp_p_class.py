@@ -34,6 +34,10 @@ class TestBZMPP(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
+        self.ust_pmz: float = 25.2
+        self.ust_faz: float = 8.2
+        self.ust_peregruz: float = 10.7
+
         self.coef_volt: float = 0.0
         self.timer_test_6_2: float = 0.0
 
@@ -202,11 +206,8 @@ class TestBZMPP(object):
             pass
         else:
             return False
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_29(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_38(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_pmz):
+            return True
         self.__mysql_conn.mysql_ins_result("неисправен", "4")
         return False
 
@@ -254,11 +255,8 @@ class TestBZMPP(object):
             pass
         else:
             return False
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_210(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_39(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_faz):
+            return True
         self.__mysql_conn.mysql_ins_result("неисправен TV1", "5")
         return False
 
@@ -316,11 +314,8 @@ class TestBZMPP(object):
             pass
         else:
             return False
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_211(coef_volt=self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_310(calc_volt=calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_peregruz):
+            return True
         self.__mysql_conn.mysql_ins_result("неисправен", "6")
         return False
 

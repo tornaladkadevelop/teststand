@@ -36,6 +36,7 @@ class TestBTZT(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
+        self.ust_test: float = 80.0
         # self.ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
         self.list_ust_tzp_volt = (25.7, 30.6, 37.56, 39.4, 44.6, 49.3)
         # self.list_ust_pmz_volt = (67.9, 86.4, 99.1, 117.2, 140.7, 146.4, 156.6, 164.2, 175.7, 183.7, 192.1)
@@ -159,11 +160,8 @@ class TestBTZT(object):
             return False
         self.__fault.debug_msg("тест 2", 'blue')
         self.__mysql_conn.mysql_ins_result('идет тест 2.1', '2')
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_23(self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_37(calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_test):
+            return True
         self.__mysql_conn.mysql_ins_result('неисправен', '2')
         return False
 
@@ -318,7 +316,7 @@ class TestBTZT(object):
                 k += 1
                 continue
             self.__mysql_conn.mysql_ins_result('идет тест 4.1', '4')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '4')
@@ -409,7 +407,7 @@ class TestBTZT(object):
                 m += 1
                 continue
             self.__mysql_conn.mysql_ins_result('идет тест 5.1', '5')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=n):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=n):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '5')

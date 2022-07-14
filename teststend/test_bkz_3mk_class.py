@@ -67,11 +67,11 @@ class TestBKZ3MK(object):
         self.msg_4 = "Установите регулятор МТЗ (1-11), расположенный на блоке, в положение «11»"
         self.msg_5 = "Установите регулятор ТЗП (0.3-1.1), расположенный на блоке в положение"
 
-        logging.basicConfig(filename="TestBKZ3MK.log",
+        logging.basicConfig(filename="C:\Stend\project_class\TestBKZ3MK.log",
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        # logging.getLogger('mysql').setLevel('INFO')
+        logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
 
     def st_test_0_bkz_3mk(self) -> bool:
@@ -267,7 +267,7 @@ class TestBKZ3MK(object):
                 self.list_delta_t_mtz.append('пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, процедура 1, 2.4, 3.4 не пройдена")
@@ -324,33 +324,34 @@ class TestBKZ3MK(object):
                 if self.__subtest_45():
                     self.__fault.debug_msg("подтест 4.5 пройден", 'green')
                     self.logger.debug("подтест 4.5 пройден")
-                    k += 1
+
                     self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, блок исправен, "
                                       f"переход на проверку следующей уставки")
+                    k += 1
                     continue
                 else:
                     self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, неисправен")
                     self.__fault.debug_msg("подтест 4.5 не пройден", 'red')
                     self.__mysql_conn.mysql_ins_result('неисправен', '4')
-                    k += 1
                     self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, блок не исправен, "
                                       f"переход на проверку следующей уставки")
+                    k += 1
                     continue
             else:
                 if self.__subtest_42(i, k):
                     self.logger.debug(f"подтест 4.2 пройден")
                     self.__fault.debug_msg("подтест 4.2 пройден", 'green')
-                    k += 1
                     self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, блок исправен, "
                                       f"переход на проверку следующей уставки")
+                    k += 1
                     continue
                 else:
                     self.logger.debug(f"подтест 4.2 не пройден")
                     self.__fault.debug_msg("подтест 4.2 не пройден", 'red')
                     self.__mysql_conn.mysql_ins_result('неисправен', '4')
-                    k += 1
                     self.logger.debug(f"уставка {self.list_ust_mtz_num[k]}, блок не исправен, "
                                       f"переход на проверку следующей уставки")
+                    k += 1
                     continue
         self.__mysql_conn.mysql_ins_result('исправен', '4')
         self.__fault.debug_msg(f'{self.list_result_mtz}', 'orange')
@@ -385,7 +386,7 @@ class TestBKZ3MK(object):
                 self.list_delta_t_tzp.append('пропущена')
                 m += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=n):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=n):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '5')

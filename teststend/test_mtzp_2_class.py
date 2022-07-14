@@ -288,7 +288,7 @@ class TestMTZP2(object):
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         :return: bool
         """
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_1, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_1, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен TV1', '4')
@@ -352,7 +352,7 @@ class TestMTZP2(object):
         :return: boolean
         """
         self.__mysql_conn.mysql_ins_result('идёт тест 5.2', '5')
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен TV1', '5')
@@ -392,7 +392,7 @@ class TestMTZP2(object):
             return False
         self.__mysql_conn.mysql_ins_result('идёт тест 6.1', '6')
         self.__resist.resist_ohm(0)
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен TV1', '6')
@@ -445,7 +445,7 @@ class TestMTZP2(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '7')
             return False
         self.__fault.debug_msg('тест 7.1 положение выходов соответствует', 'green')
-        if self.__proc.procedure_1_24_34(setpoint_volt=self.ust_3, coef_volt=self.coef_volt):
+        if self.__proc.procedure_x4_to_x5(setpoint_volt=self.ust_3, coef_volt=self.coef_volt):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен TV1', '7')

@@ -85,7 +85,7 @@ class TestMTZ5V411(object):
         Тест 1.1
         :return: bool
         """
-        self.__mysql_conn.mysql_ins_result('идёт тест 1', '1')
+        self.__mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
         self.logger.debug("тест 1.1")
         self.__ctrl_kl.ctrl_relay('KL1', True)
         sleep(0.5)
@@ -108,7 +108,8 @@ class TestMTZ5V411(object):
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         :return: bool
         """
-        self.__mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
+        self.logger.debug("тест 1.2")
+        self.__mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
         meas_volt_ust = self.__proc.procedure_1_21_31()
         if meas_volt_ust != 0.0:
             pass
@@ -138,7 +139,8 @@ class TestMTZ5V411(object):
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         :return: bool
         """
-        self.__mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
+        self.logger.debug("тест 1.3")
+        self.__mysql_conn.mysql_ins_result('идёт тест 1.3', '1')
         self.__fault.debug_msg("1.2. Определение коэффициента Кс отклонения фактического "
                                "напряжения от номинального", 'blue')
         self.coef_volt = self.__proc.procedure_1_22_32()
@@ -157,11 +159,13 @@ class TestMTZ5V411(object):
         Тест 2. Проверка работоспособности защиты МТЗ блока в режиме «Проверка»
         :return: bool
         """
+        self.logger.debug("тест 2.0")
         if my_msg(self.msg_3):
             pass
         else:
             return False
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } (False), {in_a5 = } (True)")
         if in_a1 is False and in_a5 is True:
             pass
         else:
@@ -182,10 +186,12 @@ class TestMTZ5V411(object):
             pass
         else:
             return False
-        self.__mysql_conn.mysql_ins_result('идёт тест 2.4', '2')
-        self.__fault.debug_msg("2.4.2. Сброс защит после проверки", 'blue')
+        self.logger.debug("тест 2.1")
+        self.__mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
+        self.__fault.debug_msg("2.1 Сброс защит после проверки", 'blue')
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
             pass
         else:
@@ -205,6 +211,7 @@ class TestMTZ5V411(object):
         Тест 3. Проверка срабатывания защиты ПМЗ блока по уставкам
         :return: bool
         """
+        self.logger.debug("тест 3.0")
         self.__mysql_conn.mysql_ins_result('идёт тест 3', '3')
         k = 0
         for i in self.list_ust_mtz_volt:
@@ -219,7 +226,7 @@ class TestMTZ5V411(object):
                 self.list_delta_t_mtz.append('пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(setpoint_volt=i, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=i, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "3")
@@ -234,13 +241,13 @@ class TestMTZ5V411(object):
             self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.2f}')
 
             calc_delta_t_mtz, in_a1, in_a5 = self.__subtest_time_calc()
-
+            self.logger.debug(f"время срабатывания: {calc_delta_t_mtz}мс: {in_a1 = } (True), {in_a5 = } (False)")
             self.__reset.stop_procedure_3()
             if calc_delta_percent_mtz != 9999 and in_a1 is False and in_a5 is True:
                 self.__fault.debug_msg(f'дельта t\t{calc_delta_t_mtz}', 'orange')
                 self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
-                self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
-                                                    f'дельта t: {calc_delta_t_mtz:.1f}'
+                self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]}\t'
+                                                    f'дельта t: {calc_delta_t_mtz:.1f}\t'
                                                     f'дельта %: {calc_delta_percent_mtz:.2f}')
                 if self.__subtest_33():
                     k += 1
@@ -249,13 +256,13 @@ class TestMTZ5V411(object):
                     self.__mysql_conn.mysql_ins_result('неисправен', '3')
                     return False
             else:
-                # self.__mysql_conn.mysql_error(448)
                 if self.__subtest_32(i, k):
                     if self.__subtest_33():
                         k += 1
                         continue
                     else:
                         self.health_flag = True
+                        self.__mysql_conn.mysql_error(448)
                         self.__mysql_conn.mysql_ins_result('неисправен', '3')
                         return False
                 else:
@@ -274,6 +281,7 @@ class TestMTZ5V411(object):
         Тест 4. Проверка срабатывания защиты от перегрузки блока по уставкам
         :return: bool
         """
+        self.logger.debug("тест 4.0")
         if my_msg(self.msg_6):
             pass
         else:
@@ -297,7 +305,7 @@ class TestMTZ5V411(object):
                 m += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_tzp_num[m]}', '4')
-            if self.__proc.procedure_1_24_34(setpoint_volt=n, coef_volt=self.coef_volt):
+            if self.__proc.procedure_x4_to_x5(setpoint_volt=n, coef_volt=self.coef_volt):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
@@ -317,21 +325,22 @@ class TestMTZ5V411(object):
             start_timer_tzp = time()
             delta_t_tzp = 0
             in_a5 = self.__inputs_a5()
-            while in_a5 is False and delta_t_tzp <= 25:
+            while in_a5 is False and delta_t_tzp <= 30:
                 delta_t_tzp = time() - start_timer_tzp
                 in_a5 = self.__inputs_a5()
             stop_timer_tzp = time()
             calc_delta_t_tzp = stop_timer_tzp - start_timer_tzp
             self.__fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp:.1f}', 'orange')
-            self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
-                                                f'дельта t: {calc_delta_t_tzp:.1f}')
-            self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
-                                                f'дельта %: {calc_delta_percent_tzp:.2f}')
+
             in_a1, in_a5 = self.__inputs_a()
+            self.logger.debug(f"{in_a1 = } (False), {in_a5 = } (True)")
             self.__ctrl_kl.ctrl_relay('KL63', False)
             self.__reset.stop_procedure_3()
-            if in_a1 is False and in_a5 is True and calc_delta_t_tzp <= 20:
+            if in_a1 is False and in_a5 is True and calc_delta_t_tzp <= 30:
+                self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
+                self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]}\t'
+                                                    f'дельта t: {calc_delta_t_tzp:.1f}\t'
+                                                    f'дельта %: {calc_delta_percent_tzp:.2f}')
                 self.__fault.debug_msg("положение выходов соответствует", 'green')
                 if self.__subtest_45():
                     m += 1
@@ -339,6 +348,10 @@ class TestMTZ5V411(object):
                 else:
                     return False
             else:
+                self.list_delta_t_tzp.append(f'неисправен')
+                self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]}\t'
+                                                    f'дельта t: {calc_delta_t_tzp:.1f}\t'
+                                                    f'дельта %: {calc_delta_percent_tzp:.2f}')
                 self.__fault.debug_msg("положение выходов не соответствует", 'red')
                 self.__mysql_conn.mysql_error(448)
                 self.health_flag = True
@@ -350,11 +363,15 @@ class TestMTZ5V411(object):
         self.__mysql_conn.mysql_ins_result('исправен', '4')
         return True
 
-    def __subtest_time_calc(self):
-
+    def __subtest_time_calc(self) -> [float, bool, bool]:
+        self.logger.debug("подтест проверки времени срабатывания")
         for qw in range(3):
+            self.logger.debug(f"попытка: {qw}")
             self.delta_t_mtz = self.__ctrl_kl.ctrl_ai_code_v0(110)
             self.in_1, self.in_5 = self.__inputs_a()
+            self.logger.debug(f"время срабатывания: {self.delta_t_mtz}, "
+                              f"{self.in_1 = } is False, "
+                              f"{self.in_5 = } is True")
             if self.delta_t_mtz == 9999:
                 qw += 1
                 continue
@@ -372,8 +389,10 @@ class TestMTZ5V411(object):
         :param k: порядковый номер в цикле
         :return: bool
         """
+        self.logger.debug("тест 3.2")
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             pass
         else:
@@ -383,13 +402,8 @@ class TestMTZ5V411(object):
             elif in_a5 is True:
                 self.__mysql_conn.mysql_error(447)
             return False
-        if self.__proc.start_procedure_1():
-            calc_vol = self.__proc.start_procedure_28(coef_volt=self.coef_volt, setpoint_volt=i)
-            if self.__proc.start_procedure_35(calc_volt=calc_vol, setpoint_volt=i):
-                pass
-            else:
-                self.__mysql_conn.mysql_ins_result('неисправен', '3')
-                return False
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=(i * 1.15)):
+            pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
@@ -424,8 +438,10 @@ class TestMTZ5V411(object):
         Δ%= 3.4364*(U4[i])/0.63
         :return: bool
         """
+        self.logger.debug("тест 3.3")
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             return True
         else:
@@ -442,8 +458,10 @@ class TestMTZ5V411(object):
         Определение кратности сигнала нагрузки: Δ%= 3.4364*U4[i]/0.63
         :return: bool
         """
+        self.logger.debug("тест 4.5")
         self.__sbros_zashit()
         in_a1, in_a5 = self.__inputs_a()
+        self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             self.__fault.debug_msg("тест 4.5 положение выходов соответствует", 'green')
             return True
@@ -506,13 +524,20 @@ class TestMTZ5V411(object):
 
     def result_test_mtz(self):
         for g1 in range(len(self.list_delta_percent_mtz)):
+            self.logger.debug(f"уставка: {self.list_ust_mtz_num[g1]}, "
+                              f"%: {self.list_delta_percent_mtz[g1]}, "
+                              f"t: {self.list_delta_t_mtz[g1]}")
             self.list_mtz_result.append(
                 (self.list_ust_mtz_num[g1], self.list_delta_percent_mtz[g1], self.list_delta_t_mtz[g1]))
         self.__mysql_conn.mysql_pmz_result(self.list_mtz_result)
         for g2 in range(len(self.list_delta_percent_tzp)):
+            self.logger.debug(f"уставка: {self.list_ust_tzp_num[g2]}, "
+                              f"%: {self.list_delta_percent_tzp[g2]}, "
+                              f"t: {self.list_delta_t_tzp[g2]}")
             self.list_tzp_result.append(
                 (self.list_ust_tzp_num[g2], self.list_delta_percent_tzp[g2], self.list_delta_t_tzp[g2]))
         self.__mysql_conn.mysql_tzp_result(self.list_tzp_result)
+        self.logger.debug("результаты тестов записаны в БД")
 
 
 if __name__ == '__main__':

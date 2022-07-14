@@ -256,7 +256,7 @@ class TestBZMPD(object):
         else:
             return False
         self.__mysql_conn.mysql_ins_result('идёт тест 4.1', '4')
-        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен", "4")
@@ -308,7 +308,7 @@ class TestBZMPD(object):
         """
         self.__fault.debug_msg("идёт тест 5.0", 'blue')
         self.__mysql_conn.mysql_ins_result('идёт тест 5.1', '5')
-        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")

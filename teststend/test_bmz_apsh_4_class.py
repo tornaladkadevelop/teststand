@@ -135,7 +135,7 @@ class TestBMZAPSH4(object):
                 k += 1
                 continue
             self.__mysql_conn.mysql_ins_result(f'уставка {self.list_ust_num[k]}', '4')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен TV1', '1')

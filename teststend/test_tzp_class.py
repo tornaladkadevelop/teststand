@@ -49,11 +49,12 @@ class TestTZP(object):
         self.msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
         self.msg_3 = "Установите регулятор уставок на блоке в положение"
 
-        logging.basicConfig(filename="TestTZP.log",
+        logging.basicConfig(filename="C:\Stend\project_class\TestTZP.log",
+                            filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        # logging.getLogger('mysql').setLevel('INFO')
+        logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
@@ -242,7 +243,7 @@ class TestTZP(object):
                 self.logger.debug(f'уставка: {k} пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 self.logger.debug(f'процедура 1, 2.4, 3.4: пройдена')
                 pass
             else:
@@ -300,8 +301,8 @@ class TestTZP(object):
                     # состояние, указанное в таблице выше, то переходим к п.3.6.
                     self.__fault.debug_msg("время переключения соответствует", 'green')
                     if self.__subtest_35():
-                        k += 1
                         self.logger.debug(f"переход на новую итерацию цикла")
+                        k += 1
                         continue
                     else:
                         self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]}: '

@@ -159,7 +159,7 @@ class TestMMTZD(object):
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} пропущена')
                 k += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '2')
@@ -218,7 +218,7 @@ class TestMMTZD(object):
                 self.__mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[x]} пропущена')
                 x += 1
                 continue
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=y):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=y):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')

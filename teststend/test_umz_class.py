@@ -173,7 +173,7 @@ class TestUMZ(object):
                 continue
             progress_msg = f'формируем U уставки'
             self.__mysql_conn.mysql_ins_result(f'{progress_msg} {self.k}', '2')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '2')
