@@ -36,6 +36,7 @@ class TestBMZ2(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
+        self.ust_test = 80.0
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
         # расчетный лист уставок (при тестировании данных напряжений не хватает)
         # ust = (32.2, 40.2, 48.2, 56.3, 64.3, 72.3, 80.4, 88.4, 96.5, 104.5, 112.5)
@@ -145,11 +146,8 @@ class TestBMZ2(object):
             return False
         self.__mysql_conn.mysql_ins_result('идет тест 2', '2')
         self.__fault.debug_msg("начало теста 2, сброс всех реле", 4)
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_23(self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_37(calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_test):
+            return True
         self.__mysql_conn.mysql_ins_result('неисправен', '2')
         return False
 
@@ -227,12 +225,12 @@ class TestBMZ2(object):
                 k += 1
                 continue
             self.__mysql_conn.mysql_ins_result('идет тест 3.1', '3')
-            if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i):
+            if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=i):
                 pass
             else:
                 self.__mysql_conn.mysql_ins_result('неисправен', '3')
                 return False
-            qw = 0
+            # qw = 0
             for qw in range(4):
                 self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
                 self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
@@ -326,7 +324,7 @@ class TestBMZ2(object):
         self.__fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
         self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'
         self.__mysql_conn.mysql_ins_result('идет тест 3.4', '3')
-        wq = 0
+        # wq = 0
         for wq in range(4):
             self.calc_delta_t = self.__ctrl_kl.ctrl_ai_code_v0(code=104)
             self.__fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
