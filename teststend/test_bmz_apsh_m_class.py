@@ -34,6 +34,8 @@ class TestBMZAPSHM(object):
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
 
+        self.ust_1: float = 85.6
+
         self.coef_volt: float = 0.0
         self.msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
                      "Вставьте блок в соответствующий испытательный разъем»"
@@ -128,11 +130,8 @@ class TestBMZAPSHM(object):
         Тест 2. Проверка работы 1 канала блока
         """
         self.__fault.debug_msg("тест 2.0", 4)
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_26(self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_33(calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
+            return True
         self.__mysql_conn.mysql_ins_result('неисправен', '2')
         return False
 
@@ -202,11 +201,8 @@ class TestBMZAPSHM(object):
         """
         self.__fault.debug_msg("тест 3", 4)
         self.__ctrl_kl.ctrl_relay('KL73', True)
-        if self.__proc.start_procedure_1():
-            calc_volt = self.__proc.start_procedure_26(self.coef_volt)
-            if calc_volt != 0.0:
-                if self.__proc.start_procedure_33(calc_volt):
-                    return True
+        if self.__proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
+            return True
         self.__mysql_conn.mysql_ins_result('неисправен', '3')
         return False
 
@@ -269,7 +265,6 @@ class TestBMZAPSHM(object):
     def __inputs_a0(self):
         in_a0 = self.__read_mb.read_discrete(0)
         if in_a0 is None:
-            # logging.error(f'нет связи с контроллером')
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a0
 
