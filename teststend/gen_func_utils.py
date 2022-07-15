@@ -10,7 +10,7 @@ from my_msgbox import *
 from gen_mb_client import *
 
 __all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectException", "HardwareException",
-           "ResultMsg"]
+           "ResultMsg", "ReadDI"]
 
 
 class DeltaTimeNoneKL63(object):
@@ -22,6 +22,7 @@ class DeltaTimeNoneKL63(object):
         Остановка таймера происходит по условию размыкания DI.a6 T1[i]
 
     """
+
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
@@ -53,6 +54,7 @@ class Bug(object):
     """
         Вывод сообщений в консоль, с цветовой дифференциацией штанов
     """
+
     def __init__(self, dbg=None):
         self.dbg = dbg
         kernel32 = ctypes.windll.kernel32
@@ -92,9 +94,20 @@ class ResetRelay(object):
     """
         сбросы реле в различных вариациях в зависимости от алгоритма
     """
+
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.logger = logging.getLogger(__name__)
+
+    def sbros_zashit_mtz5(self):
+        self.logger.debug("сброс защит МТЗ-5, KL1 1.5сек")
+        self.ctrl_kl.ctrl_relay('KL1', False)
+        self.logger.debug("отключение KL1")
+        sleep(1.5)
+        self.ctrl_kl.ctrl_relay('KL1', True)
+        self.logger.debug("включение KL1")
+        sleep(2)
+        self.logger.debug("таймаут 2сек, выполнен сброс защит")
 
     def sbros_zashit_kl1(self):
         self.logger.debug("сброс защит KL1 1.5сек")
@@ -104,7 +117,7 @@ class ResetRelay(object):
         self.ctrl_kl.ctrl_relay('KL1', False)
         self.logger.debug('отключение KL1')
         sleep(2)
-        self.logger.debug('таймаут 2сек')
+        self.logger.debug('таймаут 2сек, выполнен сброс защит')
 
     def sbros_zashit_kl30(self):
         self.logger.debug("сброс защит KL30 0.5сек")
@@ -114,7 +127,7 @@ class ResetRelay(object):
         self.ctrl_kl.ctrl_relay('KL30', False)
         self.logger.debug('отключение KL30')
         sleep(0.5)
-        self.logger.debug('таймаут 0.5сек')
+        self.logger.debug('таймаут 0.5сек, выполнен сброс защит')
 
     def sbros_zashit_kl30_1s5(self):
         self.logger.debug("сброс защит KL30 1.5сек")
@@ -124,7 +137,7 @@ class ResetRelay(object):
         self.ctrl_kl.ctrl_relay('KL30', False)
         self.logger.debug('отключение KL30')
         sleep(2.0)
-        self.logger.debug('таймаут 2сек')
+        self.logger.debug('таймаут 2сек, выполнен сброс защит')
 
     def reset_all(self):
         self.logger.debug("отключение всех реле")
@@ -208,7 +221,7 @@ class ResetRelay(object):
         self.ctrl_kl.ctrl_relay('Q113_6', False)
         self.ctrl_kl.ctrl_relay('Q113_7', False)
         self.logger.debug("все реле отключены")
-        
+
     def sbros_perv_obm(self):
         self.logger.debug("отключение реле первичной обмотки")
         self.ctrl_kl.ctrl_relay('KL38', False)
@@ -221,7 +234,7 @@ class ResetRelay(object):
         self.ctrl_kl.ctrl_relay('KL45', False)
         self.ctrl_kl.ctrl_relay('KL46', False)
         self.ctrl_kl.ctrl_relay('KL47', False)
-        
+
     def sbros_vtor_obm(self):
         self.logger.debug("отключение реле вторичной обмотки")
         self.ctrl_kl.ctrl_relay('KL48', False)
@@ -330,6 +343,7 @@ class Resistor(object):
         R17		295,5	кОм	KL20
         R18		183,3	кОм	
     """
+
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.logger = logging.getLogger(__name__)
@@ -446,7 +460,7 @@ class Resistor(object):
             self.ctrl_kl.ctrl_relay('KL9', False)
             self.ctrl_kl.ctrl_relay('KL10', False)
             self.logger.debug("включение 255 ом")
-        
+
     def resist_kohm(self, kohm):
 
         if kohm == 0:
@@ -559,7 +573,7 @@ class Resistor(object):
             self.ctrl_kl.ctrl_relay('KL19', False)
             self.ctrl_kl.ctrl_relay('KL20', False)
             self.logger.debug("включение 590 ком")
-        
+
     def resist_10_to_20_ohm(self):
         self.ctrl_kl.ctrl_relay('KL3', True)
         self.ctrl_kl.ctrl_relay('KL6', True)
@@ -573,7 +587,7 @@ class Resistor(object):
         self.ctrl_kl.ctrl_relay('KL6', True)
         self.ctrl_kl.ctrl_relay('KL8', False)
         self.logger.debug("переключение с 10 ом на 35 ом")
-        
+
     def resist_10_to_100_ohm(self):
         self.ctrl_kl.ctrl_relay('KL9', False)
         self.ctrl_kl.ctrl_relay('KL8', False)
@@ -636,7 +650,7 @@ class Resistor(object):
         self.ctrl_kl.ctrl_relay('KL17', True)
         self.ctrl_kl.ctrl_relay('KL15', True)
         self.logger.debug("переключение с 220 ком на 100 ком")
-        
+
 
 class ModbusConnectException(Exception):
     """вываливается когда нет связи по modbus"""
@@ -652,6 +666,7 @@ class ResultMsg(object):
     """
     исправность/неисправность блока
     """
+
     def __init__(self):
         self.reset = ResetRelay()
 
@@ -664,3 +679,68 @@ class ResultMsg(object):
         msg = "Тестирование завершено:\nБлок исправен "
         my_msg(msg)
         self.reset.reset_all()
+
+
+class ReadDI(ReadMB):
+
+    def __init__(self):
+        super().__init__()
+        self.read_mb = ReadMB()
+        self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
+                   'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
+
+        self.inp_list = []
+
+    def inputs_di(self, *args: str):
+        self.inp_list = []
+        for i in args:
+            temp = self.di[i]
+            inp = self.read_mb.read_discrete(temp)
+            if inp is None:
+                raise ModbusConnectException(f'нет связи с контроллером')
+            self.inp_list.append(inp)
+        return self.inp_list
+
+
+# if __name__ == '__main__':
+#     try:
+#         read_di = ReadDI()
+#         # st_timer = time()
+#         # a = read_mb.read_discrete(0)
+#         # b = read_mb.read_discrete(1)
+#         # c = read_mb.read_discrete(2)
+#         # d = read_mb.read_discrete(3)
+#         # e = read_mb.read_discrete(4)
+#         # f = read_mb.read_discrete(5)
+#         # g = read_mb.read_discrete(6)
+#         # h = read_mb.read_discrete(7)
+#         # j = read_mb.read_discrete(8)
+#         # k = read_mb.read_discrete(9)
+#         # l = read_mb.read_discrete(10)
+#         # q = read_mb.read_discrete(11)
+#         # a, b, c = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2')
+#         # a = read_mb.read_discrete_v1('in_a0')
+#         # a, b, c, d, e, f, g, h, j, k, l, q = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4',
+#         #                                                               'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1',
+#         #                                                               'in_b2', 'in_b3')
+#         # stop_timer = time()
+#         # print(a, b, c, d, e, f, g, h, j, k, l, q)
+#         #
+#         # # print(a, b, c)
+#         # # print(a)
+#         # print(type(a))
+#         # print(stop_timer - st_timer)
+#         # in_1, in_5, in_6 = read_di.inputs_di("in_a0, in_a5, in_a6")
+#         # print(in_1, in_5, in_6)
+#         in_2, *_ = read_di.inputs_di("in_a2")
+#         print(in_2)
+#         # in_4, in_7 = read_di.inputs_di("in_a4", "in_a7")
+#         # print(in_4, in_7)
+#         # in_3 = read_di.inputs_di("in_a3")
+#         # print(in_3)
+#     except IOError:
+#         print('системная ошибка')
+#     except ModbusConnectException as mce:
+#         print(mce)
+#     finally:
+#         print('end')
