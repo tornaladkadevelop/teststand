@@ -681,10 +681,9 @@ class ResultMsg(object):
         self.reset.reset_all()
 
 
-class ReadDI(ReadMB):
+class ReadDI(object):
 
     def __init__(self):
-        super().__init__()
         self.read_mb = ReadMB()
         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
