@@ -315,9 +315,11 @@ class ReadMB(object):
         self.__di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
                      'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
-    def read_discrete(self, tag_index: int) -> [bool, None]:
-        self.__tags_value.append(self.__opc.list('Выходы.inputs')[tag_index])
-        val = self.__opc.read(self.__tags_value, update=1, include_error=True)
+    def read_discrete(self, tag_index):
+        self.tag_index = tag_index
+        tags_value = []
+        tags_value.append(self.__opc.list('Выходы.inputs')[self.tag_index])
+        val = self.__opc.read(tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -325,6 +327,18 @@ class ReadMB(object):
             return eval(list_str[1])
         else:
             return None
+
+    # !!!---- код ниже почему то ни хуя не работает ----!!!
+    # def read_discrete(self, tag_index: int) -> [bool, None]:
+    #     self.__tags_value.append(self.__opc.list('Выходы.inputs')[tag_index])
+    #     val = self.__opc.read(self.__tags_value, update=1, include_error=True)
+    #     conv_lst = ' '.join(map(str, val))
+    #     list_str = conv_lst.split(', ', 5)
+    #     list_str[0] = list_str[0][2:-1]
+    #     if list_str[2] == "'Good'":
+    #         return eval(list_str[1])
+    #     else:
+    #         return None
 
     def read_discrete_v1(self, *args: str) -> [bool, None]:
         """
