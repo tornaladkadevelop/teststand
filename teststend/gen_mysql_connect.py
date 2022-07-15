@@ -5,14 +5,14 @@
     Класс mysql для чтения и записи в БД
 """
 
-__all__ = ['MySQLConnect']
-
 import logging
 from datetime import datetime
 
 import mysql.connector
 
 from gen_func_utils import Bug
+
+__all__ = ['MySQLConnect']
 
 
 class MySQLConnect(object):
