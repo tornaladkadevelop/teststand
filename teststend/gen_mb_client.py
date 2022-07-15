@@ -4,7 +4,7 @@
 import logging
 
 from OpenOPC import client
-from time import sleep, time
+from time import sleep
 
 __all__ = ['CtrlKL', 'ReadMB']
 
@@ -312,8 +312,8 @@ class ReadMB(object):
         self.__opc.connect('arOPC.arOpcServer.1')
         self.__tags_value = []
         self.__analog_tags_value = []
-        self.__di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
-                     'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
+        self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
+                   'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
     def read_discrete(self, tag_index):
         self.tag_index = tag_index
@@ -340,7 +340,7 @@ class ReadMB(object):
     #     else:
     #         return None
 
-    def read_discrete_v1(self, *args: str) -> [bool, None]:
+    def read_discrete_v1(self, *args):
         """
 
         :param args:
@@ -349,7 +349,7 @@ class ReadMB(object):
         list_result = []
         val = []
         for i in args:
-            tag = self.__di[i]
+            tag = self.di[i]
             self.__tags_value.append(self.__opc.list('Выходы.inputs')[tag])
             val = self.__opc.read(self.__tags_value, update=1, include_error=True)
         for n in val:
@@ -461,10 +461,10 @@ class ReadMB(object):
             return 999
 
 
-if __name__ == '__main__':
-    try:
-        read_mb = ReadMB()
-        st_timer = time()
+# if __name__ == '__main__':
+#     try:
+        # read_mb = ReadDI()
+        # st_timer = time()
         # a = read_mb.read_discrete(0)
         # b = read_mb.read_discrete(1)
         # c = read_mb.read_discrete(2)
@@ -479,17 +479,21 @@ if __name__ == '__main__':
         # q = read_mb.read_discrete(11)
         # a, b, c = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2')
         # a = read_mb.read_discrete_v1('in_a0')
-        a, b, c, d, e, f, g, h, j, k, l, q = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4',
-                                                                      'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1',
-                                                                      'in_b2', 'in_b3')
-        stop_timer = time()
-        print(a, b, c, d, e, f, g, h, j, k, l, q)
-
-        # print(a, b, c)
-        # print(a)
-        print(type(a))
-        print(stop_timer - st_timer)
-    except IOError:
-        print('системная ошибка')
-    finally:
-        print('end')
+        # a, b, c, d, e, f, g, h, j, k, l, q = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4',
+        #                                                               'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1',
+        #                                                               'in_b2', 'in_b3')
+        # stop_timer = time()
+        # print(a, b, c, d, e, f, g, h, j, k, l, q)
+        #
+        # # print(a, b, c)
+        # # print(a)
+        # print(type(a))
+        # print(stop_timer - st_timer)
+    #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
+    #     print(in_1, in_5, in_6)
+    # except IOError:
+    #     print('системная ошибка')
+    # except ModbusConnectException as mce:
+    #     print(mce)
+    # finally:
+    #     print('end')
