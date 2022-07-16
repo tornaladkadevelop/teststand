@@ -18,6 +18,7 @@ from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
 from gen_mysql_connect import *
+from gen_subtest import SubtestBDU
 
 __all__ = ["TestBDU43"]
 
@@ -26,12 +27,13 @@ class TestBDU43(object):
 
     def __init__(self):
         self.__resist = Resistor()
-        self.__read_mb = ReadMB()
+        self.read_di = ReadDI()
         self.__ctrl_kl = CtrlKL()
         self.__mysql_conn = MySQLConnect()
+        self.sub_test = SubtestBDU()
         self.__fault = Bug(True)
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBDU43.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBDU43.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
@@ -43,31 +45,22 @@ class TestBDU43(object):
         """
             Тест 1. Проверка исходного состояния блока:
         """
-        self.__mysql_conn.mysql_ins_result("идет тест 1", '1')
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
-            pass
-        else:
+        if self.sub_test.subtest_bdu_inp_a1(test_num=1, subtest_num=1.0, err_code=47):
             self.__mysql_conn.mysql_ins_result("неисправен", '1')
+            return True
+        else:
             return False
-        self.__mysql_conn.mysql_ins_result("исправен", '1')
-        return True
 
     def st_test_20_bdu_4_3(self) -> bool:
         """
             Тест 2. Проверка включения выключения блока от кнопки «Пуск Стоп».
             2.1. Проверка исходного состояния блока
         """
-        self.__mysql_conn.mysql_ins_result("идет тест 2.1", '2')
         self.__ctrl_kl.ctrl_relay('KL2', True)
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
-            pass
+        if self.sub_test.subtest_bdu_inp_a1(test_num=2, subtest_num=2.0, err_code=13):
+            return True
         else:
-            self.__mysql_conn.mysql_error(13)
-            self.__mysql_conn.mysql_ins_result("неисправен", '2')
             return False
-        return True
 
     def st_test_21_bdu_4_3(self) -> bool:
         """
@@ -85,16 +78,13 @@ class TestBDU43(object):
         """
         self.__mysql_conn.mysql_ins_result("идет тест 2.4", '2')
         self.__ctrl_kl.ctrl_relay('KL12', False)
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
+        if self.sub_test.subtest_bdu_inp_a1(test_num=2, subtest_num=2.4, err_code=23):
             pass
         else:
-            self.__mysql_conn.mysql_error(23)
-            self.__mysql_conn.mysql_ins_result("неисправен", '2')
             return False
+        self.__mysql_conn.mysql_ins_result("неисправен", '2')
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
-        self.__mysql_conn.mysql_ins_result("исправен", '2')
         return True
 
     def st_test_30_bdu_4_3(self) -> bool:
@@ -111,17 +101,14 @@ class TestBDU43(object):
             3. Отключение исполнительного элемента при увеличении сопротивления цепи заземления
         """
         self.__resist.resist_0_to_63_ohm()
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
+        if self.sub_test.subtest_bdu_inp_a1(test_num=3, subtest_num=3.3, err_code=24):
             pass
         else:
-            self.__mysql_conn.mysql_error(24)
-            self.__mysql_conn.mysql_ins_result("неисправен", '3')
             return False
+        self.__mysql_conn.mysql_ins_result("неисправен", '3')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
-        self.__mysql_conn.mysql_ins_result("исправен", '3')
         return True
 
     def st_test_40_bdu_4_3(self) -> bool:
@@ -138,18 +125,15 @@ class TestBDU43(object):
             Тест 4. Защита от потери управляемости при замыкании проводов ДУ
         """
         self.__ctrl_kl.ctrl_relay('KL11', True)
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
+        if self.sub_test.subtest_bdu_inp_a1(test_num=4, subtest_num=4.3, err_code=3):
             pass
         else:
-            self.__mysql_conn.mysql_error(3)
-            self.__mysql_conn.mysql_ins_result("неисправен", '4')
             return False
+        self.__mysql_conn.mysql_ins_result("неисправен", '4')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.__ctrl_kl.ctrl_relay('KL25', False)
         self.__ctrl_kl.ctrl_relay('KL1', False)
         self.__ctrl_kl.ctrl_relay('KL11', False)
-        self.__mysql_conn.mysql_ins_result("исправен", '4')
         return True
 
     def st_test_50_bdu_4_3(self) -> bool:
@@ -166,16 +150,12 @@ class TestBDU43(object):
             Тест 5. Защита от потери управляемости при обрыве проводов ДУ
         """
         self.__ctrl_kl.ctrl_relay('KL12', False)
-        in_a1 = self.__inputs_a()
-        if in_a1 is False:
-            pass
-        else:
-            self.__mysql_conn.mysql_error(4)
+        if self.sub_test.subtest_bdu_inp_a1(test_num=5, subtest_num=5.3, err_code=4):
             self.__mysql_conn.mysql_ins_result("неисправен", '5')
+            return True
+        else:
             return False
-        self.__mysql_conn.mysql_ins_result("исправен", '5')
-        return True
-    
+
     def __subtest_22(self, subtest_2_num: float, test_2_num: int) -> bool:
         """
             2.2. Включение блока от кнопки «Пуск»
@@ -184,16 +164,10 @@ class TestBDU43(object):
         self.__resist.resist_ohm(0)
         self.__ctrl_kl.ctrl_relay('KL12', True)
         sleep(1)
-        in_a1 = self.__inputs_a()
-        if in_a1 is True:
-            pass
+        if self.sub_test.subtest_bdu_inp_a1(test_num=test_2_num, subtest_num=subtest_2_num, err_code=21, position=True):
+            return True
         else:
-            self.__mysql_conn.mysql_ins_result("неисправен", f'{test_2_num}')
-            self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов не соответствует', 1)
-            self.__mysql_conn.mysql_error(21)
             return False
-        self.__fault.debug_msg(f'тест {subtest_2_num} положение выходов соответствует', 3)
-        return True
 
     def __subtest_23(self, subtest_3_num: float, test_3_num: int) -> bool:
         """
@@ -203,22 +177,10 @@ class TestBDU43(object):
         self.__ctrl_kl.ctrl_relay('KL1', True)
         self.__ctrl_kl.ctrl_relay('KL25', True)
         sleep(1)
-        in_a1 = self.__inputs_a()
-        if in_a1 is True:
-            pass
+        if self.sub_test.subtest_bdu_inp_a1(test_num=test_3_num, subtest_num=subtest_3_num, err_code=22, position=True):
+            return True
         else:
-            self.__mysql_conn.mysql_ins_result("неисправен", f'{test_3_num}')
-            self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов не соответствует', 1)
-            self.__mysql_conn.mysql_error(22)
             return False
-        self.__fault.debug_msg(f'тест {subtest_3_num} положение выходов соответствует', 3)
-        return True
-
-    def __inputs_a(self) -> bool:
-        in_a1 = self.__read_mb.read_discrete(1)
-        if in_a1 is None:
-            raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a1
 
     def st_test_bdu_4_3(self) -> bool:
         """
