@@ -38,7 +38,7 @@ class TestBDUD(object):
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        logging.getLogger('mysql').setLevel('WARNING')
+        logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
@@ -125,7 +125,6 @@ class TestBDUD(object):
         """
         Тест 4. Защита от потери управляемости при замыкании проводов ДУ
         """
-        self.__mysql_conn.mysql_add_message(f"старт теста: 4, подтест: 2")
         self.logger.debug(f"старт теста: 4, подтест: 2")
         self.__ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug(f'включение KL11')
@@ -153,9 +152,7 @@ class TestBDUD(object):
         """
         Тест 5. Защита от потери управляемости при обрыве проводов ДУ
         """
-        self.__mysql_conn.mysql_add_message(f"старт теста: 5, подтест: 2")
         self.logger.debug(f"старт теста: 5, подтест: 2")
-        self.__mysql_conn.mysql_ins_result("идет тест 5.2", '5')
         self.__ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(f'отключение KL12')
         sleep(3)

@@ -38,7 +38,7 @@ class TestBRU2S(object):
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        logging.getLogger('mysql').setLevel('WARNING')
+        logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
 
     def st_test_10(self) -> bool:
@@ -57,6 +57,7 @@ class TestBRU2S(object):
         """
         self.logger.debug(f"старт теста: 2, подтест: 0")
         self.__ctrl_kl.ctrl_relay('KL21', True)
+        self.logger.debug(f'включение KL21')
         if self.sub_test.subtest_bdu_inp_a1(test_num=2, subtest_num=2.0, err_code=48, position=False):
             return True
         return False
@@ -77,11 +78,13 @@ class TestBRU2S(object):
         2.4. Выключение блока от кнопки «Стоп»
         :return: bool:
         """
-        self.__mysql_conn.mysql_add_message(f"старт теста: 1, подтест: 0")
+        self.__mysql_conn.mysql_add_message(f"старт теста: 2, подтест: 3")
         self.logger.debug(f"старт теста: 1, подтест: 0")
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        self.logger.debug(f'отключение KL12')
         if self.sub_test.subtest_bdu_inp_a1(test_num=2, subtest_num=2.3, err_code=51, position=False):
             self.__ctrl_kl.ctrl_relay('KL25', False)
+            self.logger.debug(f'отключение KL25')
             return True
         return False
 
@@ -101,10 +104,12 @@ class TestBRU2S(object):
         3. Отключение выходного контакта блока при увеличении сопротивления цепи заземления
         :return: bool:
         """
+        self.logger.debug(f"старт теста: 3, подтест: 2")
         self.__resist.resist_ohm(150)
         if self.sub_test.subtest_bdu_inp_a1(test_num=3, subtest_num=3.2, err_code=52, position=False):
             self.__ctrl_kl.ctrl_relay('KL12', False)
             self.__ctrl_kl.ctrl_relay('KL25', False)
+            self.logger.debug(f'отключение KL12, KL25')
             return True
         return False
 
@@ -124,11 +129,14 @@ class TestBRU2S(object):
         4. Защита от потери управляемости при замыкании проводов ДУ
         :return: bool:
         """
+        self.logger.debug(f"старт теста: 4, подтест: 2")
         self.__ctrl_kl.ctrl_relay('KL11', True)
+        self.logger.debug(f'отключение KL11')
         if self.sub_test.subtest_bdu_inp_a1(test_num=4, subtest_num=4.2, err_code=53, position=False):
             self.__ctrl_kl.ctrl_relay('KL12', False)
             self.__ctrl_kl.ctrl_relay('KL25', False)
             self.__ctrl_kl.ctrl_relay('KL11', False)
+            self.logger.debug(f'отключение KL12, KL25, KL11')
             return True
         return False
 
@@ -148,9 +156,13 @@ class TestBRU2S(object):
         Тест 5. Защита от потери управляемости блока при обрыве проводов ДУ
         :return: bool:
         """
+        self.logger.debug(f"старт теста: 5, подтест: 2")
         self.__ctrl_kl.ctrl_relay('KL12', False)
+        self.logger.debug(f'отключение KL12')
         if self.sub_test.subtest_bdu_inp_a1(test_num=5, subtest_num=5.2, err_code=54, position=False):
             self.__ctrl_kl.ctrl_relay('KL25', False)
+            self.logger.debug(f'отключение KL25'
+                              f'')
             return True
         return False
 
@@ -159,7 +171,7 @@ class TestBRU2S(object):
         Тест 6.0
         :return: bool:
         """
-
+        self.logger.debug(f"старт теста: 6, подтест: 0")
         if my_msg(self.msg_1):
             if self.__subtest_6():
                 self.__mysql_conn.mysql_ins_result('исправен', '6')
@@ -187,10 +199,13 @@ class TestBRU2S(object):
         контролируемого присоединения до уровня предупредительной уставки
         :return: bool
         """
+        self.logger.debug(f"старт теста: 6, подтест: 1")
         self.__resist.resist_kohm(200)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug(f'включение KL12')
         if self.sub_test.subtest_bdu_inp_a1(test_num=6, subtest_num=6.0, err_code=55, position=False):
             self.__ctrl_kl.ctrl_relay('KL12', False)
+            self.logger.debug(f'отключение KL12')
             return True
         return False
 
@@ -200,10 +215,13 @@ class TestBRU2S(object):
         контролируемого присоединения до уровня аварийной уставки
         :return: bool
         """
+        self.logger.debug(f"старт теста: 7, подтест: 0")
         self.__resist.resist_kohm(30)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug(f'включение KL12')
         if self.sub_test.subtest_bdu_inp_a1(test_num=7, subtest_num=7.0, err_code=56, position=False):
             self.__ctrl_kl.ctrl_relay('KL12', False)
+            self.logger.debug(f'отключение KL12')
             return True
         return False
 
