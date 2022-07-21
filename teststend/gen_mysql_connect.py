@@ -241,3 +241,31 @@ class MySQLConnect(object):
         level = f'{level:.1f}'
         upd = f'UPDATE simple_database.progress SET level_progress = {level} WHERE (id_pro = 1);'
         self.mysql_connect(upd)
+
+    def read_err(self, err_code):
+        """
+        считывает из БД описание неисправности по номеру неисправности
+        :param err_code:
+        :return:
+        """
+        with mysql.connector.connect(host=self.host, user=self.user, password=self.password,
+                                     database=self.database, auth_plugin=self.auth_plugin) as conn:
+            try:
+                err_select = f'SELECT * FROM errors WHERE `id_error` in ({err_code});'
+                c = conn.cursor()
+                c.execute(err_select)
+                err_text, *_ = c.fetchall()
+                conn.close()
+                text_0 = err_text[1]
+                # text_1 = text_0[1]
+                return text_0
+            except self.mysql_err:
+                self.__fault.debug_msg(f"!!! Ошибка связи с базой данных MySQL !!!", "red")
+                self.logger.error('Ошибка связи с базой данных MySQL.')
+
+
+if __name__ == '__main__':
+    __mysql = MySQLConnect()
+    result = __mysql.read_err(222)
+    print(result)
+    __mysql.mysql_add_message(result)
