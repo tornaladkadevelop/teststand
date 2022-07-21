@@ -52,6 +52,8 @@ class TestBTZ3(object):
         self.coef_volt: float = 0.0
         self.calc_delta_t_pmz: float = 0.0
 
+        self.health_flag: bool = False
+
         logging.basicConfig(filename="C:\Stend\project_class\TestBTZ3.log",
                             filemode="w",
                             level=logging.DEBUG,
@@ -467,7 +469,7 @@ class TestBTZ3(object):
             elif in_a6 is False:
                 self.__mysql_conn.mysql_error(380)
             return False
-        if self.__proc.procedure_1_25_35(setpoint_volt=i, coef_volt=self.coef_volt):
+        if self.__proc.procedure_1_24_34(setpoint_volt=i, coef_volt=self.coef_volt, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", "4")
@@ -587,7 +589,7 @@ class TestBTZ3(object):
         self.__ctrl_kl.ctrl_relay('KL30', False)
         sleep(3)
 
-    def st_test_btz_3(self) -> bool:
+    def st_test_btz_3(self) -> [bool, bool]:
         if self.st_test_10_btz_3():
             if self.st_test_11_btz_3():
                 if self.st_test_12_btz_3():
@@ -598,8 +600,8 @@ class TestBTZ3(object):
                                     if self.st_test_31_btz_3():
                                         if self.st_test_40_btz_3():
                                             if self.st_test_50_btz_3():
-                                                return True
-        return False
+                                                return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_btz_3(self):
         """
@@ -623,7 +625,8 @@ if __name__ == '__main__':
     mysql_conn_btz_3 = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_btz_3.st_test_btz_3():
+        test, health_flag = test_btz_3.st_test_btz_3()
+        if test and not health_flag:
             test_btz_3.result_test_btz_3()
             mysql_conn_btz_3.mysql_block_good()
             my_msg('Блок исправен', 'green')

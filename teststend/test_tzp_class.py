@@ -44,6 +44,7 @@ class TestTZP(object):
         self.list_tzp_result = []
 
         self.coef_volt = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Переключите тумблер на корпусе блока в положение «Проверка» "
         self.msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
@@ -380,15 +381,15 @@ class TestTZP(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
-    def st_test_tzp(self) -> bool:
+    def st_test_tzp(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
                     if self.st_test_20():
                         if self.st_test_21():
                             if self.st_test_30():
-                                return True
-        return False
+                                return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_tzp(self):
         for t in range(len(self.list_delta_percent)):
@@ -403,7 +404,8 @@ if __name__ == '__main__':
     mysql_conn_tzp = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_tzp.st_test_tzp():
+        test, health_flag = test_tzp.st_test_tzp()
+        if test and not health_flag:
             test_tzp.result_test_tzp()
             mysql_conn_tzp.mysql_block_good()
             my_msg('Блок исправен', 'green')

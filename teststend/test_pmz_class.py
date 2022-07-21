@@ -47,6 +47,7 @@ class TestPMZ(object):
         self.meas_volt_ust = 0.0
         self.coef_volt = 0.0
         self.calc_delta_t = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
                      "блок ПМЗ в разъем Х14 на панели B"
@@ -287,7 +288,7 @@ class TestPMZ(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             return False
         self.__fault.debug_msg("положение выходов блока соответствует", 'green')
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             return False
@@ -371,7 +372,7 @@ class TestPMZ(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0
 
-    def st_test_pmz(self) -> bool:
+    def st_test_pmz(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_20():
@@ -381,8 +382,8 @@ class TestPMZ(object):
                                 if self.st_test_24():
                                     if self.st_test_25():
                                         if self.st_test_30():
-                                            return True
-        return False
+                                            return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_pmz(self):
         for g1 in range(len(self.list_delta_percent)):
@@ -396,7 +397,8 @@ if __name__ == '__main__':
     mysql_conn_pmz = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_pmz.st_test_pmz():
+        test, health_flag = test_pmz.st_test_pmz()
+        if test and not health_flag:
             test_pmz.result_test_pmz()
             mysql_conn_pmz.mysql_block_good()
             my_msg('Блок исправен', 'green')

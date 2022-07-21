@@ -39,6 +39,7 @@ class TestBUZ2(object):
         self.ust_2 = 20.3
 
         self.coef_volt: float = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
                      "Вставьте испытуемый блок БУЗ-2 в разъем Х17 на панели B."
@@ -305,7 +306,7 @@ class TestBUZ2(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
-    def st_test_buz_2(self) -> bool:
+    def st_test_buz_2(self) -> [bool, bool]:
         if self.st_test_10_buz_2():
             if self.st_test_11_buz_2():
                 if self.st_test_12_buz_2():
@@ -315,8 +316,8 @@ class TestBUZ2(object):
                                 if self.st_test_22_buz_2():
                                     if self.st_test_30_buz_2():
                                         if self.st_test_31_buz_2():
-                                            return True
-        return False
+                                            return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -325,7 +326,8 @@ if __name__ == '__main__':
     mysql_conn_buz_2 = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_buz_2.st_test_buz_2():
+        test, health_flag = test_buz_2.st_test_buz_2()
+        if test and not health_flag:
             mysql_conn_buz_2.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

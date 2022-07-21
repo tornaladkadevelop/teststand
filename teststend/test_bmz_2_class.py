@@ -47,6 +47,7 @@ class TestBMZ2(object):
 
         self.coef_volt: float = 0.0
         self.calc_delta_t: float = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Переключите тумблер на корпусе блока в положение " \
                      "«Работа» и установите регулятор уставок в положение 1"
@@ -314,7 +315,7 @@ class TestBMZ2(object):
                 self.__mysql_conn.mysql_error(340)
             return False
         self.__mysql_conn.mysql_ins_result('идет тест 3.3', '3')
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             return False
@@ -404,7 +405,7 @@ class TestBMZ2(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
-    def st_test_bmz_2(self) -> bool:
+    def st_test_bmz_2(self) -> [bool, bool]:
         if self.st_test_10_bmz_2():
             if self.st_test_11_bmz_2():
                 if self.st_test_12_bmz_2():
@@ -412,8 +413,8 @@ class TestBMZ2(object):
                         if self.st_test_21_bmz_2():
                             if self.st_test_22_bmz_2():
                                 if self.st_test_30_bmz_2():
-                                    return True
-        return False
+                                    return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_bmz_2(self):
         for g1 in range(len(self.list_delta_percent)):
@@ -427,8 +428,8 @@ if __name__ == '__main__':
     mysql_conn_bmz2 = MySQLConnect()
     fault = Bug(True)
     try:
-        test_bmz_2 = TestBMZ2()
-        if test_bmz_2.st_test_bmz_2():
+        test, health_flag = test_bmz_2.st_test_bmz_2()
+        if test and not health_flag:
             test_bmz_2.result_test_bmz_2()
             mysql_conn_bmz2.mysql_block_good()
             my_msg('Блок исправен', 'green')

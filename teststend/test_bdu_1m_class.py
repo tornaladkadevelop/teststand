@@ -28,8 +28,8 @@ class TestBDU1M(object):
         self.__read_mb = ReadMB()
         self.__mysql_conn = MySQLConnect()
         self.__fault = Bug(True)
-
-        logging.basicConfig(filename="C:\Stend\project_class\TestBDU1M.log",
+        # C:\Stend\project_class
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBDU1M.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

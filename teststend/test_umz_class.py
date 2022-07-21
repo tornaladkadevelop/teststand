@@ -53,6 +53,7 @@ class TestUMZ(object):
         self.num_ust = 1
         self.i = 0.0
         self.k = 0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков Подключите " \
                      "блок УМЗ в разъем Х8 на панели B с помощью соответствующей кабельной сборки"
@@ -289,7 +290,7 @@ class TestUMZ(object):
 
     def st_subtest_20_0(self):
         # self.sp_volt = sp_volt
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=self.i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
@@ -352,7 +353,7 @@ class TestUMZ(object):
             self.list_delta_t_vg[-1] = f'неисправен'
 
     def st_subtest_20_1(self):
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=self.i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
@@ -387,7 +388,7 @@ class TestUMZ(object):
             self.list_delta_t_ab[-1] = f'неисправен'
 
     def st_subtest_20_2(self):
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=self.i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=self.i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
@@ -447,7 +448,7 @@ class TestUMZ(object):
                                      self.list_ust_num[g1], self.list_delta_percent_vg[g1], self.list_delta_t_vg[g1]))
         self.__mysql_conn.mysql_umz_result(self.list_result)
 
-    def st_test_umz(self) -> bool:
+    def st_test_umz(self) -> [bool, bool]:
         """
 
         :return:
@@ -457,8 +458,8 @@ class TestUMZ(object):
                 if self.st_test_12():
                     if self.st_test_13():
                         if self.st_test_20():
-                            return True
-        return False
+                            return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -467,7 +468,8 @@ if __name__ == '__main__':
     mysql_conn_umz = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_umz.st_test_umz():
+        test, health_flag = test_umz.st_test_umz()
+        if test and not health_flag:
             test_umz.result_umz()
             mysql_conn_umz.mysql_block_good()
             my_msg('Блок исправен', 'green')

@@ -52,6 +52,7 @@ class TestBTZT(object):
 
         self.coef_volt: float = 0.0
         self.calc_delta_t_pmz = 0
+        self.health_flag: bool = False
 
         self.msg_1 = "Переключите оба тумблера на корпусе блока в положение «Работа» и установите " \
                      "регуляторы уставок в положение 1 (1-11) и положение 1.0 (0.5-1.0)"
@@ -489,7 +490,7 @@ class TestBTZT(object):
             elif in_a6 is False:
                 self.__mysql_conn.mysql_error(402)
             return False
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '4')
@@ -656,7 +657,7 @@ class TestBTZT(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
-    def st_test_btz_t(self) -> bool:
+    def st_test_btz_t(self) -> [bool, bool]:
         if self.st_test_10_btz_t():
             if self.st_test_11_btz_t():
                 if self.st_test_12_btz_t():
@@ -667,8 +668,8 @@ class TestBTZT(object):
                                     if self.st_test_31_btz_t():
                                         if self.st_test_40_btz_t():
                                             if self.st_test_50_btz_t():
-                                                return True
-        return False
+                                                return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_btz_t(self):
         """
@@ -692,7 +693,8 @@ if __name__ == '__main__':
     mysql_conn_btz_t = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_btz_t.st_test_btz_t():
+        test, health_flag = test_btz_t.st_test_btz_t()
+        if test and not health_flag:
             test_btz_t.result_test_btz_t()
             mysql_conn_btz_t.mysql_block_good()
             my_msg('Блок исправен', 'green')

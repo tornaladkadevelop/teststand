@@ -42,6 +42,7 @@ class TestBMZAPSH4(object):
         self.list_result = []
 
         self.coef_volt: float = 0.0
+        self.health_flag: bool = False
 
         logging.basicConfig(filename="C:\Stend\project_class\TestBMZAPSh4.log",
                             filemode="w",
@@ -179,7 +180,7 @@ class TestBMZAPSH4(object):
             pass
         else:
             return False
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             return False
@@ -234,13 +235,13 @@ class TestBMZAPSH4(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b0, in_b1
 
-    def st_test_bmz_apsh_4(self) -> bool:
+    def st_test_bmz_apsh_4(self) -> [bool, bool]:
         if self.st_test_10_bmz_apsh_4():
             if self.st_test_11_bmz_apsh_4():
                 if self.st_test_12_bmz_apsh_4():
                     if self.st_test_20_bmz_apsh_4():
-                        return True
-        return False
+                        return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -249,7 +250,8 @@ if __name__ == '__main__':
     mysql_conn_bmz_apsh_4 = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_bmz_apsh_4.st_test_bmz_apsh_4():
+        test, health_flag = test_bmz_apsh_4.st_test_bmz_apsh_4()
+        if test and not health_flag:
             mysql_conn_bmz_apsh_4.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

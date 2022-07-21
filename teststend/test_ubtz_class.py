@@ -42,6 +42,7 @@ class TestUBTZ(object):
 
         self.coef_volt: float = 0.0
         self.calc_delta_t_bmz = 0.0
+        self.health_flag: bool = False
 
         self.list_delta_t_tzp = []
         self.list_delta_t_bmz = []
@@ -336,7 +337,7 @@ class TestUBTZ(object):
                 self.__mysql_conn.mysql_error(463)
             return False
         self.__fault.debug_msg("тест 3.1 положение выходов соответствует", 'green')
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result("неисправен TV1", '1')
@@ -443,14 +444,14 @@ class TestUBTZ(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a6
 
-    def st_test_ubtz(self) -> bool:
+    def st_test_ubtz(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
                     if self.st_test_20():
                         if self.st_test_30():
-                            return True
-        return False
+                            return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_ubtz(self):
         for g1 in range(len(self.list_delta_t_bmz)):
@@ -471,7 +472,8 @@ if __name__ == '__main__':
     mysql_conn_ubtz = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_ubtz.st_test_ubtz():
+        test, health_flag = test_ubtz.st_test_ubtz()
+        if test and not health_flag:
             test_ubtz.result_test_ubtz()
             mysql_conn_ubtz.mysql_block_good()
             my_msg('Блок исправен', 'green')

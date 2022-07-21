@@ -58,6 +58,7 @@ class TestBKZ3MK(object):
 
         self.coef_volt: float = 0.0
         self.calc_delta_t_mtz: float = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии других блоков в панелях разъемов и вставьте " \
                      "блок в соответствующий разъем панели С»"
@@ -478,7 +479,7 @@ class TestBKZ3MK(object):
             elif in_a5 is False:
                 self.__mysql_conn.mysql_error(326)
             return False
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             return False
@@ -685,7 +686,7 @@ class TestBKZ3MK(object):
         else:
             return 0
 
-    def st_test_bkz_3mk(self) -> bool:
+    def st_test_bkz_3mk(self) -> [bool, bool]:
         if self.st_test_0_bkz_3mk():
             if self.st_test_10_bkz_3mk():
                 if self.st_test_11_bkz_3mk():
@@ -694,8 +695,8 @@ class TestBKZ3MK(object):
                             if self.st_test_30_bkz_3mk():
                                 if self.st_test_40_bkz_3mk():
                                     if self.st_test_50_bkz_3mk():
-                                        return True
-        return False
+                                        return True, self.health_flag
+        return False, self.health_flag
 
     def result_test_bkz_3mk(self):
         for g1 in range(len(self.list_delta_percent_mtz)):
@@ -718,7 +719,8 @@ if __name__ == '__main__':
     mysql_conn_bkz_3mk = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_bkz_3mk.st_test_bkz_3mk():
+        test, health_flag = test_bkz_3mk.st_test_bkz_3mk()
+        if test and not health_flag:
             mysql_conn_bkz_3mk.mysql_block_good()
             test_bkz_3mk.result_test_bkz_3mk()
             my_msg('Блок исправен', 'green')

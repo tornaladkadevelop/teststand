@@ -39,6 +39,7 @@ class TestMTZP2(object):
 
         self.meas_volt_ust = 0.0
         self.coef_volt = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии других блоков и подключите блок МТЗП-2 в соответствующие разъемы"
         self.msg_2 = "С помощью кнопок на лицевой панели установите следующие значения режима МТЗ-1:\n " \
@@ -508,7 +509,7 @@ class TestMTZP2(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_b2
 
-    def st_test_mtzp_2(self) -> bool:
+    def st_test_mtzp_2(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
@@ -525,8 +526,8 @@ class TestMTZP2(object):
                                                             if self.st_test_51():
                                                                 if self.st_test_60():
                                                                     if self.st_test_70():
-                                                                        return True
-        return False
+                                                                        return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -535,7 +536,8 @@ if __name__ == '__main__':
     mysql_conn_mtzp = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_mtzp.st_test_mtzp_2():
+        test, health_flag = test_mtzp.st_test_mtzp_2()
+        if test and not health_flag:
             mysql_conn_mtzp.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

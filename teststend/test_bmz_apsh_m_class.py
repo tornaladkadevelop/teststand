@@ -37,6 +37,8 @@ class TestBMZAPSHM(object):
         self.ust_1: float = 85.6
 
         self.coef_volt: float = 0.0
+        self.health_flag: bool = False
+        
         self.msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
                      "Вставьте блок в соответствующий испытательный разъем»"
 
@@ -277,7 +279,7 @@ class TestBMZAPSHM(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a2, in_a5, in_a6
 
-    def st_test_bmz_apsh_m(self) -> bool:
+    def st_test_bmz_apsh_m(self) -> [bool, bool]:
         if self.st_test_10_bmz_apsh_m():
             if self.st_test_11_bmz_apsh_m():
                 if self.st_test_12_bmz_apsh_m():
@@ -287,8 +289,8 @@ class TestBMZAPSHM(object):
                                 if self.st_test_30_bmz_apsh_m():
                                     if self.st_test_31_bmz_apsh_m():
                                         if self.st_test_32_bmz_apsh_m():
-                                            return True
-        return False
+                                            return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -297,8 +299,8 @@ if __name__ == '__main__':
     mysql_conn_bmz_apsh_m = MySQLConnect()
     fault = Bug(True)
     try:
-        test_bmz_apsh_m = TestBMZAPSHM()
-        if test_bmz_apsh_m.st_test_bmz_apsh_m():
+        test, health_flag = test_bmz_apsh_m.st_test_bmz_apsh_m()
+        if test and not health_flag:
             mysql_conn_bmz_apsh_m.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

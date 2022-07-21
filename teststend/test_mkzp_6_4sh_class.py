@@ -36,6 +36,7 @@ class TestMKZP6(object):
         self.ust_2: float = 15.0
         self.coef_volt: float = 0.0
         self.test_num: int = 0
+        self.health_flag: bool = False
 
         self.msg_1: str = "Убедитесь в отсутствии других блоков или соединительных кабелей в панели разъемов D " \
                           "Подключите в разъемы X33, X34, расположенные на панели разъемов D соединительные кабеля " \
@@ -401,11 +402,10 @@ class TestMKZP6(object):
     def __inputs_a0(self):
         in_a0 = self.__read_mb.read_discrete(0)
         if in_a0 is None:
-            # logging.error(f'нет связи с контроллером')
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a0
 
-    def st_test_mkzp_6_4sh(self) -> bool:
+    def st_test_mkzp_6_4sh(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
@@ -422,8 +422,8 @@ class TestMKZP6(object):
                                                             if self.st_test_50():
                                                                 if self.st_test_51():
                                                                     if self.st_test_52():
-                                                                        return True
-        return False
+                                                                        return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -432,7 +432,8 @@ if __name__ == '__main__':
     mysql_conn_mkzp = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_mkzp.st_test_mkzp_6_4sh():
+        test, health_flag = test_mkzp.st_test_mkzp_6_4sh()
+        if test and not health_flag:
             mysql_conn_mkzp.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

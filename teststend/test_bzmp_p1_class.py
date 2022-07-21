@@ -37,6 +37,7 @@ class TestBZMPP1(object):
         self.coef_volt: float = 0.0
         self.timer_test_5_2: float = 0.0
         self.timer_test_6_2: float = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БЗМП-П1 в соответствующий разъем"
         self.msg_2 = "С помощью кнопок SB1…SB3, расположенных на панели разъемов, " \
@@ -346,7 +347,7 @@ class TestBZMPP1(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_b1
 
-    def st_test_bzmp_p1(self) -> bool:
+    def st_test_bzmp_p1(self) -> [bool, bool]:
         if self.st_test_10_bzmp_p1():
             if self.st_test_11_bzmp_p1():
                 if self.st_test_12_bzmp_p1():
@@ -361,8 +362,8 @@ class TestBZMPP1(object):
                                                     if self.st_test_40_bzmp_p1():
                                                         if self.st_test_41_bzmp_p1():
                                                             if self.st_test_42_bzmp_p1():
-                                                                return True
-        return False
+                                                                return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -371,7 +372,8 @@ if __name__ == '__main__':
     mysql_conn_bzmp_p1 = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_bzmp_p1.st_test_bzmp_p1():
+        test, health_flag = test_bzmp_p1.st_test_bzmp_p1()
+        if test and not health_flag:
             mysql_conn_bzmp_p1.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:

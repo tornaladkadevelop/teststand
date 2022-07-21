@@ -43,6 +43,7 @@ class TestMMTZD(object):
 
         self.meas_volt_ust = 0.0
         self.coef_volt = 0.0
+        self.health_flag: bool = False
 
         self.msg_1 = "Убедитесь в отсутствии в панелях разъемов установленных блоков. " \
                      "Подключите блок в разъем Х21 на панели С"
@@ -270,7 +271,7 @@ class TestMMTZD(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
             self.__mysql_conn.mysql_error(418)
             return False
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=i):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '2')
@@ -334,7 +335,7 @@ class TestMMTZD(object):
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
             self.__mysql_conn.mysql_error(418)
             return False
-        if self.__proc.procedure_1_25_35(coef_volt=self.coef_volt, setpoint_volt=y):
+        if self.__proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=y, factor=1.1):
             pass
         else:
             self.__mysql_conn.mysql_ins_result('неисправен', '3')
@@ -395,7 +396,7 @@ class TestMMTZD(object):
             raise ModbusConnectException(f'нет связи с контроллером')
         return in_a1, in_a5
 
-    def st_test_mmtz_d(self) -> bool:
+    def st_test_mmtz_d(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
@@ -403,8 +404,8 @@ class TestMMTZD(object):
                         if self.st_test_14():
                             if self.st_test_20():
                                 if self.st_test_30():
-                                    return True
-        return False
+                                    return True, self.health_flag
+        return False, self.health_flag
 
 
 if __name__ == '__main__':
@@ -413,7 +414,8 @@ if __name__ == '__main__':
     mysql_conn_mmtz_d = MySQLConnect()
     fault = Bug(True)
     try:
-        if test_mmtz_d.st_test_mmtz_d():
+        test, health_flag = test_mmtz_d.st_test_mmtz_d()
+        if test and not health_flag:
             mysql_conn_mmtz_d.mysql_block_good()
             my_msg('Блок исправен', 'green')
         else:
