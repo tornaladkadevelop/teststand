@@ -301,7 +301,7 @@ class SubtestA1A2(object):
             elif in_a2 is not position_a2:
                 self._subtest_err(err_code_a2)
             self.mysql_conn.mysql_ins_result("неисправен", f'{test_num}')
-            self.mysql_conn.mysql_add_message(f"Несправен. тест: {test_num}, подтест: {subtest_num}")
+            self.mysql_conn.mysql_add_message(f"Неисправен. тест: {test_num}, подтест: {subtest_num}")
             return False
 
     def _subtest_err(self, err_code):
@@ -312,29 +312,38 @@ class SubtestA1A2(object):
 
     def subtest_a_bdu(self, **kwargs) -> bool:
         """
-        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т
+        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т, БРУ-2СР
 
-        err_code для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2): 15 и 16
-        position -//- : True & True
-        err_code для БДУ-Р, БДУ-Т (bdu_r_t): 292 и 293
-        position -//- : True & False
+        для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2)
+            err_code : 15 и 16
+            resist : 10 Ом
+            position : True & True
+        для БДУ-Р, БДУ-Т (bdu_r_t)
+            err_code : 292 и 293
+            position : True & False
+            resist : 10 Ом
+        для БРУ-2СР (bru_2sr)
+            err_sode : 61 & 62 - в прямом: 73 & 74 - в обратном
+            position : True & False - в прямом: False & True - обратном
+            resist : 0
 
         2.2. Включение блока от кнопки «Пуск»
 
-        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2:
+        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2, resistance:
         :return: bool:
         """
-        test_num = kwargs.get("test_num")
-        subtest_num = kwargs.get("subtest_num")
-        err_a1 = kwargs.get("err_code_a1")
-        err_a2 = kwargs.get("err_code_a2")
-        pos_a1 = kwargs.get("position_a1")
-        pos_a2 = kwargs.get("position_a2")
+        test_num: int = kwargs.get("test_num")
+        subtest_num: float = kwargs.get("subtest_num")
+        err_a1: int = kwargs.get("err_code_a1")
+        err_a2: int = kwargs.get("err_code_a2")
+        pos_a1: bool = kwargs.get("position_a1")
+        pos_a2: bool = kwargs.get("position_a2")
+        resist: int = kwargs.get("resistance", 10)
         self.logger.debug(f"Общий метод, тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         self.mysql_conn.mysql_add_message(f"старт теста: {test_num}, подтест: {subtest_num}")
         self.resist.resist_ohm(255)
-        self.resist.resist_ohm(10)
+        self.resist.resist_ohm(resist)
         sleep(1)
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включен KL12")
@@ -346,28 +355,38 @@ class SubtestA1A2(object):
 
     def subtest_b_bdu(self, **kwargs) -> bool:
         """
-        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т
+        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т, БРУ-2СР
 
-        err_code для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2): 7 и 8
-        position -//- : True & True
-        err_code для БДУ-Р, БДУ-Т (bdu_r_t): 294 и 295
-        position -//- : True & False
+        для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2)
+            err_code : 7 и 8
+            position : True & True
+        для БДУ-Р, БДУ-Т (bdu_r_t)
+            err_code : 294 и 295
+            position : True & False
+        для БРУ-2СР (bru_2sr)
+            err_sode : 63 & 64 - в прямом : 75 и 76 - в обратном
+            position : True & False - в прямом : False & True - в обратном
+            KL1 : не используется, необходимо передать False
 
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
 
-        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2:
+        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2, resistance:
         :return: bool:
         """
-        test_num = kwargs.get("test_num")
-        subtest_num = kwargs.get("subtest_num")
-        err_a1 = kwargs.get("err_code_a1")
-        err_a2 = kwargs.get("err_code_a2")
-        pos_a1 = kwargs.get("position_a1")
-        pos_a2 = kwargs.get("position_a2")
+        test_num: int = kwargs.get("test_num")
+        subtest_num: float = kwargs.get("subtest_num")
+        err_a1: int = kwargs.get("err_code_a1")
+        err_a2: int = kwargs.get("err_code_a2")
+        pos_a1: bool = kwargs.get("position_a1")
+        pos_a2: bool = kwargs.get("position_a2")
+        kl1: bool = kwargs.get("kl1", True)
         self.logger.debug(f"Общий метод, тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         self.mysql_conn.mysql_add_message(f"старт теста: {test_num}, подтест: {subtest_num}")
-        self.ctrl_kl.ctrl_relay('KL1', True)
+        if kl1 is False:
+            pass
+        else:
+            self.ctrl_kl.ctrl_relay('KL1', True)
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug("включены KL1, KL25")
         sleep(2)
@@ -439,6 +458,45 @@ class SubtestA1A2(object):
                                  position_a1=pos_a1, position_a2=pos_a2):
             return True
         return False
+
+    def subtest_bru2sr(self, **kwargs) -> bool:
+        """
+        Общий подтест для алгоритма БРУ-2СР (bru_2sr)
+        Тест 10. Блокировка включения блока при снижении сопротивления изоляции
+        контролируемого присоединения до уровня предупредительной уставки
+            resist = 200
+            err_code = 85 & 86
+        Тест 11. Блокировка включения блока при снижении сопротивления
+        изоляции контролируемого присоединения до уровня аварийной уставки
+            resist = 30
+            err_code = 87 & 88
+        """
+        test_num: int = kwargs.get("test_num")
+        subtest_num: float = kwargs.get("subtest_num")
+        err_a1: int = kwargs.get("err_code_a1", 85)
+        err_a2: int = kwargs.get("err_code_a2", 86)
+        resist: int = kwargs.get("resistance", 200)
+        self.logger.debug("старт подтеста 10 и 11")
+        self.mysql_conn.mysql_add_message(f"тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f"идет тест {subtest_num}", f"{test_num}")
+        self.resist.resist_kohm(resist)
+        self.ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug("включен KL12")
+        in_a1, in_a2 = self.read_di.inputs_di('in_a1', 'in_a2')
+        self.logger.debug(f'положение выходов блока: {in_a1 = } is False, {in_a2 = } is False')
+        if in_a1 is False and in_a2 is False:
+            self.ctrl_kl.ctrl_relay('KL12', False)
+            self.mysql_conn.mysql_ins_result("исправен", f"{test_num}")
+            self.mysql_conn.mysql_add_message(f"Исправен. тест: {test_num}, подтест: {subtest_num}")
+            return True
+        else:
+            self.mysql_conn.mysql_ins_result("неисправен", f"{test_num}")
+            self.mysql_conn.mysql_add_message(f"Неисправен. тест: {test_num}, подтест: {subtest_num}")
+            if in_a1 is True:
+                self._subtest_err(err_a1)
+            elif in_a2 is True:
+                self._subtest_err(err_a2)
+            return False
 
 
 class SubtestBDU1M(object):
