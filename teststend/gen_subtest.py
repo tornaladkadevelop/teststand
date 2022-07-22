@@ -15,7 +15,7 @@ from gen_mb_client import *
 from gen_func_procedure import *
 from gen_mysql_connect import *
 
-__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU"]
+__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "SubtestA1A2", "SubtestBDU1M"]
 
 
 class SubtestMTZ5(object):
@@ -254,5 +254,263 @@ class SubtestBDU(object):
         self.logger.debug(f'включение KL12')
         sleep(3)
         if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=91, position=True):
+            return True
+        return False
+
+
+class SubtestA1A2(object):
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        # self.reset = ResetRelay()
+        self.ctrl_kl = CtrlKL()
+        # self.read_mb = ReadMB()
+        self.read_di = ReadDI()
+        self.resist = Resistor()
+        self.mysql_conn = MySQLConnect()
+
+    def subtest_inp_a1a2(self, **kwargs) -> bool:
+        """
+        Тест 1. Проверка исходного состояния блока:
+        Возвращает True если на входе False
+        модуль используется в алгоритмах у которых только один вход in_a1
+        общий тест для bdu_4_2, bdu_d4_2, bdu_r_t, bdz, bru_2sr, bu_apsh_m, bur_pmvir, buz_2
+        :param: test_num: int, subtest_num: float, err_code_a1: int, err_code_a2: int, position_a1: bool,
+        position_a2: bool:
+        :return:
+        """
+        test_num = kwargs.get("test_num")
+        subtest_num = kwargs.get("subtest_num")
+        err_code_a1 = kwargs.get("err_code_a1")
+        err_code_a2 = kwargs.get("err_code_a2")
+        position_a1 = kwargs.get("position_a1")
+        position_a2 = kwargs.get("position_a2")
+        self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
+        in_a1, in_a2 = self.read_di.inputs_di('in_a1', 'in_a2')
+        self.logger.debug(f"состояние входа: {in_a1 = } is {position_a1} and {in_a2 = } is {position_a2}")
+        if in_a1 is position_a1 and in_a2 is position_a2:
+            self.logger.debug("состояние выхода блока соответствует")
+            self.mysql_conn.mysql_ins_result(f"исправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Исправен. тест: {test_num}, подтест: {subtest_num}")
+            return True
+        else:
+            if in_a1 is not position_a1:
+                self._subtest_err(err_code_a1)
+            elif in_a2 is not position_a2:
+                self._subtest_err(err_code_a2)
+            self.mysql_conn.mysql_ins_result("неисправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Несправен. тест: {test_num}, подтест: {subtest_num}")
+            return False
+
+    def _subtest_err(self, err_code):
+        self.mysql_conn.mysql_error(err_code)
+        read_err = self.mysql_conn.read_err(err_code)
+        self.mysql_conn.mysql_add_message(read_err)
+        self.logger.debug(f'код неисправности {err_code}: {read_err}')
+
+    def subtest_a_bdu(self, **kwargs) -> bool:
+        """
+        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т
+
+        err_code для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2): 15 и 16
+        position -//- : True & True
+        err_code для БДУ-Р, БДУ-Т (bdu_r_t): 292 и 293
+        position -//- : True & False
+
+        2.2. Включение блока от кнопки «Пуск»
+
+        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2:
+        :return: bool:
+        """
+        test_num = kwargs.get("test_num")
+        subtest_num = kwargs.get("subtest_num")
+        err_a1 = kwargs.get("err_code_a1")
+        err_a2 = kwargs.get("err_code_a2")
+        pos_a1 = kwargs.get("position_a1")
+        pos_a2 = kwargs.get("position_a2")
+        self.logger.debug(f"Общий метод, тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"старт теста: {test_num}, подтест: {subtest_num}")
+        self.resist.resist_ohm(255)
+        self.resist.resist_ohm(10)
+        sleep(1)
+        self.ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug("включен KL12")
+        sleep(2)
+        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
+                                 position_a1=pos_a1, position_a2=pos_a2):
+            return True
+        return False
+
+    def subtest_b_bdu(self, **kwargs) -> bool:
+        """
+        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т
+
+        err_code для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2): 7 и 8
+        position -//- : True & True
+        err_code для БДУ-Р, БДУ-Т (bdu_r_t): 294 и 295
+        position -//- : True & False
+
+        2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+
+        :param: test_num, subtest_num, err_code_a1, err_code_a2, position_a1, position_a2:
+        :return: bool:
+        """
+        test_num = kwargs.get("test_num")
+        subtest_num = kwargs.get("subtest_num")
+        err_a1 = kwargs.get("err_code_a1")
+        err_a2 = kwargs.get("err_code_a2")
+        pos_a1 = kwargs.get("position_a1")
+        pos_a2 = kwargs.get("position_a2")
+        self.logger.debug(f"Общий метод, тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"старт теста: {test_num}, подтест: {subtest_num}")
+        self.ctrl_kl.ctrl_relay('KL1', True)
+        self.ctrl_kl.ctrl_relay('KL25', True)
+        self.logger.debug("включены KL1, KL25")
+        sleep(2)
+        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
+                                 position_a1=pos_a1, position_a2=pos_a2):
+            return True
+        return False
+
+    def subtest_a_bur(self, *, test_num: int, subtest_num: float, forward: bool = False, back: bool = False) -> bool:
+        """
+        Подтест алгоритма проверки блока БУР-ПМВИР
+        forward = True - проверка вперед
+        back = True - проверка назад
+        2.2. Включение блока от кнопки «Пуск» режима «Вперёд»
+        6.2. Включение блока от кнопки «Пуск» режима «Назад»
+        """
+        err_code_a1 = 1
+        err_code_a2 = 1
+        pos_a1 = False
+        pos_a2 = False
+        if forward is True:
+            err_code_a1 = 170
+            err_code_a2 = 171
+            pos_a1 = True
+            pos_a2 = False
+        elif back is True:
+            err_code_a1 = 182
+            err_code_a2 = 183
+            pos_a1 = False
+            pos_a2 = True
+        self.resist.resist_ohm(0)
+        sleep(2)
+        self.ctrl_kl.ctrl_relay('KL12', True)
+        sleep(2)
+
+        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num,
+                                 err_code_a1=err_code_a1, err_code_a2=err_code_a2,
+                                 position_a1=pos_a1, position_a2=pos_a2):
+            return True
+        return False
+
+    def subtest_b_bur(self, *, test_num: int, subtest_num: float, forward: bool = False, back: bool = False) -> bool:
+        """
+        Подтест алгоритма проверки блока БУР-ПМВИР
+        forward = True - проверка вперед
+        back = True - проверка назад
+        2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления режима «Вперёд»:
+        6.3. Проверка удержания блока во включенном состоянии
+        при подключении Rш пульта управления режима «Назад»:
+        """
+        err_code_a1 = 1
+        err_code_a2 = 1
+        pos_a1 = False
+        pos_a2 = False
+        if forward is True:
+            err_code_a1 = 172
+            err_code_a2 = 173
+            pos_a1 = True
+            pos_a2 = False
+        elif back is True:
+            err_code_a1 = 184
+            err_code_a2 = 185
+            pos_a1 = False
+            pos_a2 = True
+        self.ctrl_kl.ctrl_relay('KL25', True)
+        sleep(2)
+        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num,
+                                 err_code_a1=err_code_a1, err_code_a2=err_code_a2,
+                                 position_a1=pos_a1, position_a2=pos_a2):
+            return True
+        return False
+
+
+class SubtestBDU1M(object):
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        # self.reset = ResetRelay()
+        self.ctrl_kl = CtrlKL()
+        # self.read_mb = ReadMB()
+        self.read_di = ReadDI()
+        self.resist = Resistor()
+        self.mysql_conn = MySQLConnect()
+
+    def subtest_inp_a2(self, **kwargs) -> bool:
+        """
+        Тест 1. Проверка исходного состояния блока:
+        Возвращает True если на входе False
+        модуль используется в алгоритмах у которых только один вход in_a1
+        общий тест для bdu_4_3, bdu_014tp, bdu, bdu_d, bru_2s, bu_pmvir
+        :param: test_num: int, subtest_num: float, err_code: int, position: bool
+        :return: bool
+        """
+        test_num = kwargs.get("test_num")
+        subtest_num = kwargs.get("subtest_num")
+        err_code = kwargs.get("err_code")
+        position = kwargs.get("position")
+        self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
+        in_a2, *_ = self.read_di.inputs_di('in_a1')
+        self.logger.debug(f"состояние входа: {in_a2 = } is {position}")
+        if in_a2 is position:
+            self.logger.debug("состояние выхода блока соответствует")
+            self.mysql_conn.mysql_ins_result(f"исправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Исправен. тест: {test_num}, подтест: {subtest_num}")
+            return True
+        else:
+            self.mysql_conn.mysql_error(err_code)
+            self.mysql_conn.mysql_ins_result("неисправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Несправен. тест: {test_num}, подтест: {subtest_num}")
+            read_err = self.mysql_conn.read_err(err_code)
+            self.mysql_conn.mysql_add_message(read_err)
+            self.logger.debug(f'код неисправности {err_code}: {read_err}')
+            return False
+
+    def subtest_a(self, *, test_num: int, subtest_num: float) -> bool:
+        """
+            2.2. Включение блока от кнопки «Пуск»
+        """
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.ctrl_kl.ctrl_relay('KL22', True)
+        self.ctrl_kl.ctrl_relay('KL1', False)
+        self.ctrl_kl.ctrl_relay('KL25', False)
+        sleep(1)
+        self.resist.resist_ohm(10)
+        sleep(1)
+        self.ctrl_kl.ctrl_relay('KL12', True)
+        sleep(1)
+        if self.subtest_inp_a2(test_num=test_num, subtest_num=subtest_num, err_code=203, position=True):
+            return True
+        return False
+
+    def subtest_b(self, *, test_num: int, subtest_num: float) -> bool:
+        """
+            2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
+        """
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.ctrl_kl.ctrl_relay('KL1', True)
+        self.ctrl_kl.ctrl_relay('KL22', False)
+        sleep(1)
+        self.ctrl_kl.ctrl_relay('KL25', True)
+        sleep(1)
+        if self.subtest_inp_a2(test_num=test_num, subtest_num=subtest_num, err_code=205, position=True):
             return True
         return False
