@@ -52,19 +52,22 @@ class TestBURPMVIR(object):
     def st_test_20(self) -> bool:
         """
         Тест 2. Проверка включения/выключения блока от кнопки «Пуск/Стоп» в режиме «Вперёд».
+        2.4. Выключение блока от кнопки «Стоп» режима «Вперёд»
         """
         self.__ctrl_kl.ctrl_relay('KL21', True)
+        self.logger.debug("включен KL21")
         if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.0, err_code_a1=168, err_code_a2=169,
                                          position_a1=False, position_a2=False):
             if self.subtest.subtest_a_bur(test_num=2, subtest_num=2.1, forward=True):
                 if self.subtest.subtest_b_bur(test_num=2, subtest_num=2.2, forward=True):
-                    # 2.4. Выключение блока от кнопки «Стоп» режима «Вперёд»
                     self.__ctrl_kl.ctrl_relay('KL12', False)
+                    self.logger.debug("отключены KL12")
                     sleep(1)
                     if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.3,
                                                      err_code_a1=174, err_code_a2=175,
                                                      position_a1=False, position_a2=False):
                         self.__ctrl_kl.ctrl_relay('KL25', False)
+                        self.logger.debug("отключен KL25")
                         return True
         return False
 
@@ -74,13 +77,13 @@ class TestBURPMVIR(object):
         """
         if self.subtest.subtest_a_bur(test_num=3, subtest_num=3.0, forward=True):
             if self.subtest.subtest_b_bur(test_num=3, subtest_num=3.1, forward=True):
-                # Формирование 100 Ом
                 self.__resist.resist_0_to_100_ohm()
                 sleep(1)
                 if self.subtest.subtest_inp_a1a2(test_num=3, subtest_num=3.2, err_code_a1=176, err_code_a2=177,
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL12', False)
                     self.__ctrl_kl.ctrl_relay('KL25', False)
+                    self.logger.debug("отключены KL12, KL25")
                     return True
         return False
 
@@ -91,12 +94,14 @@ class TestBURPMVIR(object):
         if self.subtest.subtest_a_bur(test_num=4, subtest_num=4.0, forward=True):
             if self.subtest.subtest_b_bur(test_num=4, subtest_num=4.1, forward=True):
                 self.__ctrl_kl.ctrl_relay('KL11', True)
+                self.logger.debug("включен KL11")
                 sleep(2)
                 if self.subtest.subtest_inp_a1a2(test_num=4, subtest_num=4.2, err_code_a1=178, err_code_a2=179,
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL12', False)
                     self.__ctrl_kl.ctrl_relay('KL25', False)
                     self.__ctrl_kl.ctrl_relay('KL11', False)
+                    self.logger.debug("отключены KL12, KL25, KL11")
                     return True
         return False
 
@@ -107,10 +112,12 @@ class TestBURPMVIR(object):
         if self.subtest.subtest_a_bur(test_num=5, subtest_num=5.0, forward=True):
             if self.subtest.subtest_b_bur(test_num=5, subtest_num=5.1, forward=True):
                 self.__ctrl_kl.ctrl_relay('KL12', False)
+                self.logger.debug("отключен KL12")
                 sleep(2)
                 if self.subtest.subtest_inp_a1a2(test_num=5, subtest_num=5.2, err_code_a1=180, err_code_a2=181,
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL25', False)
+                    self.logger.debug("отключен KL25")
                     return True
         return False
 
@@ -120,6 +127,7 @@ class TestBURPMVIR(object):
         Переключение в режим ДУ «Назад»	KL26 - ВКЛ
         """
         self.__ctrl_kl.ctrl_relay('KL26', True)
+        self.logger.debug("включен KL26")
         sleep(2)
         if self.subtest.subtest_inp_a1a2(test_num=6, subtest_num=6.0, err_code_a1=168, err_code_a2=169,
                                          position_a1=False, position_a2=False):
@@ -127,10 +135,12 @@ class TestBURPMVIR(object):
                 if self.subtest.subtest_b_bur(test_num=6, subtest_num=6.2, back=True):
                     # 6.4. Выключение блока от кнопки «Стоп» режима «Назад»
                     self.__ctrl_kl.ctrl_relay('KL12', False)
+                    self.logger.debug("отключен KL12")
                     sleep(2)
                     if self.subtest.subtest_inp_a1a2(test_num=6, subtest_num=6.3, err_code_a1=186, err_code_a2=187,
                                                      position_a1=False, position_a2=False):
                         self.__ctrl_kl.ctrl_relay('KL25', False)
+                        self.logger.debug("отключен KL25")
                         return True
         return False
 
@@ -146,6 +156,7 @@ class TestBURPMVIR(object):
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL12', False)
                     self.__ctrl_kl.ctrl_relay('KL25', False)
+                    self.logger.debug("отключены KL12, KL25")
                     return True
         return False
 
@@ -156,12 +167,14 @@ class TestBURPMVIR(object):
         if self.subtest.subtest_a_bur(test_num=8, subtest_num=8.0, back=True):
             if self.subtest.subtest_b_bur(test_num=8, subtest_num=8.1, back=True):
                 self.__ctrl_kl.ctrl_relay('KL11', True)
+                self.logger.debug("включен KL11")
                 sleep(2)
                 if self.subtest.subtest_inp_a1a2(test_num=8, subtest_num=8.2, err_code_a1=190, err_code_a2=191,
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL12', False)
                     self.__ctrl_kl.ctrl_relay('KL25', False)
                     self.__ctrl_kl.ctrl_relay('KL11', False)
+                    self.logger.debug("отключены KL12, KL22, KL11")
                     return True
         return False
 
@@ -172,10 +185,12 @@ class TestBURPMVIR(object):
         if self.subtest.subtest_a_bur(test_num=9, subtest_num=9.0, back=True):
             if self.subtest.subtest_b_bur(test_num=9, subtest_num=9.1, back=True):
                 self.__ctrl_kl.ctrl_relay('KL12', False)
+                self.logger.debug("отключен KL12")
                 sleep(2)
                 if self.subtest.subtest_inp_a1a2(test_num=9, subtest_num=9.2, err_code_a1=192, err_code_a2=193,
                                                  position_a1=False, position_a2=False):
                     self.__ctrl_kl.ctrl_relay('KL25', False)
+                    self.logger.debug("отключен KL25")
                     return True
         return False
 
@@ -186,10 +201,12 @@ class TestBURPMVIR(object):
         self.__resist.resist_kohm(30)
         sleep(2)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug("включен KL12")
         sleep(2)
         if self.subtest.subtest_inp_a1a2(test_num=10, subtest_num=10.0, err_code_a1=194, err_code_a2=195,
                                          position_a1=False, position_a2=False):
             self.__ctrl_kl.ctrl_relay('KL12', False)
+            self.logger.debug("отключен KL12")
             return True
         return False
 
@@ -199,6 +216,7 @@ class TestBURPMVIR(object):
         """
         self.__ctrl_kl.ctrl_relay('KL22', True)
         self.__ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug("отключены KL12, KL22")
         sleep(2)
         if self.subtest.subtest_inp_a1a2(test_num=10, subtest_num=10.1, err_code_a1=196, err_code_a2=197,
                                          position_a1=False, position_a2=False):
@@ -225,7 +243,7 @@ if __name__ == '__main__':
     test_bur_pmvir = TestBURPMVIR()
     reset_test_bur_pmvir = ResetRelay()
     mysql_conn_bur_pmvir = MySQLConnect()
-    fault = Bug(True)
+    fault = Bug(None)
     try:
         if test_bur_pmvir.st_test_bur_pmvir():
             mysql_conn_bur_pmvir.mysql_block_good()
