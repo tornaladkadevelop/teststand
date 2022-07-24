@@ -18,8 +18,9 @@ from time import sleep
 
 from my_msgbox import *
 from gen_func_utils import *
-from gen_mb_client import *
+from gen_mb_client import CtrlKL
 from gen_mysql_connect import *
+from gen_subtest import SubtestA1A2
 
 __all__ = ["TestBDZ"]
 
@@ -28,34 +29,35 @@ class TestBDZ(object):
 
     def __init__(self):
         self.__mb_ctrl = CtrlKL()
-        self.__read_mb = ReadMB()
+        self.read_di = ReadDI()
         self.__mysql_conn = MySQLConnect()
-        self.__fault = Bug(True)
+        # self.__fault = Bug(True)
+        self.subtest = SubtestA1A2()
+
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
                      "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"
         self.msg_2 = "Вставьте заведомо исправные блок БИ в разъем Х26 и блок БУЗ-2 в разъем Х17, " \
                      "расположенные на панели B"
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBDZ.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBDZ.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        logging.getLogger('mysql').setLevel('WARNING')
+        logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
+
+    def st_test_00(self) -> bool:
+        self.read_di.inputs_di('in_a0')
+        if my_msg(self.msg_1):
+            if my_msg(self.msg_2):
+                return True
+        return False
 
     def st_test_10_bdz(self) -> bool:
         """
         Тест 1. Включение/выключение блока при нормальном уровне сопротивления изоляции:
         """
-        self.__inputs_a0()
-        if my_msg(self.msg_1):
-            if my_msg(self.msg_2):
-                pass
-            else:
-                return False
-        else:
-            return False
         self.__mb_ctrl.ctrl_relay('KL21', True)
         self.__mb_ctrl.ctrl_relay('KL2', True)
         self.__mb_ctrl.ctrl_relay('KL66', True)
@@ -68,15 +70,10 @@ class TestBDZ(object):
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        in_a1, in_a2 = self.__inputs_a()
-        if in_a1 is True and in_a2 is True:
-            pass
-        else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
-            self.__mysql_conn.mysql_ins_result("неисправен", "1")
-            return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
-        return True
+        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.0, err_code_a1=1, err_code_a2=1,
+                                         position_a1=True, position_a2=True):
+            return True
+        return False
 
     def st_test_11_bdz(self) -> bool:
         """
@@ -87,16 +84,10 @@ class TestBDZ(object):
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL24', False)
         sleep(5)
-        in_a1, in_a2 = self.__inputs_a()
-        if in_a1 is False and in_a2 is False:
-            pass
-        else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
-            self.__mysql_conn.mysql_ins_result("неисправен", "1")
-            return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
-        self.__mysql_conn.mysql_ins_result("исправен", "1")
-        return True
+        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.1, err_code_a1=1, err_code_a2=1,
+                                         position_a1=False, position_a2=False):
+            return True
+        return False
 
     def st_test_20_bdz(self) -> bool:
         """
@@ -109,30 +100,10 @@ class TestBDZ(object):
         sleep(0.1)
         self.__mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        in_a1, in_a2 = self.__inputs_a()
-        if in_a1 is False and in_a2 is False:
-            pass
-        else:
-            self.__fault.debug_msg("положение выходов блока не соответствует", 1)
-            self.__mysql_conn.mysql_ins_result("неисправен", "2")
-            return False
-        self.__fault.debug_msg("положение выходов блока соответствует", 4)
-        self.__mysql_conn.mysql_ins_result("исправен", "2")
-        return True
-
-    def __inputs_a0(self):
-        in_a0 = self.__read_mb.read_discrete(0)
-        if in_a0 is None:
-            # logging.error(f'нет связи с контроллером')
-            raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a0
-
-    def __inputs_a(self):
-        in_a1 = self.__read_mb.read_discrete(1)
-        in_a2 = self.__read_mb.read_discrete(2)
-        if in_a1 is None or in_a2 is None:
-            raise ModbusConnectException(f'нет связи с контроллером')
-        return in_a1, in_a2
+        if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.0, err_code_a1=1, err_code_a2=1,
+                                         position_a1=False, position_a2=False):
+            return True
+        return False
 
     def st_test_bdz(self) -> bool:
         if self.st_test_10_bdz():
