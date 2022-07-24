@@ -312,7 +312,7 @@ class SubtestA1A2(object):
 
     def subtest_a_bdu(self, **kwargs) -> bool:
         """
-        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т, БРУ-2СР
+        Общий метод для блока БДУ-4-2, БДУ-Д4-2, БДУ-Д.01, БДУ-Р, БДУ-Т, БРУ-2СР, БУ-АПШ.М
 
         для БДУ-4-2, БДУ-Д4-2, БДУ-Д-0.1 (bdu_4_2)
             err_code : 15 и 16
@@ -323,9 +323,14 @@ class SubtestA1A2(object):
             position : True & False
             resist : 10 Ом
         для БРУ-2СР (bru_2sr)
-            err_sode : 61 & 62 - в прямом: 73 & 74 - в обратном
+            err_code : 61 & 62 - в прямом: 73 & 74 - в обратном
             position : True & False - в прямом: False & True - обратном
             resist : 0
+        для БУ-АПШ.М (bu_apsh_m):
+            err_code: в прямом 103 & 104, в обратном 113 & 114
+            position: в прямом True & False, в обратном False & True
+            resist: 10
+            timeout: 3
 
         2.2. Включение блока от кнопки «Пуск»
 
@@ -339,15 +344,16 @@ class SubtestA1A2(object):
         pos_a1: bool = kwargs.get("position_a1")
         pos_a2: bool = kwargs.get("position_a2")
         resist: int = kwargs.get("resistance", 10)
+        timeout: int = kwargs.get("timeout", 2)
         self.logger.debug(f"Общий метод, тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         self.mysql_conn.mysql_add_message(f"старт теста: {test_num}, подтест: {subtest_num}")
         self.resist.resist_ohm(255)
         self.resist.resist_ohm(resist)
-        sleep(1)
+        sleep(timeout)
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включен KL12")
-        sleep(2)
+        sleep(timeout)
         if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
                                  position_a1=pos_a1, position_a2=pos_a2):
             return True
