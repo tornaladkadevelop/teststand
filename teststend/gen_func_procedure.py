@@ -176,7 +176,7 @@ class Procedure(object):
         self.logger.debug("включение KL60")
         sleep(3)
         meas_volt = self.read_mb.read_analog()
-        self.logger.debug(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
+        self.logger.debug(f"измеренное U: {min_volt = } <= {meas_volt = } <= {max_volt = }")
         self.fault.debug_msg(f'процедура 3.1 напряжение:\t  '
                              f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
@@ -258,6 +258,24 @@ class Procedure(object):
                 meas_volt = self.start_procedure_31()
                 if meas_volt != 0.0:
                     return meas_volt
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
+
+    def procedure_1_21_31_v1(self, **kwargs) -> [float, float]:
+        """
+        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
+        :return: float: напряжение
+        """
+        koef_min: float = kwargs.get("koef_min", 0.6)
+        koef_max: float = kwargs.get("koef_max", 1.1)
+        if self.start_procedure_1():
+            if self.start_procedure_21():
+                meas_volt = self.start_procedure_31()
+                if meas_volt != 0.0:
+                    min_volt = koef_min * meas_volt
+                    max_volt = koef_max * meas_volt
+                    self.logger.info(f"изм. напряжение умноженное на 0.6 и на 1.1: {min_volt = }, {max_volt = }")
+                    return min_volt, max_volt
         raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                 "Неисправность узла формирования напряжения в стенде")
 
