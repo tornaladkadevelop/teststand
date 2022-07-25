@@ -15,10 +15,10 @@ from gen_mb_client import *
 from gen_func_procedure import *
 from gen_mysql_connect import *
 
-__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "SubtestA1A2", "SubtestBDU1M"]
+__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M"]
 
 
-class SubtestMTZ5(object):
+class SubtestMTZ5:
     """
         Методы используемые в алгоритмах проверки МТЗ-5-2.7, МТЗ-5-2.8, МТЗ-5-4.11
     """
@@ -55,7 +55,7 @@ class SubtestMTZ5(object):
         return self.delta_t_mtz, self.in_1, self.in_5
 
 
-class SubtestProcAll(object):
+class SubtestProcAll:
 
     def __init__(self):
         self.proc = Procedure()
@@ -97,7 +97,7 @@ class SubtestProcAll(object):
         return True
 
 
-class SubtestBDU(object):
+class SubtestBDU:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -258,7 +258,7 @@ class SubtestBDU(object):
         return False
 
 
-class SubtestA1A2(object):
+class Subtest2in:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -269,7 +269,7 @@ class SubtestA1A2(object):
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
-    def subtest_inp_a1a2(self, **kwargs) -> bool:
+    def subtest_2di(self, **kwargs) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         Возвращает True если на входе False
@@ -279,16 +279,18 @@ class SubtestA1A2(object):
         position_a2: bool:
         :return:
         """
-        test_num = kwargs.get("test_num")
-        subtest_num = kwargs.get("subtest_num")
-        err_code_a1 = kwargs.get("err_code_a1")
-        err_code_a2 = kwargs.get("err_code_a2")
-        position_a1 = kwargs.get("position_a1")
-        position_a2 = kwargs.get("position_a2")
+        test_num: int = kwargs.get("test_num", 1)
+        subtest_num: float = kwargs.get("subtest_num", 1.0)
+        err_code_a1: int = kwargs.get("err_code_a1", 1)
+        err_code_a2: int = kwargs.get("err_code_a2", 1)
+        position_a1: bool = kwargs.get("position_a1", False)
+        position_a2: bool = kwargs.get("position_a2", False)
+        inp_1: str = kwargs.get("inp_1", 'in_a1')
+        inp_2: str = kwargs.get("inp_2", 'in_a2')
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
-        in_a1, in_a2 = self.read_di.inputs_di('in_a1', 'in_a2')
+        in_a1, in_a2 = self.read_di.inputs_di(inp_1, inp_2)
         self.logger.debug(f"состояние входа: {in_a1 = } is {position_a1} and {in_a2 = } is {position_a2}")
         if in_a1 is position_a1 and in_a2 is position_a2:
             self.logger.debug("состояние выхода блока соответствует")
@@ -354,8 +356,8 @@ class SubtestA1A2(object):
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включен KL12")
         sleep(timeout)
-        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
-                                 position_a1=pos_a1, position_a2=pos_a2):
+        if self.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
+                            position_a1=pos_a1, position_a2=pos_a2):
             return True
         return False
 
@@ -396,8 +398,8 @@ class SubtestA1A2(object):
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug("включены KL1, KL25")
         sleep(2)
-        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
-                                 position_a1=pos_a1, position_a2=pos_a2):
+        if self.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_a1, err_code_a2=err_a2,
+                            position_a1=pos_a1, position_a2=pos_a2):
             return True
         return False
 
@@ -428,9 +430,8 @@ class SubtestA1A2(object):
         self.ctrl_kl.ctrl_relay('KL12', True)
         sleep(2)
 
-        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num,
-                                 err_code_a1=err_code_a1, err_code_a2=err_code_a2,
-                                 position_a1=pos_a1, position_a2=pos_a2):
+        if self.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_code_a1,
+                            err_code_a2=err_code_a2, position_a1=pos_a1, position_a2=pos_a2):
             return True
         return False
 
@@ -459,9 +460,8 @@ class SubtestA1A2(object):
             pos_a2 = True
         self.ctrl_kl.ctrl_relay('KL25', True)
         sleep(2)
-        if self.subtest_inp_a1a2(test_num=test_num, subtest_num=subtest_num,
-                                 err_code_a1=err_code_a1, err_code_a2=err_code_a2,
-                                 position_a1=pos_a1, position_a2=pos_a2):
+        if self.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=err_code_a1,
+                            err_code_a2=err_code_a2, position_a1=pos_a1, position_a2=pos_a2):
             return True
         return False
 
@@ -505,7 +505,7 @@ class SubtestA1A2(object):
             return False
 
 
-class SubtestBDU1M(object):
+class SubtestBDU1M:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)

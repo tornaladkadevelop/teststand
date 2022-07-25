@@ -20,7 +20,7 @@ from my_msgbox import *
 from gen_func_utils import *
 from gen_mb_client import CtrlKL
 from gen_mysql_connect import *
-from gen_subtest import SubtestA1A2
+from gen_subtest import Subtest2in
 
 __all__ = ["TestBDZ"]
 
@@ -32,7 +32,7 @@ class TestBDZ:
         self.read_di = ReadDI()
         self.mysql_conn = MySQLConnect()
         # self.fault = Bug(True)
-        self.subtest = SubtestA1A2()
+        self.subtest = Subtest2in()
 
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
                      "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"

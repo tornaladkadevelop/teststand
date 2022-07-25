@@ -18,7 +18,7 @@ from gen_func_utils import *
 from my_msgbox import *
 from gen_mb_client import *
 from gen_mysql_connect import *
-from gen_subtest import SubtestA1A2
+from gen_subtest import Subtest2in
 
 __all__ = ["TestBDURT"]
 
@@ -31,7 +31,7 @@ class TestBDURT:
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         # self.fault = Bug(None)
-        self.subtest = SubtestA1A2()
+        self.subtest = Subtest2in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDURT.log",
                             filemode="w",
