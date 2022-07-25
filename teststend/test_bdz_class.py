@@ -25,13 +25,13 @@ from gen_subtest import SubtestA1A2
 __all__ = ["TestBDZ"]
 
 
-class TestBDZ(object):
+class TestBDZ:
 
     def __init__(self):
-        self.__mb_ctrl = CtrlKL()
+        self.mb_ctrl = CtrlKL()
         self.read_di = ReadDI()
-        self.__mysql_conn = MySQLConnect()
-        # self.__fault = Bug(True)
+        self.mysql_conn = MySQLConnect()
+        # self.fault = Bug(True)
         self.subtest = SubtestA1A2()
 
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
@@ -58,20 +58,20 @@ class TestBDZ(object):
         """
         Тест 1. Включение/выключение блока при нормальном уровне сопротивления изоляции:
         """
-        self.__mb_ctrl.ctrl_relay('KL21', True)
-        self.__mb_ctrl.ctrl_relay('KL2', True)
-        self.__mb_ctrl.ctrl_relay('KL66', True)
+        self.mb_ctrl.ctrl_relay('KL21', True)
+        self.mb_ctrl.ctrl_relay('KL2', True)
+        self.mb_ctrl.ctrl_relay('KL66', True)
         sleep(6)
-        self.__mb_ctrl.ctrl_relay('KL84', True)
+        self.mb_ctrl.ctrl_relay('KL84', True)
         sleep(2)
-        self.__mb_ctrl.ctrl_relay('KL84', False)
+        self.mb_ctrl.ctrl_relay('KL84', False)
         sleep(1)
-        self.__mb_ctrl.ctrl_relay('KL80', True)
+        self.mb_ctrl.ctrl_relay('KL80', True)
         sleep(0.1)
-        self.__mb_ctrl.ctrl_relay('KL24', True)
+        self.mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.0, err_code_a1=1, err_code_a2=1,
-                                         position_a1=True, position_a2=True):
+        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=1, err_code_a2=1, position_a1=True,
+                                    position_a2=True):
             return True
         return False
 
@@ -80,12 +80,12 @@ class TestBDZ(object):
         1.2.	Выключение блока
         """
         sleep(1)
-        self.__mb_ctrl.ctrl_relay('KL80', False)
+        self.mb_ctrl.ctrl_relay('KL80', False)
         sleep(0.1)
-        self.__mb_ctrl.ctrl_relay('KL24', False)
+        self.mb_ctrl.ctrl_relay('KL24', False)
         sleep(5)
-        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.1, err_code_a1=1, err_code_a2=1,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=1, subtest_num=1.1, err_code_a1=1, err_code_a2=1, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
@@ -94,14 +94,14 @@ class TestBDZ(object):
         # Тест 2. Блокировка включения при снижении уровня сопротивления изоляции:
         """
         sleep(1)
-        self.__mb_ctrl.ctrl_relay('KL22', True)
+        self.mb_ctrl.ctrl_relay('KL22', True)
         sleep(1)
-        self.__mb_ctrl.ctrl_relay('KL80', True)
+        self.mb_ctrl.ctrl_relay('KL80', True)
         sleep(0.1)
-        self.__mb_ctrl.ctrl_relay('KL24', True)
+        self.mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.0, err_code_a1=1, err_code_a2=1,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=1, err_code_a2=1, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
     test_bdz = TestBDZ()
     reset_test_bdz = ResetRelay()
     mysql_conn_bdz = MySQLConnect()
-    fault = Bug(True)
+    fault = Bug(None)
     try:
         if test_bdz.st_test_bdz():
             mysql_conn_bdz.mysql_block_good()
