@@ -23,14 +23,14 @@ from gen_subtest import SubtestA1A2
 __all__ = ["TestBRU2SR"]
 
 
-class TestBRU2SR(object):
+class TestBRU2SR:
 
     def __init__(self):
-        self.__resist = Resistor()
-        self.__read_mb = ReadMB()
-        self.__ctrl_kl = CtrlKL()
-        self.__mysql_conn = MySQLConnect()
-        # self.__fault = Bug(None)
+        self.resist = Resistor()
+        self.read_mb = ReadMB()
+        self.ctrl_kl = CtrlKL()
+        self.mysql_conn = MySQLConnect()
+        # self.fault = Bug(None)
         self.subtest = SubtestA1A2()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBRU2SR.log",
@@ -45,8 +45,8 @@ class TestBRU2SR(object):
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.0, err_code_a1=57, err_code_a2=58,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=57, err_code_a2=58, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
@@ -58,19 +58,19 @@ class TestBRU2SR(object):
         2.4. Выключение блока от кнопки «Стоп»
         """
         self.logger.debug("старт теста 2.0")
-        self.__ctrl_kl.ctrl_relay('KL21', True)
+        self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
-        if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.0, err_code_a1=59, err_code_a2=60,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=59, err_code_a2=60, position_a1=False,
+                                    position_a2=False):
             if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.1, err_code_a1=61, err_code_a2=62,
                                           position_a1=True, position_a2=False, resistance=0):
                 if self.subtest.subtest_b_bdu(test_num=2, subtest_num=2.2, err_code_a1=63, err_code_a2=64,
                                               position_a1=True, position_a2=False, kl1=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL12', False)
                     self.logger.debug("отключен KL12")
-                    if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.3, err_code_a1=65, err_code_a2=66,
-                                                     position_a1=False, position_a2=False):
-                        self.__ctrl_kl.ctrl_relay('KL25', False)
+                    if self.subtest.subtest_2di(test_num=2, subtest_num=2.3, err_code_a1=65, err_code_a2=66,
+                                                position_a1=False, position_a2=False):
+                        self.ctrl_kl.ctrl_relay('KL25', False)
                         self.logger.debug("отключен KL25")
                         return True
         return False
@@ -85,12 +85,12 @@ class TestBRU2SR(object):
                                       position_a1=True, position_a2=False, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=3, subtest_num=3.1, err_code_a1=63, err_code_a2=64,
                                           position_a1=True, position_a2=False, kl1=False):
-                self.__resist.resist_ohm(150)
+                self.resist.resist_ohm(150)
                 sleep(1)
-                if self.subtest.subtest_inp_a1a2(test_num=3, subtest_num=3.2, err_code_a1=67, err_code_a2=68,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
+                if self.subtest.subtest_2di(test_num=3, subtest_num=3.2, err_code_a1=67, err_code_a2=68,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключены KL12, KL25")
                     return True
         return False
@@ -105,13 +105,13 @@ class TestBRU2SR(object):
                                       position_a1=True, position_a2=False, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=4, subtest_num=4.1, err_code_a1=63, err_code_a2=64,
                                           position_a1=True, position_a2=False, kl1=False):
-                self.__ctrl_kl.ctrl_relay('KL11', True)
+                self.ctrl_kl.ctrl_relay('KL11', True)
                 self.logger.debug("включен KL11")
-                if self.subtest.subtest_inp_a1a2(test_num=4, subtest_num=4.2, err_code_a1=69, err_code_a2=70,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
-                    self.__ctrl_kl.ctrl_relay('KL11', False)
+                if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=69, err_code_a2=70,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL25', False)
+                    self.ctrl_kl.ctrl_relay('KL11', False)
                     self.logger.debug("отключены KL12, KL25, KL11")
                     return True
         return False
@@ -126,11 +126,11 @@ class TestBRU2SR(object):
                                       position_a1=True, position_a2=False, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=5, subtest_num=5.1, err_code_a1=63, err_code_a2=64,
                                           position_a1=True, position_a2=False, kl1=False):
-                self.__ctrl_kl.ctrl_relay('KL12', False)
+                self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
-                if self.subtest.subtest_inp_a1a2(test_num=5, subtest_num=5.2, err_code_a1=71, err_code_a2=72,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
+                if self.subtest.subtest_2di(test_num=5, subtest_num=5.2, err_code_a1=71, err_code_a2=72,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключен KL25")
                     return True
         return False
@@ -144,19 +144,19 @@ class TestBRU2SR(object):
         6.3. Выключение блока от кнопки «Стоп» режима «Назад»
         """
         self.logger.debug("старт теста 6.0")
-        self.__ctrl_kl.ctrl_relay('KL26', True)
+        self.ctrl_kl.ctrl_relay('KL26', True)
         self.logger.debug("включен KL26")
-        if self.subtest.subtest_inp_a1a2(test_num=6, subtest_num=6.0, err_code_a1=59, err_code_a2=60,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=6, subtest_num=6.0, err_code_a1=59, err_code_a2=60, position_a1=False,
+                                    position_a2=False):
             if self.subtest.subtest_a_bdu(test_num=6, subtest_num=6.1, err_code_a1=73, err_code_a2=74,
                                           position_a1=False, position_a2=True, resistance=0):
                 if self.subtest.subtest_b_bdu(test_num=6, subtest_num=6.2, err_code_a1=75, err_code_a2=76,
                                               position_a1=False, position_a2=True, kl1=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL12', False)
                     self.logger.debug("отключен KL12")
-                    if self.subtest.subtest_inp_a1a2(test_num=6, subtest_num=6.3, err_code_a1=77, err_code_a2=78,
-                                                     position_a1=False, position_a2=False):
-                        self.__ctrl_kl.ctrl_relay('KL25', False)
+                    if self.subtest.subtest_2di(test_num=6, subtest_num=6.3, err_code_a1=77, err_code_a2=78,
+                                                position_a1=False, position_a2=False):
+                        self.ctrl_kl.ctrl_relay('KL25', False)
                         self.logger.debug("отключен KL25")
                         return True
         return False
@@ -172,11 +172,11 @@ class TestBRU2SR(object):
                                       position_a1=False, position_a2=True, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=7, subtest_num=7.1, err_code_a1=75, err_code_a2=76,
                                           position_a1=False, position_a2=True, kl1=False):
-                self.__resist.resist_ohm(150)
-                if self.subtest.subtest_inp_a1a2(test_num=7, subtest_num=7.2, err_code_a1=79, err_code_a2=80,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
+                self.resist.resist_ohm(150)
+                if self.subtest.subtest_2di(test_num=7, subtest_num=7.2, err_code_a1=79, err_code_a2=80,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключены KL12, KL25")
                     return True
         return False
@@ -192,13 +192,13 @@ class TestBRU2SR(object):
                                       position_a1=False, position_a2=True, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=8, subtest_num=8.1, err_code_a1=75, err_code_a2=76,
                                           position_a1=False, position_a2=True, kl1=False):
-                self.__ctrl_kl.ctrl_relay('KL11', True)
+                self.ctrl_kl.ctrl_relay('KL11', True)
                 self.logger.debug("включен KL11")
-                if self.subtest.subtest_inp_a1a2(test_num=8, subtest_num=8.2, err_code_a1=81, err_code_a2=82,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL12', False)
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
-                    self.__ctrl_kl.ctrl_relay('KL11', False)
+                if self.subtest.subtest_2di(test_num=8, subtest_num=8.2, err_code_a1=81, err_code_a2=82,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL12', False)
+                    self.ctrl_kl.ctrl_relay('KL25', False)
+                    self.ctrl_kl.ctrl_relay('KL11', False)
                     self.logger.debug("отключены KL12, KL25, KL11")
                     return True
         return False
@@ -214,11 +214,11 @@ class TestBRU2SR(object):
                                       position_a1=False, position_a2=True, resistance=0):
             if self.subtest.subtest_b_bdu(test_num=9, subtest_num=9.1, err_code_a1=75, err_code_a2=76,
                                           position_a1=False, position_a2=True, kl1=False):
-                self.__ctrl_kl.ctrl_relay('KL12', False)
+                self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
-                if self.subtest.subtest_inp_a1a2(test_num=9, subtest_num=9.2, err_code_a1=83, err_code_a2=84,
-                                                 position_a1=False, position_a2=False):
-                    self.__ctrl_kl.ctrl_relay('KL25', False)
+                if self.subtest.subtest_2di(test_num=9, subtest_num=9.2, err_code_a1=83, err_code_a2=84,
+                                            position_a1=False, position_a2=False):
+                    self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключен KL25")
                     return True
         return False
@@ -241,9 +241,9 @@ class TestBRU2SR(object):
         else:
             if self.subtest.subtest_bru2sr(test_num=11, subtest_num=11.0, err_code_a1=87, err_code_a2=88,
                                            resistance=30):
-                self.__mysql_conn.mysql_ins_result('пропущен', '10')
+                self.mysql_conn.mysql_ins_result('пропущен', '10')
                 return True
-        self.__mysql_conn.mysql_ins_result('пропущен', '10')
+        self.mysql_conn.mysql_ins_result('пропущен', '10')
         return False
 
     def st_test_bru_2sr(self) -> bool:
