@@ -24,14 +24,14 @@ from gen_subtest import SubtestA1A2
 __all__ = ["TestBDUD42"]
 
 
-class TestBDUD42(object):
+class TestBDUD42:
 
     def __init__(self):
-        self.__resist = Resistor()
-        self.__ctrl_kl = CtrlKL()
-        self.__read_mb = ReadMB()
-        self.__mysql_conn = MySQLConnect()
-        # self.__fault = Bug(True)
+        self.resist = Resistor()
+        self.ctrl_kl = CtrlKL()
+        self.read_mb = ReadMB()
+        self.mysql_conn = MySQLConnect()
+        # self.fault = Bug(True)
         self.subtest = SubtestA1A2()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUD42.log",
@@ -46,8 +46,8 @@ class TestBDUD42(object):
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        if self.subtest.subtest_inp_a1a2(test_num=1, subtest_num=1.0, err_code_a1=5, err_code_a2=6,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=5, err_code_a2=6, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
@@ -57,11 +57,11 @@ class TestBDUD42(object):
         2.1. Проверка исходного состояния блока
         """
         self.logger.debug("старт теста 2.0")
-        self.__ctrl_kl.ctrl_relay('KL2', True)
+        self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
         sleep(1)
-        if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.0, err_code_a1=13, err_code_a2=14,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=13, err_code_a2=14, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
@@ -82,13 +82,13 @@ class TestBDUD42(object):
         2.4. Выключение блока от кнопки «Стоп»
         """
         self.logger.debug("старт теста 2.3")
-        self.__ctrl_kl.ctrl_relay('KL12', False)
+        self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(2)
-        if self.subtest.subtest_inp_a1a2(test_num=2, subtest_num=2.3, err_code_a1=17, err_code_a2=18,
-                                         position_a1=False, position_a2=False):
-            self.__ctrl_kl.ctrl_relay('KL1', False)
-            self.__ctrl_kl.ctrl_relay('KL25', False)
+        if self.subtest.subtest_2di(test_num=2, subtest_num=2.3, err_code_a1=17, err_code_a2=18, position_a1=False,
+                                    position_a2=False):
+            self.ctrl_kl.ctrl_relay('KL1', False)
+            self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug("отключены KL25, KL1")
             return True
         return False
@@ -110,13 +110,13 @@ class TestBDUD42(object):
         3. Отключение исполнительного элемента при увеличении сопротивления цепи заземления
         """
         self.logger.debug("старт теста 3.2")
-        self.__resist.resist_10_to_110_ohm()
+        self.resist.resist_10_to_110_ohm()
         sleep(3)
-        if self.subtest.subtest_inp_a1a2(test_num=3, subtest_num=3.2, err_code_a1=19, err_code_a2=20,
-                                         position_a1=False, position_a2=False):
-            self.__ctrl_kl.ctrl_relay('KL12', False)
-            self.__ctrl_kl.ctrl_relay('KL25', False)
-            self.__ctrl_kl.ctrl_relay('KL1', False)
+        if self.subtest.subtest_2di(test_num=3, subtest_num=3.2, err_code_a1=19, err_code_a2=20, position_a1=False,
+                                    position_a2=False):
+            self.ctrl_kl.ctrl_relay('KL12', False)
+            self.ctrl_kl.ctrl_relay('KL25', False)
+            self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug("отключены KL12, KL25, KL1")
             return True
         return False
@@ -138,15 +138,15 @@ class TestBDUD42(object):
         Тест 4. Защита от потери управляемости при замыкании проводов ДУ
         """
         self.logger.debug("старт теста 4.2")
-        self.__ctrl_kl.ctrl_relay('KL11', True)
+        self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
         sleep(1)
-        if self.subtest.subtest_inp_a1a2(test_num=4, subtest_num=4.2, err_code_a1=9, err_code_a2=10,
-                                         position_a1=False, position_a2=False):
-            self.__ctrl_kl.ctrl_relay('KL12', False)
-            self.__ctrl_kl.ctrl_relay('KL25', False)
-            self.__ctrl_kl.ctrl_relay('KL1', False)
-            self.__ctrl_kl.ctrl_relay('KL11', False)
+        if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=9, err_code_a2=10, position_a1=False,
+                                    position_a2=False):
+            self.ctrl_kl.ctrl_relay('KL12', False)
+            self.ctrl_kl.ctrl_relay('KL25', False)
+            self.ctrl_kl.ctrl_relay('KL1', False)
+            self.ctrl_kl.ctrl_relay('KL11', False)
             self.logger.debug("отключены KL12, KL25, KL1, KL11")
             return True
         return False
@@ -168,11 +168,11 @@ class TestBDUD42(object):
         Тест 5. Защита от потери управляемости при обрыве проводов ДУ
         """
         self.logger.debug("старт теста 5.2")
-        self.__ctrl_kl.ctrl_relay('KL12', False)
+        self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.subtest.subtest_inp_a1a2(test_num=5, subtest_num=5.2, err_code_a1=11, err_code_a2=12,
-                                         position_a1=False, position_a2=False):
+        if self.subtest.subtest_2di(test_num=5, subtest_num=5.2, err_code_a1=11, err_code_a2=12, position_a1=False,
+                                    position_a2=False):
             return True
         return False
 
