@@ -13,7 +13,7 @@ __all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectE
            "ResultMsg", "ReadDI"]
 
 
-class DeltaTimeNoneKL63(object):
+class DeltaTimeNoneKL63:
     """
         расчет дельты времени переключения выходов блока
         Сброс или запоминание состояние таймера текущего времени CPU T0[i], сек
@@ -50,7 +50,7 @@ class DeltaTimeNoneKL63(object):
         return in_b1
 
 
-class Bug(object):
+class Bug:
     """
         Вывод сообщений в консоль, с цветовой дифференциацией штанов
     """
@@ -90,7 +90,7 @@ class Bug(object):
             pass
 
 
-class ResetRelay(object):
+class ResetRelay:
     """
         сбросы реле в различных вариациях в зависимости от алгоритма
     """
@@ -322,7 +322,7 @@ class ResetRelay(object):
         self.stop_procedure_3()
 
 
-class Resistor(object):
+class Resistor:
     """
         R1		1,2	    Ом	KL3
         R2		2,1	    Ом	KL4
@@ -662,7 +662,7 @@ class HardwareException(Exception):
     pass
 
 
-class ResultMsg(object):
+class ResultMsg:
     """
     исправность/неисправность блока
     """
@@ -681,7 +681,7 @@ class ResultMsg(object):
         self.reset.reset_all()
 
 
-class ReadDI(object):
+class ReadDI:
 
     def __init__(self):
         self.read_mb = ReadMB()

@@ -15,7 +15,7 @@ from gen_func_utils import Bug
 __all__ = ['MySQLConnect']
 
 
-class MySQLConnect(object):
+class MySQLConnect:
 
     def __init__(self):
         self.host = 'localhost'

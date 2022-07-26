@@ -9,7 +9,7 @@ from time import sleep
 __all__ = ['CtrlKL', 'ReadMB']
 
 
-class CtrlKL(object):
+class CtrlKL:
     """
     Управление дискретными выходами контроллера через ModBus OPC Server.
     100 запуск счетчика импульсов БКИ-1Т
@@ -302,7 +302,7 @@ class CtrlKL(object):
         self.__opc['Устройство.tegs.in_num_alg'] = 0
 
 
-class ReadMB(object):
+class ReadMB:
     """
     чтение регистров из ModBus OPC Server
     """

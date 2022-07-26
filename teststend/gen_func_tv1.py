@@ -9,7 +9,7 @@ from gen_func_utils import ResetRelay
 __all__ = ["PervObmTV1", "VtorObmTV1"]
 
 
-class PervObmTV1(object):
+class PervObmTV1:
     """
     Включение первичной обмотки в зависимости от напряжения
     """
@@ -376,7 +376,7 @@ class PervObmTV1(object):
             self.reset.sbros_perv_obm()
 
 
-class VtorObmTV1(object):
+class VtorObmTV1:
     """
         Включение вторичной обмотки в зависимости от напряжения
     """
