@@ -15,7 +15,7 @@ from gen_mb_client import *
 from gen_func_procedure import *
 from gen_mysql_connect import *
 
-__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M"]
+__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
 
 
 class SubtestMTZ5:
@@ -576,5 +576,157 @@ class SubtestBDU1M:
         self.ctrl_kl.ctrl_relay('KL25', True)
         sleep(1)
         if self.subtest_inp_a2(test_num=test_num, subtest_num=subtest_num, err_code=205, position=True):
+            return True
+        return False
+
+
+class Subtest4in:
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+        # self.reset = ResetRelay()
+        self.ctrl_kl = CtrlKL()
+        # self.read_mb = ReadMB()
+        self.read_di = ReadDI()
+        self.resist = Resistor()
+        self.mysql_conn = MySQLConnect()
+
+    def subtest_4di(self, *, test_num: int = 1, subtest_num: float = 1.0,
+                    err_code_a: int = 1, err_code_b: int = 1, err_code_c: int = 1, err_code_d: int = 1,
+                    position_a: bool = False, position_b: bool = False,
+                    position_c: bool = False, position_d: bool = False,
+                    inp_a: str = 'in_a0', inp_b: str = 'in_a1', inp_c: str = 'in_a2', inp_d: str = 'in_a3') -> bool:
+        """
+        Тест 1. Проверка исходного состояния блока:
+        Модуль используется в алгоритмах у которых 4 выхода
+        общий тест для БДУ-ДР.01 (bdu_dr01)
+        :param test_num: номер теста
+        :param subtest_num: номер подтеста
+        :param err_code_a: код ошибки для 1-го выхода
+        :param err_code_b: код ошибки для 2-го выхода
+        :param err_code_c: код ошибки для 3-го выхода
+        :param err_code_d: код ошибки для 4-го выхода
+        :param position_a: положение которое должен занять 1-й выход блока
+        :param position_b: положение которое должен занять 2-й выход блока
+        :param position_c: положение которое должен занять 3-й выход блока
+        :param position_d: положение которое должен занять 4-й выход блока
+        :param inp_a: 1-й вход контроллера
+        :param inp_b: 2-й вход контроллера
+        :param inp_c: 3-й вход контроллера
+        :param inp_d: 4-й вход контроллера
+        :return:
+        """
+
+        self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
+        in_a, in_b, in_c, in_d = self.read_di.inputs_di(inp_a, inp_b, inp_c, inp_d)
+        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b}"
+                          f"and {in_c = } is {position_c} and {in_d = } is {position_d}")
+        if in_a is position_a and in_b is position_b and in_c is position_c and in_d is position_d:
+            self.logger.debug("состояние выхода блока соответствует")
+            self.mysql_conn.mysql_ins_result(f"исправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Исправен. тест: {test_num}, подтест: {subtest_num}")
+            return True
+        else:
+            if in_a is not position_a:
+                self._subtest_err(err_code_a)
+            elif in_b is not position_b:
+                self._subtest_err(err_code_b)
+            elif in_c is not position_c:
+                self._subtest_err(err_code_c)
+            elif in_d is not position_d:
+                self._subtest_err(err_code_d)
+            self.mysql_conn.mysql_ins_result("неисправен", f'{test_num}')
+            self.mysql_conn.mysql_add_message(f"Неисправен. тест: {test_num}, подтест: {subtest_num}")
+            return False
+
+    def _subtest_err(self, err_code):
+        self.mysql_conn.mysql_error(err_code)
+        read_err = self.mysql_conn.read_err(err_code)
+        self.mysql_conn.mysql_add_message(read_err)
+        self.logger.debug(f'код неисправности {err_code}: {read_err}')
+
+    def subtest_a(self, *, test_num: int = 1, subtest_num: float = 1.0, resistance: int = 10,
+                  err_code_a: int = 1, err_code_b: int = 1, err_code_c: int = 1, err_code_d: int = 1,
+                  position_a: bool = False, position_b: bool = False,
+                  position_c: bool = False, position_d: bool = False,
+                  inp_a: str = 'in_a0', inp_b: str = 'in_a1', inp_c: str = 'in_a2', inp_d: str = 'in_a3') -> bool:
+        """
+        2.2. Включение 1 канала блока от кнопки «Пуск» 1 канала
+        # общий подтест для алгоритма БДУ-ДР.01 (bdu_dr01)
+            err_code: 1-й канал 224, 225, 226, 227, 2-й канал 252, 253, 254, 255
+            position: 1-й канал True & True & False & False, 2-й канал False & False & True & True
+        :param resistance: сопротивление
+        :param test_num: номер теста
+        :param subtest_num: номер подтеста
+        :param err_code_a: код ошибки для 1-го выхода
+        :param err_code_b: код ошибки для 2-го выхода
+        :param err_code_c: код ошибки для 3-го выхода
+        :param err_code_d: код ошибки для 4-го выхода
+        :param position_a: положение которое должен занять 1-й выход блока
+        :param position_b: положение которое должен занять 2-й выход блока
+        :param position_c: положение которое должен занять 3-й выход блока
+        :param position_d: положение которое должен занять 4-й выход блока
+        :param inp_a: 1-й вход контроллера
+        :param inp_b: 2-й вход контроллера
+        :param inp_c: 3-й вход контроллера
+        :param inp_d: 4-й вход контроллера
+        :return:
+        """
+        self.logger.debug(f"старт теста {test_num}, подтест {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.resist.resist_ohm(255)
+        self.resist.resist_ohm(resistance)
+        sleep(1)
+        self.ctrl_kl.ctrl_relay('KL12', True)
+        self.logger.debug("включен KL12")
+        sleep(1)
+        if self.subtest_4di(test_num=test_num, subtest_num=subtest_num,
+                            err_code_a=err_code_a, err_code_b=err_code_b, err_code_c=err_code_c, err_code_d=err_code_d,
+                            position_a=position_a, position_b=position_b, position_c=position_c, position_d=position_d,
+                            inp_a=inp_a, inp_b=inp_b, inp_c=inp_c, inp_d=inp_d):
+            return True
+        return False
+
+    def subtest_b(self, *, test_num: int = 1, subtest_num: float = 1.0, relay: str = 'KL1',
+                  err_code_a: int = 1, err_code_b: int = 1, err_code_c: int = 1, err_code_d: int = 1,
+                  position_a: bool = False, position_b: bool = False,
+                  position_c: bool = False, position_d: bool = False,
+                  inp_a: str = 'in_a0', inp_b: str = 'in_a1', inp_c: str = 'in_a2', inp_d: str = 'in_a3') -> bool:
+        """
+        2.3. Проверка удержания 1 канала блока во включенном состоянии
+        при подключении Rш пульта управления 1 каналом блока:
+        6.3. Проверка удержания 2 канала блока во включенном состоянии
+        при подключении Rш пульта управления 2 каналом блока:
+        # общий подтест для алгоритма БДУ-ДР.01 (bdu_dr01)
+            err_code: 1-й канал 228, 229, 230, 231, 2-й канал 256, 257, 258, 259
+            position: 1-й канал True & True & False & False, 2-й канал False & False & True & True
+            relay:  1-й канал KL1, 2-й канал KL29
+        :param relay: номер реле в формате 'KL1'
+        :param test_num: номер теста
+        :param subtest_num: номер подтеста
+        :param err_code_a: код ошибки для 1-го выхода
+        :param err_code_b: код ошибки для 2-го выхода
+        :param err_code_c: код ошибки для 3-го выхода
+        :param err_code_d: код ошибки для 4-го выхода
+        :param position_a: положение которое должен занять 1-й выход блока
+        :param position_b: положение которое должен занять 2-й выход блока
+        :param position_c: положение которое должен занять 3-й выход блока
+        :param position_d: положение которое должен занять 4-й выход блока
+        :param inp_a: 1-й вход контроллера
+        :param inp_b: 2-й вход контроллера
+        :param inp_c: 3-й вход контроллера
+        :param inp_d: 4-й вход контроллера
+        :return:
+        """
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.ctrl_kl.ctrl_relay(relay, True)
+        self.ctrl_kl.ctrl_relay('KL25', True)
+        sleep(1)
+        if self.subtest_4di(test_num=test_num, subtest_num=subtest_num,
+                            err_code_a=err_code_a, err_code_b=err_code_b, err_code_c=err_code_c, err_code_d=err_code_d,
+                            position_a=position_a, position_b=position_b, position_c=position_c, position_d=position_d,
+                            inp_a=inp_a, inp_b=inp_b, inp_c=inp_c, inp_d=inp_d):
             return True
         return False
