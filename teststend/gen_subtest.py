@@ -653,6 +653,7 @@ class Subtest4in:
                   position_c: bool = False, position_d: bool = False,
                   inp_a: str = 'in_a0', inp_b: str = 'in_a1', inp_c: str = 'in_a2', inp_d: str = 'in_a3') -> bool:
         """
+        общий подтест для БДУ-ДР.01
         2.2. Включение 1 канала блока от кнопки «Пуск» 1 канала
         # общий подтест для алгоритма БДУ-ДР.01 (bdu_dr01)
             err_code: 1-й канал 224, 225, 226, 227, 2-й канал 252, 253, 254, 255
@@ -676,6 +677,7 @@ class Subtest4in:
         """
         self.logger.debug(f"старт теста {test_num}, подтест {subtest_num}")
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
         self.resist.resist_ohm(255)
         self.resist.resist_ohm(resistance)
         sleep(1)
@@ -695,6 +697,7 @@ class Subtest4in:
                   position_c: bool = False, position_d: bool = False,
                   inp_a: str = 'in_a0', inp_b: str = 'in_a1', inp_c: str = 'in_a2', inp_d: str = 'in_a3') -> bool:
         """
+        общий подтест для БДУ-ДР.01
         2.3. Проверка удержания 1 канала блока во включенном состоянии
         при подключении Rш пульта управления 1 каналом блока:
         6.3. Проверка удержания 2 канала блока во включенном состоянии
@@ -720,7 +723,9 @@ class Subtest4in:
         :param inp_d: 4-й вход контроллера
         :return:
         """
+        self.logger.debug(f"старт теста {test_num}, подтест {subtest_num}")
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
         self.ctrl_kl.ctrl_relay(relay, True)
         self.ctrl_kl.ctrl_relay('KL25', True)
         sleep(1)
