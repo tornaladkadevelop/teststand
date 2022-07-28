@@ -35,7 +35,7 @@ class TestBKI2T:
         self.fault = Bug(None)
         self.subtest = Subtest4in()
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBKI2T.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBKI2T.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
