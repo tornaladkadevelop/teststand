@@ -19,6 +19,7 @@ from gen_func_utils import *
 from gen_mb_client import *
 from gen_mysql_connect import *
 from gen_subtest import Subtest2in
+from gen_exception import *
 
 __all__ = ["TestBRU2SR"]
 

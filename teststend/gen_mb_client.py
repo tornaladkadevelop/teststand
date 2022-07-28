@@ -3,8 +3,11 @@
 
 import logging
 
+from time import sleep, time
+
 from OpenOPC import client
-from time import sleep
+
+from gen_exception import ModbusConnectException
 
 __all__ = ['CtrlKL', 'ReadMB']
 
@@ -460,10 +463,28 @@ class ReadMB:
         else:
             return 999
 
+    def read_di(self, *args):
+        print(args)
+        start_timer = time()
+        position = []
+        tags = ['in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4', 'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1', 'in_b2',
+                'in_b3', 'in_b4', 'in_b5']
+        gr_di = 'Выходы.inputs'
+        read_tags = self.__opc.read(args, group=gr_di, update=1, include_error=True)
+        print(read_tags)
+        print(read_tags[0][2])
+        if read_tags[0][2] != 'Good':
+            raise ModbusConnectException("нет связи с контроллером")
+        for i in range(len(args)):
+            position.append(read_tags[i][1])
+        stop_timer = time()
+        print(stop_timer - start_timer)
+        return position
 
-# if __name__ == '__main__':
-#     try:
-        # read_mb = ReadDI()
+
+if __name__ == '__main__':
+    try:
+        read_mb = ReadMB()
         # st_timer = time()
         # a = read_mb.read_discrete(0)
         # b = read_mb.read_discrete(1)
@@ -491,9 +512,10 @@ class ReadMB:
         # print(stop_timer - st_timer)
     #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
     #     print(in_1, in_5, in_6)
-    # except IOError:
-    #     print('системная ошибка')
-    # except ModbusConnectException as mce:
-    #     print(mce)
-    # finally:
-    #     print('end')
+        in_a0, in_a1, in_b0 = read_mb.read_di('in_a0', 'in_a1', 'in_b0')
+    except IOError:
+        print('системная ошибка')
+    except ModbusConnectException as mce:
+        print(mce)
+    finally:
+        print('end')

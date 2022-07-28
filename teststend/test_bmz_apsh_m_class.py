@@ -21,6 +21,7 @@ from my_msgbox import *
 from gen_mb_client import *
 from gen_mysql_connect import *
 from gen_subtest import Subtest4in
+from gen_exception import *
 
 __all__ = ["TestBMZAPSHM"]
 

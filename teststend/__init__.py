@@ -70,7 +70,8 @@ __all__ = ("config", "gen_func_procedure", "gen_func_tv1", "gen_func_utils", "ge
            "test_ubtz_class", "test_umz_class", "test_mtzp_2_class", "test_mtz_5_v2_7_class", "test_mtz_5_v2_8_class",
            "test_mmtz_d_class", "test_bzmp_d_class", "test_bzmp_p1_class", "test_bzmp_p_class", "test_bru_2s_class",
            "test_bru_2sr_class", "test_bu_pmvir_class", "test_bur_pmvir_class", "test_mtz_5_v4_11_class",
-           "test_bu_apsh_m_class", "test_bmz_apsh_4_class", "test_bmz_apsh_m_class", "test_mkzp_6_4sh_class")
+           "test_bu_apsh_m_class", "test_bmz_apsh_4_class", "test_bmz_apsh_m_class", "test_mkzp_6_4sh_class",
+           "gen_subtest", "gen_exception")
 
 __author__ = '<konstantin.devyaterikov@tornaladka.ru>' \
              '<irik.safin@tornaladka.ru>, ' \
