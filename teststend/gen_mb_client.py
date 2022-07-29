@@ -3,13 +3,13 @@
 
 import logging
 
-from time import sleep, time
+from time import sleep
 
 from OpenOPC import client
 
 from gen_exception import ModbusConnectException
 
-__all__ = ['CtrlKL', 'ReadMB']
+__all__ = ['CtrlKL', 'ReadMB', 'DIRead']
 
 
 class CtrlKL:
@@ -30,8 +30,8 @@ class CtrlKL:
     """
 
     def __init__(self):
-        self.__opc = client()
-        self.__opc.connect('arOPC.arOpcServer.1')
+        self.opc = client()
+        self.opc.connect('arOPC.arOpcServer.1')
         self.__dic_relay = {'KL1': 'Устройство.tg.in_perekl_rejimov_KL1',
                             'KL2': 'Устройство.tg.in_power_18V_KL2',
                             'KL3': 'Устройство.tg.in_R1_KL3',
@@ -182,18 +182,18 @@ class CtrlKL:
 
     def ctrl_relay(self, rel, ctrl) -> None:
         kl = self.__dic_relay[f'{rel}']
-        self.__opc[kl] = ctrl
+        self.opc[kl] = ctrl
 
     def reset_all_v1(self) -> None:
         for i in range(len(self.__list_relay)):
             kl = self.__list_relay[i]
-            self.__opc[kl] = False
+            self.opc[kl] = False
 
     def reset_all_v2(self) -> None:
         kl = self.__dic_relay.keys()
         for i in kl:
             rele = self.__dic_relay[i]
-            self.__opc[rele] = False
+            self.opc[rele] = False
 
     def ctrl_ai_code_v0(self, code: int) -> [int, float]:
         """
@@ -208,21 +208,21 @@ class CtrlKL:
         :param code: 103, 104, 105, 109, 110, 111
         :return:
         """
-        self.__opc['Устройство.tegs.in_num_alg'] = code
+        self.opc['Устройство.tegs.in_num_alg'] = code
         sleep(3)
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[3])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
         if list_str[2] == "'Good'":
             analog_inp_fl = float(list_str[1])
-            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            self.opc['Устройство.tegs.in_num_alg'] = 0
             return analog_inp_fl
         else:
-            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            self.opc['Устройство.tegs.in_num_alg'] = 0
             return 9999
-        # self.__opc['Устройство.tegs.in_num_alg'] = 0
+        # self.opc['Устройство.tegs.in_num_alg'] = 0
         # if analog_inp_fl <= 3000:
         #     return analog_inp_fl
         # else:
@@ -233,21 +233,21 @@ class CtrlKL:
         100 запуск счетчика импульсов БКИ-1Т
         :return: analog_inp_fl
         """
-        self.__opc['Устройство.tegs.in_num_alg'] = 100
+        self.opc['Устройство.tegs.in_num_alg'] = 100
         sleep(3)
 
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[0])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[0])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
         if list_str[2] == "'Good'":
             pass
         else:
-            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            self.opc['Устройство.tegs.in_num_alg'] = 0
             return 9999
         analog_inp_fl = float(list_str[1])
-        self.__opc['Устройство.tegs.in_num_alg'] = 0
+        self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
 
     def ctrl_ai_code_101(self) -> [int, float]:
@@ -255,20 +255,20 @@ class CtrlKL:
         101 запуск 1-го подтеста БКИ-6-ЗШ
         :return: analog_inp_fl
         """
-        self.__opc['Устройство.tegs.in_num_alg'] = 101
+        self.opc['Устройство.tegs.in_num_alg'] = 101
         sleep(21)
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[1])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
         if list_str[2] == "'Good'":
             pass
         else:
-            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            self.opc['Устройство.tegs.in_num_alg'] = 0
             return 9999
         analog_inp_fl = float(list_str[1])
-        self.__opc['Устройство.tegs.in_num_alg'] = 0
+        self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
 
     def ctrl_ai_code_102(self) -> [int, float]:
@@ -276,20 +276,20 @@ class CtrlKL:
         102 запуск 2-го подтеста БКИ-6-ЗШ
         :return: analog_inp_fl
         """
-        self.__opc['Устройство.tegs.in_num_alg'] = 102
+        self.opc['Устройство.tegs.in_num_alg'] = 102
         sleep(3)
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[2])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
         if list_str[2] == "'Good'":
             pass
         else:
-            self.__opc['Устройство.tegs.in_num_alg'] = 0
+            self.opc['Устройство.tegs.in_num_alg'] = 0
             return 9999
         analog_inp_fl = float(list_str[1])
-        self.__opc['Устройство.tegs.in_num_alg'] = 0
+        self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
 
     def ctrl_ai_code_v1(self, code: int) -> None:
@@ -300,9 +300,9 @@ class CtrlKL:
         :param code:
         :return: None
         """
-        self.__opc['Устройство.tegs.in_num_alg'] = code
+        self.opc['Устройство.tegs.in_num_alg'] = code
         sleep(0.5)
-        self.__opc['Устройство.tegs.in_num_alg'] = 0
+        self.opc['Устройство.tegs.in_num_alg'] = 0
 
 
 class ReadMB:
@@ -311,18 +311,19 @@ class ReadMB:
     """
 
     def __init__(self):
-        self.__opc = client()
-        self.__opc.connect('arOPC.arOpcServer.1')
+        self.opc = client()
+        self.opc.connect('arOPC.arOpcServer.1')
         self.__tags_value = []
         self.__analog_tags_value = []
+        self.logger = logging.getLogger(__name__)
         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
     def read_discrete(self, tag_index):
         self.tag_index = tag_index
         tags_value = []
-        tags_value.append(self.__opc.list('Выходы.inputs')[self.tag_index])
-        val = self.__opc.read(tags_value, update=1, include_error=True)
+        tags_value.append(self.opc.list('Выходы.inputs')[self.tag_index])
+        val = self.opc.read(tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -333,8 +334,8 @@ class ReadMB:
 
     # !!!---- код ниже почему то ни хуя не работает ----!!!
     # def read_discrete(self, tag_index: int) -> [bool, None]:
-    #     self.__tags_value.append(self.__opc.list('Выходы.inputs')[tag_index])
-    #     val = self.__opc.read(self.__tags_value, update=1, include_error=True)
+    #     self.__tags_value.append(self.opc.list('Выходы.inputs')[tag_index])
+    #     val = self.opc.read(self.__tags_value, update=1, include_error=True)
     #     conv_lst = ' '.join(map(str, val))
     #     list_str = conv_lst.split(', ', 5)
     #     list_str[0] = list_str[0][2:-1]
@@ -353,8 +354,8 @@ class ReadMB:
         val = []
         for i in args:
             tag = self.di[i]
-            self.__tags_value.append(self.__opc.list('Выходы.inputs')[tag])
-            val = self.__opc.read(self.__tags_value, update=1, include_error=True)
+            self.__tags_value.append(self.opc.list('Выходы.inputs')[tag])
+            val = self.opc.read(self.__tags_value, update=1, include_error=True)
         for n in val:
             if n[2] == 'Good':
                 list_result.append(n[1])
@@ -378,8 +379,8 @@ class ReadMB:
         """
         analog_max_code = 27648.0
         analog_max = 400
-        self.__analog_tags_value.append(self.__opc.list('AI.AI')[0])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('AI.AI')[0])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -401,8 +402,8 @@ class ReadMB:
         analog_min_code = 0
         analog_max = 10
         analog_min = 0
-        self.__analog_tags_value.append(self.__opc.list('AI.AI')[2])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('AI.AI')[2])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -420,8 +421,8 @@ class ReadMB:
             считывание тега модбас error_4
         :return:
         """
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[3])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -436,8 +437,8 @@ class ReadMB:
             считывание тега модбас error_1
         :return:
         """
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[1])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -452,8 +453,8 @@ class ReadMB:
             считывание тега модбас error_2
         :return:
         """
-        self.__analog_tags_value.append(self.__opc.list('Устройство.tegs')[2])
-        val = self.__opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
+        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -463,28 +464,40 @@ class ReadMB:
         else:
             return 999
 
-    def read_di(self, *args):
-        print(args)
-        start_timer = time()
+
+class DIRead:
+    """
+    Чтение дискретных входов ПЛК через OPC server
+    """
+    def __init__(self):
+        self.opc = client()
+        self.opc.connect('arOPC.arOpcServer.1')
+        self.logger = logging.getLogger(__name__)
+
+        # tags = ['in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4', 'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1', 'in_b2',
+        #         'in_b3', 'in_b4', 'in_b5']
+
+    def di_read(self, *args):
+        """
+        если этот метод заработает на реальном железе, нужно будет везде его подключить
+        :param args:
+        :return:
+        """
+        self.logger.debug("старт считывания дискретных входов ПЛК")
         position = []
-        tags = ['in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4', 'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1', 'in_b2',
-                'in_b3', 'in_b4', 'in_b5']
         gr_di = 'Выходы.inputs'
-        read_tags = self.__opc.read(args, group=gr_di, update=1, include_error=True)
-        print(read_tags)
-        print(read_tags[0][2])
+        read_tags = self.opc.read(args, group=gr_di, update=1, include_error=True)
+        self.logger.debug(f'считанные значения {read_tags}')
         if read_tags[0][2] != 'Good':
             raise ModbusConnectException("нет связи с контроллером")
         for i in range(len(args)):
             position.append(read_tags[i][1])
-        stop_timer = time()
-        print(stop_timer - start_timer)
         return position
 
 
 if __name__ == '__main__':
     try:
-        read_mb = ReadMB()
+        read_mb = DIRead()
         # st_timer = time()
         # a = read_mb.read_discrete(0)
         # b = read_mb.read_discrete(1)
@@ -512,7 +525,9 @@ if __name__ == '__main__':
         # print(stop_timer - st_timer)
     #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
     #     print(in_1, in_5, in_6)
-        in_a0, in_a1, in_b0 = read_mb.read_di('in_a0', 'in_a1', 'in_b0')
+        in_a0, in_a1, in_b0 = read_mb.di_read('in_a0', 'in_a1', 'in_b0')
+        in_b1, *_ = read_mb.di_read('in_b1')
+        print(in_b1)
     except IOError:
         print('системная ошибка')
     except ModbusConnectException as mce:

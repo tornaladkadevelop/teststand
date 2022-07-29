@@ -8,9 +8,9 @@ from time import time, sleep
 
 from my_msgbox import *
 from gen_mb_client import *
+from gen_exception import *
 
-__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ModbusConnectException", "HardwareException",
-           "ResultMsg", "ReadDI"]
+__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ResultMsg", "ReadDI"]
 
 
 class DeltaTimeNoneKL63:
@@ -320,6 +320,43 @@ class ResetRelay:
         self.logger.debug("отключение реле KL63")
         sleep(0.1)
         self.stop_procedure_3()
+
+    def sbros_testa_bp_0(self):
+        """
+        сброс реле в алгоритме проверки БП (bp)
+        используется в тесте 2.0
+        :return:
+        """
+        self.logger.debug("отключение реле")
+        self.ctrl_kl.ctrl_relay('KL77', False)
+        sleep(0.1)
+        self.ctrl_kl.ctrl_relay('KL65', False)
+        sleep(0.1)
+        self.ctrl_kl.ctrl_relay('KL76', False)
+        self.ctrl_kl.ctrl_relay('KL66', False)
+        self.ctrl_kl.ctrl_relay('KL78', False)
+        self.logger.debug("отключены реле KL77, KL65, KL76, KL66, KL78")
+
+    def sbros_testa_bp_1(self):
+        """
+        сброс реле в алгоритме проверки БП (bp)
+        используется в тесте 4.0 и 3.0
+        :return:
+        """
+        self.sbros_testa_bp_0()
+        self.ctrl_kl.ctrl_relay('KL75', False)
+        self.logger.debug("отключены реле KL75")
+
+    def sbros_zashit_ubtz(self):
+        """
+        Метод используется для сброса защит блока УБТЗ (ubtz)
+        :return:
+        """
+        self.ctrl_kl.ctrl_relay('KL1', True)
+        self.ctrl_kl.ctrl_relay('KL31', True)
+        sleep(12)
+        self.ctrl_kl.ctrl_relay('KL1', False)
+        self.ctrl_kl.ctrl_relay('KL31', False)
 
 
 class Resistor:
@@ -652,16 +689,6 @@ class Resistor:
         self.logger.debug("переключение с 220 ком на 100 ком")
 
 
-class ModbusConnectException(Exception):
-    """вываливается когда нет связи по modbus"""
-    pass
-
-
-class HardwareException(Exception):
-    """вываливается при неиспраности стенда"""
-    pass
-
-
 class ResultMsg:
     """
     исправность/неисправность блока
@@ -701,9 +728,17 @@ class ReadDI:
         return self.inp_list
 
 
-# if __name__ == '__main__':
-#     try:
-#         read_di = ReadDI()
+
+
+
+
+
+
+
+
+if __name__ == '__main__':
+    try:
+        read_di = ReadDI()
 #         # st_timer = time()
 #         # a = read_mb.read_discrete(0)
 #         # b = read_mb.read_discrete(1)
@@ -737,9 +772,11 @@ class ReadDI:
 #         # print(in_4, in_7)
 #         # in_3 = read_di.inputs_di("in_a3")
 #         # print(in_3)
-#     except IOError:
-#         print('системная ошибка')
-#     except ModbusConnectException as mce:
-#         print(mce)
-#     finally:
-#         print('end')
+#         in_a0, in_a1 = read_di.inputs_di_1('in_a0', 'in_a1')
+#         print(in_a0, in_a1)
+    except IOError:
+        print('системная ошибка')
+    except ModbusConnectException as mce:
+        print(mce)
+    finally:
+        print('end')

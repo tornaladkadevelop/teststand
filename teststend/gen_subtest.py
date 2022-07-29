@@ -269,24 +269,24 @@ class Subtest2in:
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
-    def subtest_2di(self, **kwargs) -> bool:
+    def subtest_2di(self, *, test_num: int = 1, subtest_num: float = 1.0, err_code_a1: int = 1, err_code_a2: int = 1,
+                    position_a1: bool = False, position_a2: bool = False, inp_1: str = 'in_a1',
+                    inp_2: str = 'in_a2') -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         Возвращает True если на входе False
         модуль используется в алгоритмах у которых только один вход in_a1
         общий тест для bdu_4_2, bdu_d4_2, bdu_r_t, bdz, bru_2sr, bu_apsh_m, bur_pmvir, buz_2
-        :param: test_num: int, subtest_num: float, err_code_a1: int, err_code_a2: int, position_a1: bool,
-        position_a2: bool:
+        :param test_num:
+        :param subtest_num:
+        :param err_code_a1:
+        :param err_code_a2:
+        :param position_a1:
+        :param position_a2:
+        :param inp_1:
+        :param inp_2:
         :return:
         """
-        test_num: int = kwargs.get("test_num", 1)
-        subtest_num: float = kwargs.get("subtest_num", 1.0)
-        err_code_a1: int = kwargs.get("err_code_a1", 1)
-        err_code_a2: int = kwargs.get("err_code_a2", 1)
-        position_a1: bool = kwargs.get("position_a1", False)
-        position_a2: bool = kwargs.get("position_a2", False)
-        inp_1: str = kwargs.get("inp_1", 'in_a1')
-        inp_2: str = kwargs.get("inp_2", 'in_a2')
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
@@ -735,3 +735,5 @@ class Subtest4in:
                             inp_a=inp_a, inp_b=inp_b, inp_c=inp_c, inp_d=inp_d):
             return True
         return False
+
+
