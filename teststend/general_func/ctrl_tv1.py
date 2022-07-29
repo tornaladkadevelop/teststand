@@ -3,8 +3,8 @@
 
 import logging
 
-from gen_mb_client import CtrlKL
-from gen_func_utils import ResetRelay
+from .modbus import CtrlKL
+from .utils import ResetRelay
 
 __all__ = ["PervObmTV1", "VtorObmTV1"]
 

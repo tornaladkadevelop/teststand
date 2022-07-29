@@ -10,7 +10,7 @@ from datetime import datetime
 
 import mysql.connector
 
-from gen_func_utils import Bug
+from .utils import Bug
 
 __all__ = ['MySQLConnect']
 

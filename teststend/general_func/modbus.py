@@ -7,7 +7,7 @@ from time import sleep
 
 from OpenOPC import client
 
-from gen_exception import ModbusConnectException
+from .exception import ModbusConnectException
 
 __all__ = ['CtrlKL', 'ReadMB', 'DIRead']
 

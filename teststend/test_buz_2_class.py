@@ -18,13 +18,13 @@ import logging
 
 from time import sleep, time
 
-from my_msgbox import *
-from gen_func_procedure import *
-from gen_func_utils import *
-from gen_mb_client import *
-from gen_mysql_connect import *
-from gen_subtest import Subtest2in
-from gen_exception import *
+from general_func.exception import *
+from general_func.utils import *
+from general_func.database import *
+from general_func.modbus import *
+from general_func.procedure import *
+from general_func.subtest import *
+from gui.msgbox_1 import *
 
 
 class TestBUZ2:

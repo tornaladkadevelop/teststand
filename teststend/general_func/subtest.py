@@ -10,10 +10,10 @@ import logging
 from typing import Union
 from time import sleep
 
-from gen_func_utils import *
-from gen_mb_client import *
-from gen_func_procedure import *
-from gen_mysql_connect import *
+from .utils import *
+from .modbus import *
+from .procedure import *
+from .database import *
 
 __all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
 

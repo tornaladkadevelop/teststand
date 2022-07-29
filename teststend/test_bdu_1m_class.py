@@ -12,12 +12,12 @@ import logging
 
 from time import sleep
 
-from gen_func_utils import *
-from my_msgbox import *
-from gen_mb_client import *
-from gen_mysql_connect import *
-from gen_subtest import SubtestBDU1M
-from gen_exception import *
+from general_func.exception import *
+from general_func.subtest import *
+from general_func.utils import *
+from general_func.database import *
+from general_func.modbus import *
+from gui.msgbox_1 import *
 
 __all__ = ["TestBDU1M"]
 
@@ -32,7 +32,7 @@ class TestBDU1M:
         self.fault = Bug(False)
         self.subtest = SubtestBDU1M()
         # C:\Stend\project_class
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBDU1M.log",
+        logging.basicConfig(filename=".\log\TestBDU1M.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
@@ -200,7 +200,7 @@ if __name__ == '__main__':
     test_bdu_1m = TestBDU1M()
     mysql_conn_test_bdu_1m = MySQLConnect()
     reset_test_bdu_1m = ResetRelay()
-    fault = Bug(True)
+    fault = Bug(None)
     try:
         if test_bdu_1m.st_test_bdu_1m():
             mysql_conn_test_bdu_1m.mysql_block_good()

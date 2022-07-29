@@ -6,9 +6,9 @@ import logging
 
 from time import time, sleep
 
-from my_msgbox import *
-from gen_mb_client import *
-from gen_exception import *
+# from my_msgbox import *
+from .modbus import *
+from .exception import *
 
 __all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ResultMsg", "ReadDI"]
 
@@ -699,12 +699,12 @@ class ResultMsg:
 
     def test_error(self, test_number):
         msg = (f'Тест: {test_number} не пройден')
-        my_msg(msg)
+        # my_msg(msg)
         self.reset.reset_all()
 
     def test_good(self):
         msg = "Тестирование завершено:\nБлок исправен "
-        my_msg(msg)
+        # my_msg(msg)
         self.reset.reset_all()
 
 

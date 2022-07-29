@@ -59,10 +59,9 @@
 
 """
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
-__all__ = ("config", "gen_func_procedure", "gen_func_tv1", "gen_func_utils", "gen_mb_client", "gen_mysql_connect",
-           "my_msgbox", "my_msgbox_2", "reset_all", "test_bdu_1_class", "test_bdu_1m_class", "test_bdu_4_2_class",
+__all__ = ("config", "general_func", "gui", "reset_all", "test_bdu_1_class", "test_bdu_1m_class", "test_bdu_4_2_class",
            "test_bdu_4_3_class", "test_bdu_014tp_class", "test_bdu_class", "test_bdu_d4_2_class", "test_bdu_d_class",
            "test_bdu_dr01_class", "test_bdu_r_t_class", "test_bdz_class", "test_bki_1t_class", "test_bki_2t_class",
            "test_bki_6_3sh_class", "test_bki_p_class", "test_bkz_3mk_class", "test_bmz_2_class", "test_btz_3_class",
@@ -70,8 +69,7 @@ __all__ = ("config", "gen_func_procedure", "gen_func_tv1", "gen_func_utils", "ge
            "test_ubtz_class", "test_umz_class", "test_mtzp_2_class", "test_mtz_5_v2_7_class", "test_mtz_5_v2_8_class",
            "test_mmtz_d_class", "test_bzmp_d_class", "test_bzmp_p1_class", "test_bzmp_p_class", "test_bru_2s_class",
            "test_bru_2sr_class", "test_bu_pmvir_class", "test_bur_pmvir_class", "test_mtz_5_v4_11_class",
-           "test_bu_apsh_m_class", "test_bmz_apsh_4_class", "test_bmz_apsh_m_class", "test_mkzp_6_4sh_class",
-           "gen_subtest", "gen_exception")
+           "test_bu_apsh_m_class", "test_bmz_apsh_4_class", "test_bmz_apsh_m_class", "test_mkzp_6_4sh_class")
 
 __author__ = '<konstantin.devyaterikov@tornaladka.ru>' \
              '<irik.safin@tornaladka.ru>, ' \

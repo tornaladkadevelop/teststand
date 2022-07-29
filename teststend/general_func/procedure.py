@@ -5,10 +5,10 @@ import logging
 
 from time import sleep
 
-from gen_func_tv1 import *
-from gen_func_utils import *
-from gen_mb_client import *
-from gen_exception import *
+from .ctrl_tv1 import *
+from .utils import *
+from .modbus import *
+from .exception import *
 
 __all__ = ["Procedure"]
 
