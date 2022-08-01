@@ -25,6 +25,8 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.resistance import Resistor
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -35,7 +37,8 @@ class TestBKZ3MK:
 
     def __init__(self):
         self.proc = Procedure()
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
@@ -97,7 +100,7 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включение KL21")
         sleep(2)
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         sleep(1)
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")
@@ -144,12 +147,12 @@ class TestBKZ3MK:
             self.fault.debug_msg("напряжение не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(32)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             self.logger.debug("отключение реле")
             return False
         self.logger.debug("напряжение соответствует")
         self.fault.debug_msg("напряжение соответствует", 'green')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         self.logger.debug("отключение реле")
         return True
 
@@ -165,12 +168,12 @@ class TestBKZ3MK:
             pass
         else:
             self.logger.debug("неисправен")
-            self.reset.stop_procedure_32()
+            self.reset_relay.stop_procedure_32()
             self.logger.debug("отключение реле процедуры 3.2")
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.logger.debug("исправен")
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         self.logger.debug("отключение реле процедуры 3.2")
         self.mysql_conn.mysql_ins_result('исправен', '1')
         self.fault.debug_msg("тест 1 пройден", 'green')
@@ -236,7 +239,7 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL22', False)
         self.logger.debug("отключение KL22")
         sleep(2)
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защиты")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"положение входов \t {in_a5 = } (True), {in_a6 = } (True)")
@@ -297,7 +300,7 @@ class TestBKZ3MK:
                 self.logger.debug(f"{in_a5 = } (False), {in_a6 = } (True)")
                 self.fault.debug_msg(f'положение входов \t {in_a5 = } (False) {in_a6 = } (True)', 'blue')
                 if self.calc_delta_t_mtz == 9999:
-                    self.reset.sbros_zashit_kl30_1s5()
+                    self.reset_protect.sbros_zashit_kl30_1s5()
                     self.logger.debug("сброс защиты")
                     sleep(3)
                     qw += 1
@@ -320,7 +323,7 @@ class TestBKZ3MK:
             self.mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]}  '
                                               f'дельта t: {self.calc_delta_t_mtz:.1f} '
                                               f'дельта %: {calc_delta_percent_mtz:.2f}')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             self.logger.debug("останов процедуры 3")
             in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
             if in_a5 is False and in_a6 is True:
@@ -376,7 +379,7 @@ class TestBKZ3MK:
         m = 0
         for n in self.list_ust_tzp_volt:
             self.logger.debug(f"проверка уставки: {self.list_ust_tzp_volt[m]}")
-            self.reset.sbros_zashit_kl30_1s5()
+            self.reset_protect.sbros_zashit_kl30_1s5()
             self.logger.debug("сброс защит")
             msg_result_tzp = my_msg_2(f'{self.msg_5} {self.list_ust_tzp_num[m]}')
             if msg_result_tzp == 0:
@@ -410,7 +413,7 @@ class TestBKZ3MK:
             self.mysql_conn.mysql_add_message(f'уставка ТЗП {self.list_ust_tzp_num[m]}: '
                                               f'дельта t: {calc_delta_t_tzp:.1f}, '
                                               f'дельта %: {calc_delta_percent_tzp:.2f}')
-            self.reset.sbros_kl63_proc_all()
+            self.reset_relay.sbros_kl63_proc_all()
             if calc_delta_t_tzp != 0:
                 in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
                 self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (False)")
@@ -467,7 +470,7 @@ class TestBKZ3MK:
         """
         self.logger.debug("тест 4.2, повышение уставки")
         self.mysql_conn.mysql_ins_result('идет тест 4.2', '4')
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug(f"сброс защит")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")
@@ -501,7 +504,7 @@ class TestBKZ3MK:
             in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
             self.logger.debug(f"{in_a5 = } (False), {in_a6 = } (True)")
             if self.calc_delta_t_mtz == 9999:
-                self.reset.sbros_zashit_kl30_1s5()
+                self.reset_protect.sbros_zashit_kl30_1s5()
                 self.logger.debug(f"сброс защит")
                 sleep(3)
                 wq += 1
@@ -523,7 +526,7 @@ class TestBKZ3MK:
             self.list_delta_t_mtz[-1] = f'{self.calc_delta_t_mtz:.1f}'
         self.mysql_conn.mysql_add_message(f'уставка МТЗ {self.list_ust_mtz_num[k]} '
                                           f'дельта t: {self.calc_delta_t_mtz:.1f}')
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         self.logger.debug(f"останов процедуры 3")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (False), {in_a6 = } (True)")
@@ -549,7 +552,7 @@ class TestBKZ3MK:
     def subtest_43(self):
         self.logger.debug("тест 4.3")
         self.mysql_conn.mysql_ins_result('идет тест 4.3', '4')
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защит")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")
@@ -570,7 +573,7 @@ class TestBKZ3MK:
         self.logger.debug("тест 4.5")
         self.mysql_conn.mysql_ins_result('идет тест 4.5', '4')
         # 4.5. Расчет времени и кратности срабатывания
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защит")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")
@@ -591,7 +594,7 @@ class TestBKZ3MK:
         self.logger.debug("тест 5.5")
         self.mysql_conn.mysql_ins_result('идет тест 5.5', '5')
         self.fault.debug_msg('идет тест 5.5', 'blue')
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защит")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")
@@ -611,7 +614,7 @@ class TestBKZ3MK:
         self.logger.debug("тест 5.6")
         self.mysql_conn.mysql_ins_result('идет тест 5.6', '5')
         self.fault.debug_msg('идет тест 5.6', 'blue')
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защит")
         in_a5, in_a6 = self.di_read.di_read('in_a5', 'in_a6')
         self.logger.debug(f"{in_a5 = } (True), {in_a6 = } (True)")

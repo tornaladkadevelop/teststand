@@ -19,6 +19,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.subtest import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -28,7 +29,8 @@ __all__ = ["TestMTZ5V411"]
 class TestMTZ5V411:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
@@ -95,7 +97,7 @@ class TestMTZ5V411:
         sleep(0.5)
         self.ctrl_kl.ctrl_relay('KL2', True)
         sleep(1)
-        self.reset.sbros_zashit_mtz5()
+        self.reset_protect.sbros_zashit_mtz5()
         in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
         self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
@@ -152,9 +154,9 @@ class TestMTZ5V411:
             pass
         else:
             self.mysql_conn.mysql_ins_result("неисправен TV1", "1")
-            self.reset.stop_procedure_32()
+            self.reset_relay.stop_procedure_32()
             return False
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         self.mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
@@ -193,7 +195,7 @@ class TestMTZ5V411:
         self.logger.debug("тест 2.1")
         self.mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
         self.fault.debug_msg("2.1 Сброс защит после проверки", 'blue')
-        self.reset.sbros_zashit_mtz5()
+        self.reset_protect.sbros_zashit_mtz5()
         in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
         self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
@@ -246,7 +248,7 @@ class TestMTZ5V411:
 
             calc_delta_t_mtz, in_a1, in_a5 = self.sub_test.subtest_time_calc_mtz()
             self.logger.debug(f"время срабатывания: {calc_delta_t_mtz}мс: {in_a1 = } (True), {in_a5 = } (False)")
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if calc_delta_percent_mtz != 9999 and in_a1 is False and in_a5 is True:
                 self.fault.debug_msg(f'дельта t\t{calc_delta_t_mtz}', 'orange')
                 self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
@@ -339,7 +341,7 @@ class TestMTZ5V411:
             in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
             self.logger.debug(f"{in_a1 = } (False), {in_a5 = } (True)")
             self.ctrl_kl.ctrl_relay('KL63', False)
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is True and calc_delta_t_tzp <= 30:
                 self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
                 self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]}\t'
@@ -375,7 +377,7 @@ class TestMTZ5V411:
         :return: bool
         """
         self.logger.debug("тест 3.2")
-        self.reset.sbros_zashit_mtz5()
+        self.reset_protect.sbros_zashit_mtz5()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
@@ -399,7 +401,7 @@ class TestMTZ5V411:
 
         calc_delta_t_mtz, in_a1, in_a5 = self.sub_test.subtest_time_calc_mtz()
 
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
 
         if calc_delta_percent_mtz != 9999 and in_a1 is False and in_a5 is True:
             self.list_delta_t_mtz[-1] = f'{calc_delta_t_mtz:.1f}'
@@ -424,7 +426,7 @@ class TestMTZ5V411:
         :return: bool
         """
         self.logger.debug("тест 3.3")
-        self.reset.sbros_zashit_mtz5()
+        self.reset_protect.sbros_zashit_mtz5()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
@@ -444,7 +446,7 @@ class TestMTZ5V411:
         :return: bool
         """
         self.logger.debug("тест 4.5")
-        self.reset.sbros_zashit_mtz5()
+        self.reset_protect.sbros_zashit_mtz5()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:

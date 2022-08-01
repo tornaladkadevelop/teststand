@@ -23,6 +23,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.subtest import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -32,7 +33,8 @@ __all__ = ["TestTZP"]
 class TestTZP:
     
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -72,7 +74,7 @@ class TestTZP:
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=277, err_code_a2=278, position_a1=False,
                                     position_a2=True, inp_2='in_a5'):
             return True
@@ -94,7 +96,7 @@ class TestTZP:
         sleep(1)
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63 \t{meas_volt:.2f}')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug("напряжение соответствует")
             return True
@@ -114,7 +116,7 @@ class TestTZP:
         self.logger.debug("тест 1.3")
         self._coef_volt = self.proc.procedure_1_22_32()
         self.logger.debug(f"процедура 1, 2.2, 3.2, Ku: {self._coef_volt}")
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         self.logger.debug("сброс всех реле")
         if self._coef_volt != 0.0:
             self.mysql_conn.mysql_ins_result('исправен', '1')
@@ -151,7 +153,7 @@ class TestTZP:
         else:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.1', '2')
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         if self.subtest.subtest_2di(test_num=2, subtest_num=2.1, err_code_a1=284, err_code_a2=285,
                                     position_a1=False, position_a2=True, inp_2='in_a5'):
             return True
@@ -223,7 +225,7 @@ class TestTZP:
                 self.logger.debug(f"отключение KL63")
                 calc_delta_t = stop_timer - start_timer
                 self.logger.debug(f"dt: {calc_delta_t}")
-                self.reset.stop_procedure_3()
+                self.reset_relay.stop_procedure_3()
                 self.logger.debug(f"останов процедуры 3")
                 self._list_delta_t.append(f'{calc_delta_t:.1f}')
                 self.mysql_conn.mysql_add_message(f'уставка {self._list_ust_num[k]} '
@@ -261,7 +263,7 @@ class TestTZP:
             else:
                 self.logger.debug("напряжение U4 не соответствует")
                 self.mysql_conn.mysql_error(286)
-                self.reset.stop_procedure_3()
+                self.reset_relay.stop_procedure_3()
                 self.logger.debug("останов процедуры 3")
         self.mysql_conn.mysql_ins_result('исправен', '3')
         self.logger.debug("тест 3 завершен")
@@ -270,7 +272,7 @@ class TestTZP:
     def subtest_35(self) -> bool:
         self.mysql_conn.mysql_ins_result('идет тест 3.5', '3')
         self.logger.debug("идет тест 3.5")
-        self.reset.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30_1s5()
         self.logger.debug("сброс защит")
         sleep(1)
         if self.subtest.subtest_2di(test_num=3, subtest_num=3.5, err_code_a1=284, err_code_a2=285,

@@ -25,7 +25,7 @@ class MySQLConnect:
         self.auth_plugin = 'mysql_native_password'
         self.mysql_err = mysql.connector.Error
         self.logger = logging.getLogger(__name__)
-        self.__fault = Bug(True)
+        self.__fault = Bug(None)
 
     def mysql_ins_result(self, my_result, num_test):
         """

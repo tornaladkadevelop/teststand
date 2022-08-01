@@ -10,10 +10,11 @@ import logging
 from typing import Union
 from time import sleep
 
-from .utils import *
 from .modbus import *
 from .procedure import *
 from .database import *
+from .resistance import Resistor
+from .reset import ResetRelay, ResetProtection
 
 __all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
 
@@ -25,7 +26,8 @@ class SubtestMTZ5:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -38,7 +40,7 @@ class SubtestMTZ5:
         self.logger.debug("подтест проверки времени срабатывания")
         for stc in range(3):
             self.logger.debug(f"попытка: {stc}")
-            self.reset.sbros_zashit_mtz5()
+            self.reset_protect.sbros_zashit_mtz5()
             self.delta_t_mtz = self.ctrl_kl.ctrl_ai_code_v0(110)
             self.in_1, self.in_5 = self.di_read.di_read("in_a1", "in_a5")
             self.logger.debug(f"время срабатывания: {self.delta_t_mtz}, "
@@ -60,7 +62,8 @@ class SubtestProcAll:
     def __init__(self):
         self.proc = Procedure()
         self.logger = logging.getLogger(__name__)
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -79,7 +82,7 @@ class SubtestProcAll:
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63:\t{meas_volt:.2f}\tдолжно быть '
                           f'от\t{min_volt:.2f}\tдо\t{max_volt:.2f}')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
             return True
         self.mysql_conn.mysql_ins_result('неисправен', f'{test_num}')
@@ -91,7 +94,8 @@ class SubtestBDU:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()

@@ -21,6 +21,7 @@ from general_func.subtest import *
 from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
+from general_func.reset import ResetRelay
 from gui.msgbox_1 import *
 
 __all__ = ["TestBDZ"]

@@ -21,6 +21,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -30,7 +31,8 @@ __all__ = ["TestBTZT"]
 class TestBTZT:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
@@ -85,7 +87,7 @@ class TestBTZT:
         self.fault.debug_msg("тест 1", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
@@ -130,10 +132,10 @@ class TestBTZT:
             self.fault.debug_msg("напряжение не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(394)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             return False
         self.fault.debug_msg("напряжение соответствует", 'green')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         return True
 
     def st_test_12_btz_t(self) -> bool:
@@ -149,7 +151,7 @@ class TestBTZT:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         self.fault.debug_msg("тест 1 завершен", 'blue')
         return True
 
@@ -196,7 +198,7 @@ class TestBTZT:
                 self.mysql_conn.mysql_error(398)
             return False
         self.fault.debug_msg("положение выходов блока соответствует", 'green')
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return True
 
     def st_test_22_btz_t(self) -> bool:
@@ -205,7 +207,7 @@ class TestBTZT:
         """
         self.fault.debug_msg("тест 2.4", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 2.4', '2')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
@@ -274,7 +276,7 @@ class TestBTZT:
             pass
         else:
             return False
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
@@ -335,12 +337,12 @@ class TestBTZT:
                 self.calc_delta_t_pmz = self.ctrl_kl.ctrl_ai_code_v0(103)
                 self.fault.debug_msg(f'дельта t: {self.calc_delta_t_pmz:.1f}', 'orange')
                 if self.calc_delta_t_pmz == 9999:
-                    self.reset.sbros_zashit_kl30()
+                    self.reset_protect.sbros_zashit_kl30()
                     sleep(3)
                     qw += 1
                     continue
                 elif 3000 < self.calc_delta_t_pmz < 9999:
-                    self.reset.sbros_zashit_kl30()
+                    self.reset_protect.sbros_zashit_kl30()
                     sleep(3)
                     qw += 1
                     continue
@@ -358,7 +360,7 @@ class TestBTZT:
                 self.list_delta_t_pmz.append(f'> 3000')
             else:
                 self.list_delta_t_pmz.append(f'{self.calc_delta_t_pmz:.1f}')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
                 self.fault.debug_msg("положение выходов блока соответствует", 'green')
                 if self.subtest_45():
@@ -475,7 +477,7 @@ class TestBTZT:
         """
         self.fault.debug_msg("тест 4.2", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 4.2', '4')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
@@ -506,12 +508,12 @@ class TestBTZT:
             self.calc_delta_t_pmz = self.ctrl_kl.ctrl_ai_code_v0(103)
             self.fault.debug_msg(f'дельта t: {self.calc_delta_t_pmz}', 'orange')
             if self.calc_delta_t_pmz == 9999:
-                self.reset.sbros_zashit_kl30()
+                self.reset_protect.sbros_zashit_kl30()
                 sleep(3)
                 wq += 1
                 continue
             elif 3000 < self.calc_delta_t_pmz < 9999:
-                self.reset.sbros_zashit_kl30()
+                self.reset_protect.sbros_zashit_kl30()
                 sleep(3)
                 wq += 1
                 continue
@@ -534,13 +536,13 @@ class TestBTZT:
             pass
         else:
             return False
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return True
 
     def subtest_43(self):
         self.fault.debug_msg("тест 4.3", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 4.3', '4')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
@@ -561,7 +563,7 @@ class TestBTZT:
     def subtest_45(self):
         self.fault.debug_msg("тест 4.5", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 4.5', '4')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         self.fault.debug_msg(f'{in_a1 = } (False), {in_a2 = } (True), '
@@ -584,8 +586,8 @@ class TestBTZT:
     def subtest_55(self):
         self.fault.debug_msg("тест 5.5", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 5.5', '5')
-        self.reset.stop_procedure_3()
-        self.reset.sbros_zashit_kl30()
+        self.reset_relay.stop_procedure_3()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
@@ -609,8 +611,8 @@ class TestBTZT:
         """
         self.fault.debug_msg("тест 5.6", 'blue')
         self.mysql_conn.mysql_ins_result('идет тест 5.6', '5')
-        self.reset.stop_procedure_3()
-        self.reset.sbros_zashit_kl30()
+        self.reset_relay.stop_procedure_3()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:

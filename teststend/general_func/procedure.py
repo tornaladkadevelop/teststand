@@ -6,9 +6,9 @@ import logging
 from time import sleep
 
 from .ctrl_tv1 import *
-from .utils import *
 from .modbus import *
 from .exception import *
+from .reset import ResetRelay
 
 __all__ = ["Procedure"]
 

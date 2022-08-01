@@ -20,6 +20,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -30,7 +31,8 @@ class TestBMZAPSH4:
 
     def __init__(self):
         self.proc = Procedure()
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -66,7 +68,7 @@ class TestBMZAPSH4:
             return False
         self.mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
         self.ctrl_kl.ctrl_relay('KL66', True)
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, *_ = self.di_read.di_read('in_a1')
         if in_a1 is False:
             pass
@@ -96,10 +98,10 @@ class TestBMZAPSH4:
             self.fault.debug_msg("напряжение не соответствует", 1)
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(343)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             return False
         self.fault.debug_msg(f'напряжение соответствует заданному \t {meas_volt:.2f}', 'orange')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         return True
 
     def st_test_12_bmz_apsh_4(self) -> bool:
@@ -111,11 +113,11 @@ class TestBMZAPSH4:
         if coef_volt != 0.0:
             pass
         else:
-            self.reset.stop_procedure_32()
+            self.reset_relay.stop_procedure_32()
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.mysql_conn.mysql_ins_result('тест 1 исправен', '1')
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         return True
 
     def st_test_20_bmz_apsh_4(self) -> bool:
@@ -150,7 +152,7 @@ class TestBMZAPSH4:
             in_a1, *_ = self.di_read.di_read('in_a1')
             if in_a1 is True:
                 self.fault.debug_msg("вход 1 соответствует", 4)
-                self.reset.stop_procedure_3()
+                self.reset_relay.stop_procedure_3()
                 if self.sbros_zashit():
                     k += 1
                     continue
@@ -160,7 +162,7 @@ class TestBMZAPSH4:
                 self.fault.debug_msg("вход 1 не соответствует", 1)
                 self.mysql_conn.mysql_ins_result('неисправен', '1')
                 self.mysql_conn.mysql_error(344)
-                self.reset.stop_procedure_3()
+                self.reset_relay.stop_procedure_3()
                 if self.subtest_2_2(i=i, k=k):
                     if self.sbros_zashit():
                         k += 1
@@ -198,7 +200,7 @@ class TestBMZAPSH4:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(346)
             return False
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return True
 
     def sbros_zashit(self):

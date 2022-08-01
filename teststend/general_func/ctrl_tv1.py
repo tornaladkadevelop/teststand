@@ -4,7 +4,7 @@
 import logging
 
 from .modbus import CtrlKL
-from .utils import ResetRelay
+from .reset import ResetRelay
 
 __all__ = ["PervObmTV1", "VtorObmTV1"]
 

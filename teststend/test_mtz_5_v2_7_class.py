@@ -18,6 +18,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -27,7 +28,8 @@ __all__ = ["TestMTZ5V27"]
 class TestMTZ5V27:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
@@ -126,9 +128,9 @@ class TestMTZ5V27:
         else:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(455)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             return False
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         return True
 
     def st_test_12(self) -> bool:
@@ -144,9 +146,9 @@ class TestMTZ5V27:
             pass
         else:
             self.mysql_conn.mysql_ins_result("неисправен TV1", "1")
-            self.reset.stop_procedure_32()
+            self.reset_relay.stop_procedure_32()
             return False
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         self.mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
@@ -190,9 +192,9 @@ class TestMTZ5V27:
                 self.mysql_conn.mysql_error(444)
             elif in_a5 is False:
                 self.mysql_conn.mysql_error(445)
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             return False
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return True
 
     def st_test_22(self) -> bool:
@@ -257,7 +259,7 @@ class TestMTZ5V27:
 
             calc_delta_t_mtz, in_a1, in_a5 = self.subtest_time_calc()
             self.logger.debug(f"время срабатывания: {calc_delta_t_mtz}мс: {in_a1 = } (False), {in_a5 = } (True)")
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if calc_delta_percent_mtz != 9999 and in_a1 is False and in_a5 is True:
                 self.fault.debug_msg(f'дельта t\t{calc_delta_t_mtz}', 'orange')
                 self.list_delta_t_mtz.append(f'{calc_delta_t_mtz:.1f}')
@@ -350,7 +352,7 @@ class TestMTZ5V27:
                                               f'дельта t: {calc_delta_t_tzp:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_tzp_num[m]} '
                                               f'дельта %: {calc_delta_percent_tzp:.2f}')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if in_a1 is False and in_a5 is True and calc_delta_t_tzp <= 21:
                 self.fault.debug_msg("положение выходов соответствует", 'green')
@@ -400,7 +402,7 @@ class TestMTZ5V27:
 
         calc_delta_t_mtz, in_a1, in_a5 = self.subtest_time_calc()
         self.logger.debug(f"время срабатывания: {calc_delta_t_mtz}мс: {in_a1 = } (False), {in_a5 = } (True)")
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
 
         for wq in range(4):
             self.calc_delta_t_mtz = self.ctrl_kl.ctrl_ai_code_v0(110)
@@ -423,10 +425,10 @@ class TestMTZ5V27:
         self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_mtz_num[k]} '
                                           f'дельта %: {calc_delta_percent_mtz:.2f}')
         if in_a1 is False and in_a5 is True:
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             return True
         else:
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             self.mysql_conn.mysql_error(448)
             return False
 

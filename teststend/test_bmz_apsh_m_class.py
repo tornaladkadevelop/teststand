@@ -21,6 +21,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.subtest import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 
 __all__ = ["TestBMZAPSHM"]
@@ -30,7 +31,8 @@ class TestBMZAPSHM:
 
     def __init__(self):
         self.proc = Procedure()
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
@@ -64,7 +66,7 @@ class TestBMZAPSHM:
         self.logger.debug("тест 1")
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug('включен KL21')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         if self.subtest.subtest_4di(test_num=1, subtest_num=1.0,
                                     err_code_a=347, err_code_b=348, err_code_c=349, err_code_d=350,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
@@ -83,7 +85,7 @@ class TestBMZAPSHM:
         sleep(1)
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'измеряем напряжение:\t {meas_volt}')
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug("напряжение соответствует")
             return True
@@ -97,7 +99,7 @@ class TestBMZAPSHM:
         """
         self.logger.debug("старт теста 1.2")
         self.coef_volt = self.proc.procedure_1_22_32()
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         if self.coef_volt != 0.0:
             self.mysql_conn.mysql_ins_result('исправен', '1')
             return True
@@ -129,9 +131,9 @@ class TestBMZAPSHM:
                                     err_code_a=352, err_code_b=353, err_code_c=354, err_code_d=355,
                                     position_a=True, position_b=False, position_c=False, position_d=True,
                                     inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             return True
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return False
 
     def st_test_22(self) -> bool:
@@ -139,7 +141,7 @@ class TestBMZAPSHM:
         2.2. Сброс защит после проверки
         """
         self.logger.debug("старт теста 2.2")
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         if self.subtest.subtest_4di(test_num=2, subtest_num=2.2,
                                     err_code_a=356, err_code_b=357, err_code_c=358, err_code_d=359,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
@@ -170,9 +172,9 @@ class TestBMZAPSHM:
                                     err_code_a=360, err_code_b=361, err_code_c=362, err_code_d=363,
                                     position_a=False, position_b=True, position_c=True, position_d=False,
                                     inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             return True
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return False
 
     def st_test_32(self) -> bool:
@@ -180,7 +182,7 @@ class TestBMZAPSHM:
         3.2. Сброс защит после проверки
         """
         self.logger.debug("старт теста 3.2")
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         if self.subtest.subtest_4di(test_num=3, subtest_num=3.2,
                                     err_code_a=364, err_code_b=365, err_code_c=366, err_code_d=367,

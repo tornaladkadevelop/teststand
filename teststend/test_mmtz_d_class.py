@@ -20,6 +20,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -29,7 +30,8 @@ __all__ = ["TestMMTZD"]
 class TestMMTZD:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
@@ -76,7 +78,7 @@ class TestMMTZD:
 
     def st_test_11(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL33', True)
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is True and in_a5 is True:
             pass
@@ -120,9 +122,9 @@ class TestMMTZD:
         else:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(455)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             return False
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         return True
 
     def st_test_14(self) -> bool:
@@ -135,11 +137,11 @@ class TestMMTZD:
         if self.coef_volt != 0.0:
             pass
         else:
-            self.reset.stop_procedure_32()
+            self.reset_relay.stop_procedure_32()
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         return True
 
     def st_test_20(self) -> bool:
@@ -171,7 +173,7 @@ class TestMMTZD:
             self.ctrl_kl.ctrl_ai_code_v1(106)
             sleep(3)
             in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is False:
                 self.fault.debug_msg("положение выходов блока соответствует", 3)
                 if self.subtest_23():
@@ -228,7 +230,7 @@ class TestMMTZD:
             self.ctrl_kl.ctrl_ai_code_v1(106)
             sleep(3)
             in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is False:
                 if self.subtest_33():
                     self.mysql_conn.mysql_ins_result('исправен', f'{self.list_num_yach_test_3[x]}')
@@ -261,7 +263,7 @@ class TestMMTZD:
         :param i:
         :return:
         """
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is True and in_a5 is True:
             pass
@@ -281,7 +283,7 @@ class TestMMTZD:
         self.ctrl_kl.ctrl_ai_code_v1(107)
         sleep(3)
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         if in_a1 is False and in_a5 is False:
             if self.subtest_23():
                 return True
@@ -307,7 +309,7 @@ class TestMMTZD:
         2.3. Сброс защит после проверки
         :return:
         """
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is True and in_a5 is True:
             return True
@@ -325,7 +327,7 @@ class TestMMTZD:
         :param y:
         :return:
         """
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is True and in_a5 is True:
             pass
@@ -346,7 +348,7 @@ class TestMMTZD:
         self.ctrl_kl.ctrl_ai_code_v1(107)
         sleep(3)
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         if in_a1 is False and in_a5 is False:
             if self.subtest_33():
                 return True
@@ -372,7 +374,7 @@ class TestMMTZD:
         2.3. Сброс защит после проверки
         :return:
         """
-        self.reset.sbros_zashit_kl1()
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is True and in_a5 is True:
             return True

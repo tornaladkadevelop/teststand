@@ -21,6 +21,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.subtest import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 
 __all__ = ["TestBP"]
@@ -32,7 +33,8 @@ class TestBP:
         self.mb_ctrl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.mysql_conn = MySQLConnect()
         self.fault = Bug(None)
         self.subtest = Subtest4in()
@@ -105,7 +107,7 @@ class TestBP:
         if delta_zaryad != 0:
             pass
         else:
-            self.reset.sbros_testa_bp_0()
+            self.reset_protect.sbros_testa_bp_0()
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.emkost_kond = math.log(zaryad_1 / zaryad_2)
@@ -117,7 +119,7 @@ class TestBP:
         if self.emkost_kond >= 1600:
             pass
         else:
-            self.reset.sbros_testa_bp_0()
+            self.reset_protect.sbros_testa_bp_0()
             self.mysql_conn.mysql_ins_result(f'неиспр. емкость снижена на {self.emkost_kond_d:.1f} %', "2")
             return False
         # 2.3. Форсированный разряд
@@ -143,7 +145,7 @@ class TestBP:
                                     err_code_a=344, err_code_b=344, err_code_c=344, err_code_d=344,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
                                     inp_a='in_a6', inp_b='in_a1', inp_c='in_a7', inp_d='in_a2'):
-            self.reset.sbros_testa_bp_1()
+            self.reset_protect.sbros_testa_bp_1()
             self.mysql_conn.mysql_ins_result("неисправен", "5")
             return True
         self.mysql_conn.mysql_ins_result("исправен", "5")
@@ -161,10 +163,10 @@ class TestBP:
         if calc_volt >= 6:
             pass
         else:
-            self.reset.sbros_testa_bp_1()
+            self.reset_protect.sbros_testa_bp_1()
             self.mysql_conn.mysql_ins_result("неисправен", "6")
             return False
-        self.reset.sbros_testa_bp_1()
+        self.reset_protect.sbros_testa_bp_1()
         self.mysql_conn.mysql_ins_result("исправен", "6")
         return True
 

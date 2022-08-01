@@ -21,6 +21,7 @@ from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -30,7 +31,8 @@ __all__ = ['TestBMZ2']
 class TestBMZ2:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
@@ -77,7 +79,7 @@ class TestBMZ2:
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.fault.debug_msg("KL21 включен", 4)
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         self.fault.debug_msg("тест 1 сброс защит", 4)
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a5 is True and in_a2 is False:
@@ -117,10 +119,10 @@ class TestBMZ2:
             self.fault.debug_msg("напряжение не соответствует", 1)
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(394)
-            self.reset.sbros_kl63_proc_1_21_31()
+            self.reset_relay.sbros_kl63_proc_1_21_31()
             return False
         self.fault.debug_msg("напряжение соответствует", 4)
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         return True
 
     def st_test_12_bmz_2(self) -> bool:
@@ -135,7 +137,7 @@ class TestBMZ2:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         self.fault.debug_msg("тест 1 пройден", 2)
         return True
 
@@ -175,7 +177,7 @@ class TestBMZ2:
                 self.fault.debug_msg("состояние входа 2 не соответствует", 1)
                 self.mysql_conn.mysql_error(337)
             return False
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         return True
 
     def st_test_22_bmz_2(self) -> bool:
@@ -183,7 +185,7 @@ class TestBMZ2:
         2.4.2. Сброс защит после проверки
         """
         self.mysql_conn.mysql_ins_result('идет тест 2.4', '2')
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a5 is True and in_a2 is False:
             self.fault.debug_msg("состояние выходов соответствует", 3)
@@ -238,7 +240,7 @@ class TestBMZ2:
                 self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(code=104)
                 self.fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
                 if self.calc_delta_t == 9999:
-                    self.reset.sbros_zashit_kl30()
+                    self.reset_protect.sbros_zashit_kl30()
                     sleep(3)
                     qw += 1
                     continue
@@ -256,7 +258,7 @@ class TestBMZ2:
             calc_delta_percent = meas_volt * 6.1085
             self.fault.debug_msg(f'дельта % \t {calc_delta_percent:.2f}', 2)
             self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {self.calc_delta_t:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта %: {calc_delta_percent:.2f}')
             in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
@@ -299,7 +301,7 @@ class TestBMZ2:
         """
         self.mysql_conn.mysql_ins_result('идет тест 3.2', '3')
         self.fault.debug_msg("старт теста 3.2", 3)
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a5 is True and in_a2 is False:
             self.fault.debug_msg("состояние выходов блока соответствуют", 3)
@@ -332,7 +334,7 @@ class TestBMZ2:
             self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(code=104)
             self.fault.debug_msg(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
             if self.calc_delta_t == 9999:
-                self.reset.sbros_zashit_kl30()
+                self.reset_protect.sbros_zashit_kl30()
                 sleep(3)
                 wq += 1
                 continue
@@ -356,7 +358,7 @@ class TestBMZ2:
             self.mysql_conn.mysql_error(341)
             return False
         self.fault.debug_msg("выходы блока соответствуют", 3)
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         self.fault.debug_msg("сброс реле и старт теста 3.5", 2)
         return True
 
@@ -366,7 +368,7 @@ class TestBMZ2:
         """
         self.mysql_conn.mysql_ins_result('идет тест 3.5', '3')
         self.fault.debug_msg("старт теста 3.5", 2)
-        self.reset.sbros_zashit_kl30()
+        self.reset_protect.sbros_zashit_kl30()
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a5 and in_a2 is False:
             self.fault.debug_msg("состояние выходов блока соответствует", 3)

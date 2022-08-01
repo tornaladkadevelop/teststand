@@ -21,6 +21,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.subtest import *
+from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -30,7 +31,8 @@ __all__ = ["TestUBTZ"]
 class TestUBTZ:
 
     def __init__(self):
-        self.reset = ResetRelay()
+        self.reset_relay = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.fault = Bug(None)
         self.read_mb = ReadMB()
@@ -79,7 +81,7 @@ class TestUBTZ:
         self.mysql_conn.mysql_ins_result("идёт тест 1.0", '1')
         self.ctrl_kl.ctrl_relay('KL22', True)
         self.ctrl_kl.ctrl_relay('KL66', True)
-        self.reset.sbros_zashit_ubtz()
+        self.reset_protect.sbros_zashit_ubtz()
         sleep(2)
         if self.subtest.subtest_4di(test_num=1, subtest_num=1.0,
                                     err_code_a=451, err_code_b=452, err_code_c=453, err_code_d=454,
@@ -102,7 +104,7 @@ class TestUBTZ:
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(1)
         meas_volt = self.read_mb.read_analog()
-        self.reset.sbros_kl63_proc_1_21_31()
+        self.reset_relay.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
             return True
         else:
@@ -118,7 +120,7 @@ class TestUBTZ:
         self.fault.debug_msg('тест 1.3', 'blue')
         self.mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
         self.coef_volt = self.proc.procedure_1_22_32()
-        self.reset.stop_procedure_32()
+        self.reset_relay.stop_procedure_32()
         if self.coef_volt != 0.0:
             self.mysql_conn.mysql_ins_result('исправен', '1')
             self.fault.debug_msg('тест 1 завершён', 'blue')
@@ -155,12 +157,12 @@ class TestUBTZ:
                 self.calc_delta_t_bmz = self.ctrl_kl.ctrl_ai_code_v0(109)
                 self.fault.debug_msg(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', 'orange')
                 if self.calc_delta_t_bmz == 9999:
-                    self.reset.sbros_zashit_ubtz()
+                    self.reset_protect.sbros_zashit_ubtz()
                     continue
                 else:
                     break
             in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             if self.calc_delta_t_bmz < 10:
                 self.list_delta_t_bmz.append(f'< 10')
             elif self.calc_delta_t_bmz == 9999:
@@ -255,7 +257,7 @@ class TestUBTZ:
             stop_timer = time()
             in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
             self.fault.debug_msg(f'{in_a1 = } (F), {in_a2 = } (F), {in_a5 = } (T), {in_a6 = } (T)', 'purple')
-            self.reset.stop_procedure_3()
+            self.reset_relay.stop_procedure_3()
             self.mysql_conn.progress_level(0.0)
             calc_delta_t_tzp = stop_timer - start_timer
             self.fault.debug_msg(f'тест 3 delta t:\t{calc_delta_t_tzp:.1f}', 'orange')
@@ -311,11 +313,11 @@ class TestUBTZ:
             self.calc_delta_t_bmz = self.ctrl_kl.ctrl_ai_code_v0(109)
             self.fault.debug_msg(f'тест 3 delta t:\t{self.calc_delta_t_bmz:.1f}', 'orange')
             if self.calc_delta_t_bmz == 9999:
-                self.reset.sbros_zashit_ubtz()
+                self.reset_protect.sbros_zashit_ubtz()
                 continue
             else:
                 break
-        self.reset.stop_procedure_3()
+        self.reset_relay.stop_procedure_3()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if self.calc_delta_t_bmz < 10:
             self.list_delta_t_bmz[-1] = f'< 10'
@@ -347,7 +349,7 @@ class TestUBTZ:
         3.3. Сброс защит после проверки
         :return:
         """
-        self.reset.sbros_zashit_ubtz()
+        self.reset_protect.sbros_zashit_ubtz()
         sleep(2)
         if self.subtest.subtest_4di(test_num=test_num, subtest_num=subtest_num,
                                     err_code_a=460, err_code_b=461, err_code_c=462, err_code_d=463,
