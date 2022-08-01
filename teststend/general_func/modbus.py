@@ -313,17 +313,15 @@ class ReadMB:
     def __init__(self):
         self.opc = client()
         self.opc.connect('arOPC.arOpcServer.1')
-        self.__tags_value = []
-        self.__analog_tags_value = []
+        self.tags_value = []
+        self.analog_tags_value = []
         self.logger = logging.getLogger(__name__)
         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
     def read_discrete(self, tag_index):
-        self.tag_index = tag_index
-        tags_value = []
-        tags_value.append(self.opc.list('Выходы.inputs')[self.tag_index])
-        val = self.opc.read(tags_value, update=1, include_error=True)
+        self.tags_value.append(self.opc.list('Выходы.inputs')[tag_index])
+        val = self.opc.read(self.tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -354,8 +352,8 @@ class ReadMB:
         val = []
         for i in args:
             tag = self.di[i]
-            self.__tags_value.append(self.opc.list('Выходы.inputs')[tag])
-            val = self.opc.read(self.__tags_value, update=1, include_error=True)
+            self.tags_value.append(self.opc.list('Выходы.inputs')[tag])
+            val = self.opc.read(self.tags_value, update=1, include_error=True)
         for n in val:
             if n[2] == 'Good':
                 list_result.append(n[1])
@@ -379,8 +377,8 @@ class ReadMB:
         """
         analog_max_code = 27648.0
         analog_max = 400
-        self.__analog_tags_value.append(self.opc.list('AI.AI')[0])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('AI.AI')[0])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -402,8 +400,8 @@ class ReadMB:
         analog_min_code = 0
         analog_max = 10
         analog_min = 0
-        self.__analog_tags_value.append(self.opc.list('AI.AI')[2])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('AI.AI')[2])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -421,8 +419,8 @@ class ReadMB:
             считывание тега модбас error_4
         :return:
         """
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -437,8 +435,8 @@ class ReadMB:
             считывание тега модбас error_1
         :return:
         """
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -453,8 +451,8 @@ class ReadMB:
             считывание тега модбас error_2
         :return:
         """
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -493,6 +491,25 @@ class DIRead:
         for i in range(len(args)):
             position.append(read_tags[i][1])
         return position
+
+    # class ReadDI:
+    #
+    #     def __init__(self):
+    #         self.read_mb = ReadMB()
+    #         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
+    #                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
+    #
+    #         self.inp_list = []
+    #
+    #     def inputs_di(self, *args: str):
+    #         self.inp_list = []
+    #         for i in args:
+    #             temp = self.di[i]
+    #             inp = self.read_mb.read_discrete(temp)
+    #             if inp is None:
+    #                 raise ModbusConnectException(f'нет связи с контроллером')
+    #             self.inp_list.append(inp)
+    #         return self.inp_list
 
 
 if __name__ == '__main__':

@@ -118,7 +118,7 @@ class TestUMZ:
 
     def st_test_13(self) -> bool:
         """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
+        1.2) Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
         self.mysql_conn.mysql_ins_result("идет тест 1.2", "1")
@@ -136,7 +136,7 @@ class TestUMZ:
 
     def st_test_20(self) -> bool:
         """
-        Тест 2. Проверка срабатывания защиты канала АБ по уставкам
+        Тест 2. Проверка срабатывания защиты канала АБ по уставкам.
         :return:
         """
         if my_msg(self.msg_4):
@@ -410,20 +410,6 @@ class TestUMZ:
             self.list_delta_t_vg[-1] = f'{self.calc_delta_t_vg:.1f}'
         else:
             self.list_delta_t_vg[-1] = f'неисправен'
-
-    # def __inputs_a0(self):
-    #     in_a0 = self.read_mb.read_discrete(0)
-    #     if in_a0 is None:
-    #         # logging.error(f'нет связи с контроллером')
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_a0
-    #
-    # def __inputs_a(self):
-    #     in_a1 = self.read_mb.read_discrete(1)
-    #     in_a5 = self.read_mb.read_discrete(5)
-    #     if in_a1 is None or in_a5 is None:
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_a1, in_a5
 
     def result_umz(self):
         """

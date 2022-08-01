@@ -11,5 +11,5 @@ class ModbusConnectException(Exception):
 
 
 class HardwareException(Exception):
-    """Вываливается при неиспраности стенда"""
+    """Вываливается при неисправности стенда"""
     pass

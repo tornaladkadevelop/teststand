@@ -89,12 +89,6 @@ class Bug:
             pass
 
 
-
-
-
-
-
-
 # class ResultMsg:
 #     """
 #     исправность/неисправность блока
@@ -112,26 +106,6 @@ class Bug:
 #         # msg = "Тестирование завершено:\nБлок исправен "
 #         # my_msg(msg)
 #         self.reset.reset_all()
-
-
-# class ReadDI:
-#
-#     def __init__(self):
-#         self.read_mb = ReadMB()
-#         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
-#                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
-#
-#         self.inp_list = []
-#
-#     def inputs_di(self, *args: str):
-#         self.inp_list = []
-#         for i in args:
-#             temp = self.di[i]
-#             inp = self.read_mb.read_discrete(temp)
-#             if inp is None:
-#                 raise ModbusConnectException(f'нет связи с контроллером')
-#             self.inp_list.append(inp)
-#         return self.inp_list
 
 
 if __name__ == '__main__':

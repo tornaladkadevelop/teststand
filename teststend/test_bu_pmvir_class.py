@@ -55,7 +55,7 @@ class TestBUPMVIR:
 
     def st_test_11(self) -> bool:
         """
-        # 1.1. Проверка состояния контактов блока при подаче напряжения питания
+        # 1.1. Проверка состояния контактов блока при подаче напряжения питания.
         :return: bool
         """
         self.logger.debug("старт теста 1.1")
@@ -68,7 +68,7 @@ class TestBUPMVIR:
     def st_test_20(self) -> bool:
         """
         2. Проверка включения/выключения блока от кнопки «Пуск/Стоп».
-        2.1. Проверка исходного состояния блока
+        2.1. Проверка исходного состояния блока.
         :return: bool
         """
         if self.sub_test.subtest_a_bupmvir(test_num=2, subtest_num=2.0):
@@ -102,7 +102,7 @@ class TestBUPMVIR:
 
     def st_test_40(self) -> bool:
         """
-        4.  Отключение блока при увеличении сопротивления цепи заземления на величину более 100 Ом
+        4.  Отключение блока при увеличении сопротивления цепи заземления на величину более 100 Ом.
         :return: bool
         """
         if self.sub_test.subtest_a_bupmvir(test_num=4, subtest_num=4.0):
@@ -116,7 +116,7 @@ class TestBUPMVIR:
 
     def st_test_50(self) -> bool:
         """
-        Тест 5. Защита от потери управляемости блока при замыкании проводов ДУ
+        Тест 5. Защита от потери управляемости блока при замыкании проводов ДУ.
         :return: bool
         """
         if self.sub_test.subtest_a_bupmvir(test_num=5, subtest_num=5.0):
