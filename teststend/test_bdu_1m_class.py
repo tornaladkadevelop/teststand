@@ -145,7 +145,7 @@ class TestBDU1M:
 
     def st_test_52_bdu_1m(self) -> bool:
         """
-            5. Защита от потери управляемости при замыкании проводов ДУ
+            Тест 5. Защита от потери управляемости при замыкании проводов ДУ
         """
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
@@ -178,7 +178,7 @@ class TestBDU1M:
 
     def st_test_bdu_1m(self):
         """
-            главная функция которая собирает все остальные
+            Главная функция которая собирает все остальные.
         """
         if self.st_test_1_bdu_1m():
             if self.st_test_20_bdu_1m():

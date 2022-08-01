@@ -410,7 +410,6 @@ class TestMTZ5V27:
                 wq += 1
                 continue
             else:
-                wq = 0
                 break
         in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if self.calc_delta_t_mtz < 10:

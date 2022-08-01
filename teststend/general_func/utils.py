@@ -10,12 +10,12 @@ from time import time, sleep
 from .modbus import *
 from .exception import *
 
-__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ResultMsg", "ReadDI"]
+__all__ = ["Bug", "ResetRelay", "Resistor", "DeltaTimeNoneKL63", "ResultMsg"]
 
 
 class DeltaTimeNoneKL63:
     """
-        расчет дельты времени переключения выходов блока
+        Расчет дельты времени переключения выходов блока
         Сброс или запоминание состояние таймера текущего времени CPU T0[i], сек
         KL63 - ВКЛ	DQ5:1B - ВКЛ
         Запуск таймера происходит по условию замыкания DI.b1 (контакт реле KL63)
@@ -62,7 +62,7 @@ class Bug:
 
     def debug_msg(self, *args):
         """
-        :param args: 1 or red, 2 or orange, 3 or blue, 4 or green, 5 or purple
+        :param args:
         :return: string
         """
 
@@ -92,7 +92,7 @@ class Bug:
 
 class ResetRelay:
     """
-        сбросы реле в различных вариациях в зависимости от алгоритма
+        Сбросы реле в различных вариациях в зависимости от алгоритма.
     """
 
     def __init__(self):
@@ -297,7 +297,7 @@ class ResetRelay:
 
     def sbros_kl63_proc_1_21_31(self):
         """
-        используется для сброса после процедуры 1 -> 2.1 -> 3.1
+        Используется для сброса после процедуры 1 -> 2.1 -> 3.1.
         :return:
         """
         self.ctrl_kl.ctrl_relay('KL63', False)
@@ -307,7 +307,7 @@ class ResetRelay:
 
     def sbros_kl63_proc_1_22_32(self):
         """
-        используется для сброса после процедуры 1 -> 2.2 -> 3.2
+        Используется для сброса после процедуры 1 -> 2.2 -> 3.2
         :return:
         """
         self.ctrl_kl.ctrl_relay('KL63', False)
@@ -698,47 +698,40 @@ class ResultMsg:
         self.reset = ResetRelay()
 
     def test_error(self, test_number):
-        msg = (f'Тест: {test_number} не пройден')
+        # msg = (f'Тест: {test_number} не пройден')
         # my_msg(msg)
         self.reset.reset_all()
 
     def test_good(self):
-        msg = "Тестирование завершено:\nБлок исправен "
+        # msg = "Тестирование завершено:\nБлок исправен "
         # my_msg(msg)
         self.reset.reset_all()
 
 
-class ReadDI:
-
-    def __init__(self):
-        self.read_mb = ReadMB()
-        self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
-                   'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
-
-        self.inp_list = []
-
-    def inputs_di(self, *args: str):
-        self.inp_list = []
-        for i in args:
-            temp = self.di[i]
-            inp = self.read_mb.read_discrete(temp)
-            if inp is None:
-                raise ModbusConnectException(f'нет связи с контроллером')
-            self.inp_list.append(inp)
-        return self.inp_list
-
-
-
-
-
-
-
-
+# class ReadDI:
+#
+#     def __init__(self):
+#         self.read_mb = ReadMB()
+#         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
+#                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
+#
+#         self.inp_list = []
+#
+#     def inputs_di(self, *args: str):
+#         self.inp_list = []
+#         for i in args:
+#             temp = self.di[i]
+#             inp = self.read_mb.read_discrete(temp)
+#             if inp is None:
+#                 raise ModbusConnectException(f'нет связи с контроллером')
+#             self.inp_list.append(inp)
+#         return self.inp_list
 
 
 if __name__ == '__main__':
     try:
-        read_di = ReadDI()
+        pass
+        # read_di = ReadDI()
 #         # st_timer = time()
 #         # a = read_mb.read_discrete(0)
 #         # b = read_mb.read_discrete(1)

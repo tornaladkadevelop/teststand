@@ -35,7 +35,7 @@ class TestTZP:
         self.reset = ResetRelay()
         self.proc = Procedure()
         self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.fault = Bug(None)
@@ -68,7 +68,7 @@ class TestTZP:
         :return:
         """
         self.logger.debug("тест 1")
-        self.read_di.inputs_di('in_a0')
+        self.di_read.di_read('in_a0')
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
@@ -199,22 +199,22 @@ class TestTZP:
                 self.mysql_conn.progress_level(0.0)
                 self.ctrl_kl.ctrl_relay('KL63', True)
                 self.logger.debug("включение KL63")
-                in_b0, *_ = self.read_di.inputs_di('in_b0')
+                in_b0, *_ = self.di_read.di_read('in_b0')
                 self.logger.debug(f"in_b0 = {in_b0} (True)")
                 while in_b0 is False:
                     self.logger.debug(f"in_b0 = {in_b0} (False)")
-                    in_b0, *_ = self.read_di.inputs_di('in_b0')
+                    in_b0, *_ = self.di_read.di_read('in_b0')
                 start_timer = time()
                 self.logger.debug(f"начало отсчета: {start_timer}")
                 sub_timer = 0
-                in_a1, in_a5 = self.read_di.inputs_di("in_a1")
+                in_a1, in_a5 = self.di_read.di_read("in_a1")
                 self.logger.debug(f"in_a1 = {in_a5} (False)")
                 while in_a5 is True and sub_timer <= 370:
                     sleep(0.2)
                     sub_timer = time() - start_timer
                     self.logger.debug(f"времени прошло {sub_timer:.1f}")
                     self.mysql_conn.progress_level(sub_timer)
-                    in_a5, *_ = self.read_di.inputs_di('in_a5')
+                    in_a5, *_ = self.di_read.di_read('in_a5')
                     self.logger.debug(f"in_a1 = {in_a5} (False)")
                 stop_timer = time()
                 self.logger.debug(f"конец отсчета")
@@ -230,7 +230,7 @@ class TestTZP:
                                                   f'дельта t: {calc_delta_t:.1f}')
                 self.mysql_conn.mysql_add_message(f'уставка {self._list_ust_num[k]} '
                                                   f'дельта %: {calc_delta_percent:.2f}')
-                in_a1, in_a5 = self.read_di.inputs_di('in_a1', 'in_a5')
+                in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
                 self.logger.debug(f"in_a1 = {in_a1} (True), in_a5 = {in_a5} (False), время: {calc_delta_t}")
                 if calc_delta_t <= 360 and in_a1 is True and in_a5 is False:
                     # Если в период времени до 6 минут входа DI.A1, DI.A5 занимают

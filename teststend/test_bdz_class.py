@@ -30,9 +30,8 @@ class TestBDZ:
 
     def __init__(self):
         self.mb_ctrl = CtrlKL()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        # self.fault = Bug(True)
         self.subtest = Subtest2in()
 
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
@@ -49,7 +48,7 @@ class TestBDZ:
         self.logger = logging.getLogger(__name__)
 
     def st_test_00(self) -> bool:
-        self.read_di.inputs_di('in_a0')
+        self.di_read.di_read('in_a0')
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 return True

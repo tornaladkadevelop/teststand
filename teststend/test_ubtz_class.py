@@ -95,7 +95,7 @@ class TestUBTZ:
         """
         self.fault.debug_msg('тест 1.1', 'blue')
         self.mysql_conn.mysql_ins_result("идёт тест 1.2", '1')
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(koef_min=0.6)
+        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.6)
         # 1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         self.fault.debug_msg('тест 1.2', 'blue')
         self.mysql_conn.mysql_ins_result("идёт тест 1.3", '1')

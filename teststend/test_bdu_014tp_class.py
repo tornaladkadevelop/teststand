@@ -38,7 +38,6 @@ class TestBDU014TP:
     def __init__(self):
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        self.read_di = ReadDI()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestBDU()
         # self.fault = Bug(True)
@@ -95,7 +94,7 @@ class TestBDU014TP:
 
     def test_30(self) -> bool:
         """
-        повтор теста 2.2
+        Повтор теста 2.2
         """
         if self.sub_test.subtest_a_bdu014tp(test_num=3, subtest_num=3.0):
             return True

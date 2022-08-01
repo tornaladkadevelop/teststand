@@ -49,12 +49,6 @@ class Procedure:
         self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
-        self.fault = Bug(None)
-
-        # self.coef_volt: float
-        # self.setpoint_volt: float
-        # self.calc_volt: float
-        # self.factor: float = 1.0
 
     def start_procedure_1(self) -> bool:
         """
@@ -76,8 +70,7 @@ class Procedure:
             in_b0 = self.read_mb.read_discrete(8)
             self.logger.debug(f"in_b0 = {in_b0} (False)")
             if in_b0 is False:
-                self.fault.debug_msg(f"попытка: {i}, процедура 1 пройдена", 'green')
-                self.logger.debug("процедура 1 пройдена")
+                self.logger.debug(f"попытка: {i}, процедура 1 пройдена")
                 return True
             elif in_b0 is True:
                 self.logger.debug(f"попытка: {i}, процедура 1 не пройдена")
@@ -87,7 +80,6 @@ class Procedure:
                     continue
         else:
             self.logger.warning("процедура 1 не пройдена")
-            self.fault.debug_msg("процедура 1 не пройдена", 'red')
             self.ctrl_kl.ctrl_relay('KL62', False)
             self.logger.debug("отключение KL62")
             self.ctrl_kl.ctrl_relay('KL37', False)
@@ -104,13 +96,10 @@ class Procedure:
         self.ctrl_kl.ctrl_relay('KL43', True)
         self.logger.debug("включение KL43")
         sleep(1)
-        if self._subtest_meas_volt():
-            self.logger.debug("процедура 2.1 пройдена")
-            self.fault.debug_msg("процедура 2.1 пройдена", 'green')
+        condition = self._subtest_meas_volt()
+        if condition:
             return True
         else:
-            self.logger.warning("процедура 2.1 не пройдена")
-            self.fault.debug_msg("процедура 2.1 не пройдена", 'red')
             self.reset.stop_procedure_21()
             raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                     "Неисправность узла формирования напряжения в стенде")
@@ -124,13 +113,12 @@ class Procedure:
         self.ctrl_kl.ctrl_relay('KL44', True)
         self.logger.debug("включение KL44")
         sleep(1)
-        if self._subtest_meas_volt():
+        condition = self._subtest_meas_volt()
+        if condition:
             self.logger.debug("процедура 2.2 пройдена")
-            self.fault.debug_msg("процедура 2.2 пройдена", 'green')
             return True
         else:
             self.logger.warning("процедура 2.2 не пройдена")
-            self.fault.debug_msg("процедура 2.2 не пройдена", 'red')
             self.reset.stop_procedure_22()
             raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                     "Неисправность узла формирования напряжения в стенде")
@@ -151,24 +139,21 @@ class Procedure:
         self.perv_obm.perv_obm_tv1(calc_volt)
         self.logger.debug("включение первичной обмотки")
         sleep(1)
-        if self._subtest_meas_volt():
-            self.logger.debug("процедура 2.4 пройдена")
-            self.fault.debug_msg(f"процедура 2.4 пройдена, {calc_volt = :.2f}", 'green')
+        condition = self._subtest_meas_volt()
+        self.logger.info(f"процедура 2.4: {calc_volt = :.2f}, {condition = }")
+        if condition:
             return calc_volt
         else:
-            self.logger.warning("процедура 2.4 не пройдена")
-            self.fault.debug_msg(f"процедура 2.4 не пройдена, {calc_volt = :.2f}", 'red')
             self.reset.stop_procedure_2()
             raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                     "Неисправность узла формирования напряжения в стенде")
 
     def start_procedure_31(self) -> float:
         """
-        a=1
-        Формирование испытательного сигнала
-        ~ 5.96В
+        Процедура 3.1.
+        Формирование испытательного сигнала ~ 5.96В
         KL60 – ВКЛ
-        :return: float: напряжение
+        :return: meas_volt: напряжение
         """
         self.logger.debug("процедура 3.1")
         min_volt = 4.768
@@ -178,15 +163,11 @@ class Procedure:
         sleep(3)
         meas_volt = self.read_mb.read_analog()
         self.logger.info(f"измеренное U: {min_volt = } <= {meas_volt = } <= {max_volt = }")
-        self.fault.debug_msg(f'процедура 3.1 напряжение:\t  '
-                             f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.1 пройдена")
-            self.fault.debug_msg("процедура 3.1 пройдена", 'green')
             return meas_volt
         else:
             self.logger.warning(f"процедура 3.1 не пройдена")
-            self.fault.debug_msg("процедура 3.1 не пройдена", 'red')
             self.reset.stop_procedure_31()
             raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                     "Неисправность узла формирования напряжения в стенде")
@@ -205,17 +186,13 @@ class Procedure:
         min_volt = 41.232
         max_volt = 61.848
         meas_volt = self.read_mb.read_analog()
-        self.logger.info(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
-        self.fault.debug_msg(f'процедура 3.2 напряжение: '
-                             f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
+        self.logger.info(f'процедура 3.2 напряжение: {min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.2 пройдена")
-            self.fault.debug_msg("процедура 3.2 пройдена", 'green')
             coef_volt = meas_volt / 51.54
             return coef_volt
         else:
             self.logger.warning(f"процедура 3.2 не пройдена")
-            self.fault.debug_msg("процедура 3.2 не пройдена", 'red')
             self.reset.stop_procedure_32()
             raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                     "Неисправность узла формирования напряжения в стенде")
@@ -236,16 +213,12 @@ class Procedure:
         min_volt = 0.88 * setpoint_volt
         max_volt = 1.11 * setpoint_volt
         meas_volt = self.read_mb.read_analog()
-        self.logger.info(f"измеренное U: {min_volt} <= {meas_volt} <= {max_volt}")
-        self.fault.debug_msg(f'процедура 3.4 напряжение: '
-                             f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
+        self.logger.info(f'процедура 3.4 напряжение: {min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.4 пройдена")
-            self.fault.debug_msg("процедура 3.4 пройдена", 'green')
             return True
         else:
             self.logger.warning(f"процедура 3.4 не пройдена")
-            self.fault.debug_msg("процедура 3.4 не пройдена", 'red')
             self.reset.stop_procedure_3()
             return False
 
@@ -262,7 +235,7 @@ class Procedure:
         raise HardwareException("Выходное напряжение не соответствует заданию.\n"
                                 "Неисправность узла формирования напряжения в стенде")
 
-    def procedure_1_21_31_v1(self, koef_min: float = 0.6, koef_max: float = 1.1) -> [float, float]:
+    def procedure_1_21_31_v1(self, coef_min: float = 0.6, coef_max: float = 1.1) -> [float, float]:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         :return: float: напряжение
@@ -271,9 +244,9 @@ class Procedure:
             if self.start_procedure_21():
                 meas_volt = self.start_procedure_31()
                 if meas_volt != 0.0:
-                    min_volt = koef_min * meas_volt
-                    max_volt = koef_max * meas_volt
-                    self.logger.info(f"изм. напряжение умноженное на {koef_min} и на {koef_max}: "
+                    min_volt = coef_min * meas_volt
+                    max_volt = coef_max * meas_volt
+                    self.logger.info(f"изм. напряжение умноженное на {coef_min} и на {coef_max}: "
                                      f"{min_volt = }, {max_volt = }")
                     return min_volt, max_volt
         self.logger.warning('Неисправность узла формирования напряжения в стенде')
@@ -295,7 +268,6 @@ class Procedure:
                 coef_volt = self.start_procedure_32()
                 if coef_volt != 0.0:
                     self.logger.info(f"коэффициент сети:\t {coef_volt:.2f}")
-                    self.fault.debug_msg(f'коэффициент сети:\t {coef_volt:.2f}', 'orange')
                     return coef_volt
         self.logger.warning('Неисправность узла формирования напряжения в стенде')
         raise HardwareException("Выходное напряжение не соответствует заданию.\n"
@@ -316,7 +288,7 @@ class Procedure:
     def procedure_x4_to_x5(self, coef_volt: float, setpoint_volt: float) -> bool:
         """
         Процедура последовательно выполняет процедуры 1, 2.4, 3.4,
-        если происходит какая то ошибка, выполняет те же процедуры с напряжением увеличенным в 1.1 раз
+        если происходит какая-то ошибка, выполняет те же процедуры с напряжением увеличенным в 1.1 раза.
         :param coef_volt:
         :param setpoint_volt:
         :return:
@@ -353,8 +325,7 @@ class Procedure:
         self.logger.debug("измерение U в процедуре 2.х")
         for i in range(3):
             meas_volt = self.read_mb.read_analog()
-            self.logger.debug(f"измерение U: {meas_volt}")
-            self.fault.debug_msg(f'измеренное напряжение в процедуре 2.х:\t {meas_volt:.2f}', 'orange')
+            self.logger.info(f"измерение U: {meas_volt:.2f}")
             if meas_volt <= 1.1:
                 self.logger.debug("напряжение соответствует")
                 return True

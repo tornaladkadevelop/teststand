@@ -4,9 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-УМЗ	        Нет производителя
-
+Тип блока:	УМЗ
+Производитель: Нет производителя
 """
 
 import sys
@@ -32,6 +31,7 @@ class TestUMZ:
         self.reset = ResetRelay()
         self.proc = Procedure()
         self.read_mb = ReadMB()
+        self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.fault = Bug(None)
@@ -97,7 +97,7 @@ class TestUMZ:
         :return:
         """
         self.mysql_conn.mysql_ins_result("идет тест 1.1", "1")
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(koef_min=0.4)
+        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.4)
         # 1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         self.mysql_conn.mysql_ins_result("идет тест 1.1.2", "1")
         self.ctrl_kl.ctrl_relay('KL63', True)
@@ -175,7 +175,7 @@ class TestUMZ:
                     my_msg(self.msg_4, 'darkgrey')
                     continue
             self.list_delta_t_ab.append(f'{self.calc_delta_t_ab:.1f}')
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if in_a1 is True and in_a5 is False:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
                 progress_msg = f'канал АБ дельта %'
@@ -205,7 +205,7 @@ class TestUMZ:
                     my_msg(self.msg_4, "darkgrey")
                     continue
             self.list_delta_t_vg.append(f'{self.calc_delta_t_vg:.1f}')
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if in_a1 is True and in_a5 is False:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
                 progress_msg = f'канал ВГ дельта %'
@@ -264,7 +264,7 @@ class TestUMZ:
             pass
         else:
             return False
-        in_a1, in_a5 = self.inputs_a()
+        in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         if in_a1 is False and in_a5 is True:
             return True
         elif in_a1 is True:
@@ -284,7 +284,7 @@ class TestUMZ:
         for i3 in range(5):
             self.calc_delta_t_ab = self.ctrl_kl.ctrl_ai_code_v0(109)
             sleep(0.5)
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if self.calc_delta_t_ab != 9999 and in_a1 is True and in_a5 is False:
                 self.test_setpoint_ab = True
                 break
@@ -301,7 +301,7 @@ class TestUMZ:
         for i4 in range(5):
             self.calc_delta_t_vg = self.ctrl_kl.ctrl_ai_code_v0(109)
             sleep(0.5)
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if self.calc_delta_t_vg != 9999 and in_a1 is True and in_a5 is False:
                 self.test_setpoint_vg = True
                 break
@@ -351,7 +351,7 @@ class TestUMZ:
         for i3 in range(5):
             self.calc_delta_t_ab = self.ctrl_kl.ctrl_ai_code_v0(109)
             sleep(0.5)
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if self.calc_delta_t_ab != 9999 and in_a1 is True and in_a5 is False:
                 self.test_setpoint_ab = True
                 break
@@ -387,7 +387,7 @@ class TestUMZ:
         for i4 in range(5):
             self.calc_delta_t_vg = self.ctrl_kl.ctrl_ai_code_v0(109)
             sleep(0.5)
-            in_a1, in_a5 = self.inputs_a()
+            in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             if self.calc_delta_t_vg != 9999 and in_a1 is True and in_a5 is False:
                 self.test_setpoint_vg = True
                 break

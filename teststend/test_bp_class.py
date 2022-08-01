@@ -31,7 +31,7 @@ class TestBP:
     def __init__(self):
         self.mb_ctrl = CtrlKL()
         self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.reset = ResetRelay()
         self.mysql_conn = MySQLConnect()
         self.fault = Bug(None)
@@ -56,7 +56,7 @@ class TestBP:
         Переключение АЦП на AI.1 канал
         """
         self.logger.debug("старт теста 1.0")
-        in_a0, *_ = self.read_di.inputs_di('in_a0')
+        in_a0, *_ = self.di_read.di_read('in_a0')
         if my_msg(self.msg_1):
             pass
         else:

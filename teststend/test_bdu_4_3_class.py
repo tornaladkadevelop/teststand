@@ -26,7 +26,6 @@ class TestBDU43:
 
     def __init__(self):
         self.resist = Resistor()
-        self.read_di = ReadDI()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestBDU()

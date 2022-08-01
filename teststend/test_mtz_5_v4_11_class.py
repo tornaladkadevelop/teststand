@@ -34,7 +34,7 @@ class TestMTZ5V411:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestMTZ5()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.fault = Bug(None)
 
         self.list_ust_tzp_num = (0.8, 1, 1.5, 2, 2.25, 2.5, 3)
@@ -78,7 +78,7 @@ class TestMTZ5V411:
 
         :return: bool
         """
-        self.read_di.inputs_di("in_a0")
+        self.di_read.di_read("in_a0")
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 return True
@@ -96,7 +96,7 @@ class TestMTZ5V411:
         self.ctrl_kl.ctrl_relay('KL2', True)
         sleep(1)
         self.reset.sbros_zashit_mtz5()
-        in_a1, in_a5 = self.read_di.inputs_di("in_a1", "in_a5")
+        in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
         self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
             pass
@@ -168,7 +168,7 @@ class TestMTZ5V411:
             pass
         else:
             return False
-        in_a1, in_a5 = self.read_di.inputs_di("in_a1", "in_a5")
+        in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
         self.logger.debug(f"{in_a1 = } (False), {in_a5 = } (True)")
         if in_a1 is False and in_a5 is True:
             pass
@@ -194,7 +194,7 @@ class TestMTZ5V411:
         self.mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
         self.fault.debug_msg("2.1 Сброс защит после проверки", 'blue')
         self.reset.sbros_zashit_mtz5()
-        in_a1, in_a5 = self.read_di.inputs_di("in_a1", "in_a5")
+        in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
         self.logger.debug(f"{in_a1 = } (True), {in_a5 = } (False)")
         if in_a1 is True and in_a5 is False:
             pass
@@ -322,21 +322,21 @@ class TestMTZ5V411:
             # 4.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.ctrl_kl.ctrl_relay('KL63', True)
             r = 0
-            in_b1, *_ = self.read_di.inputs_di('in_b1')
+            in_b1, *_ = self.di_read.di_read('in_b1')
             while in_b1 is False and r <= 5:
-                in_b1, *_ = self.read_di.inputs_di("in_b1")
+                in_b1, *_ = self.di_read.di_read("in_b1")
                 r += 1
             start_timer_tzp = time()
             delta_t_tzp = 0
-            in_a5 = self.read_di.inputs_di("in_a5")
+            in_a5 = self.di_read.di_read("in_a5")
             while in_a5 is False and delta_t_tzp <= 30:
                 delta_t_tzp = time() - start_timer_tzp
-                in_a5 = self.read_di.inputs_di("in_a5")
+                in_a5 = self.di_read.di_read("in_a5")
             stop_timer_tzp = time()
             calc_delta_t_tzp = stop_timer_tzp - start_timer_tzp
             self.fault.debug_msg(f'тест 3 delta t: {calc_delta_t_tzp:.1f}', 'orange')
 
-            in_a1, in_a5 = self.read_di.inputs_di("in_a1", "in_a5")
+            in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
             self.logger.debug(f"{in_a1 = } (False), {in_a5 = } (True)")
             self.ctrl_kl.ctrl_relay('KL63', False)
             self.reset.stop_procedure_3()
@@ -376,7 +376,7 @@ class TestMTZ5V411:
         """
         self.logger.debug("тест 3.2")
         self.reset.sbros_zashit_mtz5()
-        in_a1, in_a5 = self.read_di.inputs_di('in_a1', 'in_a5')
+        in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             pass
@@ -425,7 +425,7 @@ class TestMTZ5V411:
         """
         self.logger.debug("тест 3.3")
         self.reset.sbros_zashit_mtz5()
-        in_a1, in_a5 = self.read_di.inputs_di('in_a1', 'in_a5')
+        in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             return True
@@ -445,7 +445,7 @@ class TestMTZ5V411:
         """
         self.logger.debug("тест 4.5")
         self.reset.sbros_zashit_mtz5()
-        in_a1, in_a5 = self.read_di.inputs_di('in_a1', 'in_a5')
+        in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
         self.logger.debug(f"{in_a1 = } is True and {in_a5 = } is False")
         if in_a1 is True and in_a5 is False:
             self.fault.debug_msg("тест 4.5 положение выходов соответствует", 'green')

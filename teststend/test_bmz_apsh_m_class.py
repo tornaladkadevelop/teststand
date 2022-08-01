@@ -77,7 +77,7 @@ class TestBMZAPSHM:
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
         self.logger.debug("старт теста 1.1")
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(koef_min=0.9)
+        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.9)
         self.ctrl_kl.ctrl_relay('KL63', True)
         self.logger.debug('включен KL63')
         sleep(1)

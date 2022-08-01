@@ -28,7 +28,7 @@ class SubtestMTZ5:
         self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
 
         self.delta_t_mtz: Union[float, int] = 0
         self.in_1 = False
@@ -40,7 +40,7 @@ class SubtestMTZ5:
             self.logger.debug(f"попытка: {stc}")
             self.reset.sbros_zashit_mtz5()
             self.delta_t_mtz = self.ctrl_kl.ctrl_ai_code_v0(110)
-            self.in_1, self.in_5 = self.read_di.inputs_di("in_a1", "in_a5")
+            self.in_1, self.in_5 = self.di_read.di_read("in_a1", "in_a5")
             self.logger.debug(f"время срабатывания: {self.delta_t_mtz}, "
                               f"{self.in_1 = } is False, "
                               f"{self.in_5 = } is True")
@@ -63,38 +63,28 @@ class SubtestProcAll:
         self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
 
-    def sub_proc_1(self):
+    def procedure_1(self, *, test_num: int = 1, subtest_num: float = 1.0, coef_min_volt: float = 0.6,
+                    coef_max_volt: float = 1.1):
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока.
         :return: bool
         """
-        self.logger.debug("тест 1.2")
-        self.mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
-        meas_volt_ust = self.proc.procedure_1_21_31()
-        if meas_volt_ust != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_error(433)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
+        self.logger.debug("СТАРТ процедуры 1, 2.1, 3.1 - проверка на КЗ")
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=coef_min_volt, coef_max=coef_max_volt)
         self.ctrl_kl.ctrl_relay('KL63', True)
-        min_volt = 0.6 * meas_volt_ust
-        max_volt = 1.0 * meas_volt_ust
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63:\t{meas_volt:.2f}\tдолжно быть '
                           f'от\t{min_volt:.2f}\tдо\t{max_volt:.2f}')
-        if min_volt <= meas_volt <= max_volt:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(455)
-            self.reset.sbros_kl63_proc_1_21_31()
-            return False
         self.reset.sbros_kl63_proc_1_21_31()
-        return True
+        if min_volt <= meas_volt <= max_volt:
+            return True
+        self.mysql_conn.mysql_ins_result('неисправен', f'{test_num}')
+        self.mysql_conn.mysql_error(455)
+        return False
 
 
 class SubtestBDU:
@@ -104,7 +94,7 @@ class SubtestBDU:
         self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
@@ -123,7 +113,7 @@ class SubtestBDU:
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {subtest_num}, подтест: {test_num}")
-        in_a1, *_ = self.read_di.inputs_di('in_a1')
+        in_a1, *_ = self.di_read.di_read('in_a1')
         self.logger.debug(f"состояние входа: {in_a1 = } is {position}")
         if in_a1 is position:
             self.logger.debug("состояние выхода блока соответствует")
@@ -262,10 +252,8 @@ class Subtest2in:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        # self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
-        # self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
@@ -290,7 +278,7 @@ class Subtest2in:
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
-        in_a1, in_a2 = self.read_di.inputs_di(inp_1, inp_2)
+        in_a1, in_a2 = self.di_read.di_read(inp_1, inp_2)
         self.logger.debug(f"состояние входа: {in_a1 = } is {position_a1} and {in_a2 = } is {position_a2}")
         if in_a1 is position_a1 and in_a2 is position_a2:
             self.logger.debug("состояние выхода блока соответствует")
@@ -488,7 +476,7 @@ class Subtest2in:
         self.resist.resist_kohm(resist)
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включен KL12")
-        in_a1, in_a2 = self.read_di.inputs_di('in_a1', 'in_a2')
+        in_a1, in_a2 = self.di_read.di_read('in_a1', 'in_a2')
         self.logger.debug(f'положение выходов блока: {in_a1 = } is False, {in_a2 = } is False')
         if in_a1 is False and in_a2 is False:
             self.ctrl_kl.ctrl_relay('KL12', False)
@@ -509,10 +497,8 @@ class SubtestBDU1M:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        # self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
-        # self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
@@ -532,7 +518,7 @@ class SubtestBDU1M:
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
-        in_a2, *_ = self.read_di.inputs_di('in_a1')
+        in_a2, *_ = self.di_read.di_read('in_a1')
         self.logger.debug(f"состояние входа: {in_a2 = } is {position}")
         if in_a2 is position:
             self.logger.debug("состояние выхода блока соответствует")
@@ -584,10 +570,8 @@ class Subtest4in:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        # self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
-        # self.read_mb = ReadMB()
-        self.read_di = ReadDI()
+        self.di_read = DIRead()
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
@@ -620,7 +604,7 @@ class Subtest4in:
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {test_num}, подтест: {subtest_num}")
-        in_a, in_b, in_c, in_d = self.read_di.inputs_di(inp_a, inp_b, inp_c, inp_d)
+        in_a, in_b, in_c, in_d = self.di_read.di_read(inp_a, inp_b, inp_c, inp_d)
         self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b}"
                           f"and {in_c = } is {position_c} and {in_d = } is {position_d}")
         if in_a is position_a and in_b is position_b and in_c is position_c and in_d is position_d:
@@ -735,5 +719,3 @@ class Subtest4in:
                             inp_a=inp_a, inp_b=inp_b, inp_c=inp_c, inp_d=inp_d):
             return True
         return False
-
-
