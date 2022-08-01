@@ -33,7 +33,6 @@ class TestBRU2SR:
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        # self.fault = Bug(None)
         self.subtest = Subtest2in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBRU2SR.log",

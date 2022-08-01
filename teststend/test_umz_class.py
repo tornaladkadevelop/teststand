@@ -14,7 +14,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -31,11 +30,11 @@ class TestUMZ:
     def __init__(self):
         self.reset = ResetRelay()
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest2in()
 
         self.list_ust_volt = (22.6, 27.1, 31.9, 36.5, 41.3, 46.4, 50.2, 54.7, 59.3, 63.8, 68.4)
@@ -95,26 +94,12 @@ class TestUMZ:
     def st_test_12(self) -> bool:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока.
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока.
         :return:
         """
-        self.mysql_conn.mysql_ins_result("идет тест 1.1", "1")
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.4)
-        # 1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
-        self.mysql_conn.mysql_ins_result("идет тест 1.1.2", "1")
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        sleep(1)
-        meas_volt = self.read_mb.read_analog()
-        self.fault.debug_msg(f'напряжение после включения KL63 \t{meas_volt:.2f}', 'orange')
-        self.reset.sbros_kl63_proc_1_21_31()
-        if min_volt <= meas_volt <= max_volt:
-            pass
-        else:
-            self.fault.debug_msg("измеренное напряжение не соответствует заданному", 'red')
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(478)
-            return False
-        self.fault.debug_msg("измеренное напряжение соответствует заданному", 'green')
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_min_volt=0.4):
+            return True
+        return False
 
     def st_test_13(self) -> bool:
         """
@@ -124,15 +109,13 @@ class TestUMZ:
         self.mysql_conn.mysql_ins_result("идет тест 1.2", "1")
         self.coef_volt = self.proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(150)
-            return False
-        self.fault.debug_msg(f'коэф. сети\t {self.coef_volt:.2f}', 'orange')
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset.stop_procedure_32()
-        return True
+            self.logger.info(f'коэф. сети\t {self.coef_volt:.2f}')
+            self.mysql_conn.mysql_ins_result('исправен', '1')
+            self.reset.stop_procedure_32()
+            return True
+        self.mysql_conn.mysql_ins_result('неисправен', '1')
+        self.mysql_conn.mysql_error(150)
+        return False
 
     def st_test_20(self) -> bool:
         """
@@ -439,7 +422,6 @@ if __name__ == '__main__':
     test_umz = TestUMZ()
     reset_test_umz = ResetRelay()
     mysql_conn_umz = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_umz.st_test_umz()
         if test and not health_flag:
@@ -455,7 +437,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

@@ -34,6 +34,7 @@ class TestUBTZ:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.fault = Bug(None)
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -95,22 +96,9 @@ class TestUBTZ:
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         :return:
         """
-        self.fault.debug_msg('тест 1.1', 'blue')
-        self.mysql_conn.mysql_ins_result("идёт тест 1.2", '1')
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.6)
-        # 1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
-        self.fault.debug_msg('тест 1.2', 'blue')
-        self.mysql_conn.mysql_ins_result("идёт тест 1.3", '1')
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        sleep(1)
-        meas_volt = self.read_mb.read_analog()
-        self.reset_relay.sbros_kl63_proc_1_21_31()
-        if min_volt <= meas_volt <= max_volt:
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
             return True
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(455)
-            return False
+        return False
 
     def st_test_12(self) -> bool:
         """

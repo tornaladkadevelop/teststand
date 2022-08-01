@@ -23,6 +23,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay
+from general_func.subtest import ProcedureFull
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -34,6 +35,7 @@ class TestBTZ3:
     def __init__(self):
         self.reset = ResetRelay()
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
@@ -99,29 +101,9 @@ class TestBTZ3:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
-        self.mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
-        meas_volt_ust = self.proc.procedure_1_21_31()
-        if meas_volt_ust != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_error(433)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        min_volt = 0.6 * meas_volt_ust
-        max_volt = 1.0 * meas_volt_ust
-        meas_volt = self.read_mb.read_analog()
-        self.fault.debug_msg(f'напряжение после включения KL63: '
-                             f'{min_volt:.2f} < = {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
-        if min_volt <= meas_volt <= max_volt:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(455)
-            self.reset.sbros_kl63_proc_1_21_31()
-            return False
-        self.reset.sbros_kl63_proc_1_21_31()
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+            return True
+        return False
 
     def st_test_12_btz_3(self) -> bool:
         """

@@ -24,6 +24,7 @@ from general_func.modbus import *
 from general_func.procedure import *
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ProcedureFull
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -34,6 +35,7 @@ class TestBKZ3MK:
 
     def __init__(self):
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.resist = Resistor()
@@ -119,39 +121,9 @@ class TestBKZ3MK:
         """
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         """
-        self.logger.debug("тест 1.1")
-        meas_volt_ust = self.proc.procedure_1_21_31()
-        if meas_volt_ust != 0.0:
-            pass
-        else:
-            self.logger.debug("неисправен")
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-        self.mysql_conn.mysql_ins_result('идет тест 1.1.2', '1')
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        self.logger.debug("включение KL63")
-        sleep(1)
-        min_volt = 0.6 * meas_volt_ust
-        max_volt = 1.1 * meas_volt_ust
-        meas_volt = self.read_mb.read_analog()
-        self.fault.debug_msg(f"напряжение после включения KL63 "
-                             f"{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}", 'orange')
-        self.logger.info(f"напряжение после включения KL63 {min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}")
-        if min_volt <= meas_volt <= max_volt:
-            pass
-        else:
-            self.logger.debug("напряжение не соответствует")
-            self.fault.debug_msg("напряжение не соответствует", 'red')
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(32)
-            self.reset_relay.sbros_kl63_proc_1_21_31()
-            self.logger.debug("отключение реле")
-            return False
-        self.logger.debug("напряжение соответствует")
-        self.fault.debug_msg("напряжение соответствует", 'green')
-        self.reset_relay.sbros_kl63_proc_1_21_31()
-        self.logger.debug("отключение реле")
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2):
+            return True
+        return False
 
     def st_test_12_bkz_3mk(self) -> bool:
         """

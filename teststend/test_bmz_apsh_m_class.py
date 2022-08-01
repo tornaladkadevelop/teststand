@@ -22,6 +22,7 @@ from general_func.modbus import *
 from general_func.procedure import *
 from general_func.subtest import *
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ProcedureFull
 from gui.msgbox_1 import *
 
 __all__ = ["TestBMZAPSHM"]
@@ -31,6 +32,7 @@ class TestBMZAPSHM:
 
     def __init__(self):
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
@@ -78,19 +80,8 @@ class TestBMZAPSHM:
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
-        self.logger.debug("старт теста 1.1")
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=0.9)
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        self.logger.debug('включен KL63')
-        sleep(1)
-        meas_volt = self.read_mb.read_analog()
-        self.logger.debug(f'измеряем напряжение:\t {meas_volt}')
-        self.reset_relay.sbros_kl63_proc_1_21_31()
-        if min_volt <= meas_volt <= max_volt:
-            self.logger.debug("напряжение соответствует")
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_min_volt=0.9):
             return True
-        self.logger.debug("напряжение не соответствует")
-        self.mysql_conn.mysql_ins_result('неисправен', '1')
         return False
 
     def st_test_12(self) -> bool:

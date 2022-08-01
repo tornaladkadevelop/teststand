@@ -21,6 +21,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ProcedureFull
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -31,6 +32,7 @@ class TestBMZAPSH4:
 
     def __init__(self):
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
@@ -84,25 +86,9 @@ class TestBMZAPSH4:
         """
         Проверка на КЗ входа блока, и межвиткового замыкания трансформатора
         """
-        self.mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
-        meas_volt_ust = self.proc.procedure_1_21_31()
-        if meas_volt_ust != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен TV1', '1')
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        meas_volt = self.read_mb.read_analog()
-        if 0.9 * meas_volt_ust <= meas_volt <= 1.1 * meas_volt_ust:
-            pass
-        else:
-            self.fault.debug_msg("напряжение не соответствует", 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(343)
-            self.reset_relay.sbros_kl63_proc_1_21_31()
-            return False
-        self.fault.debug_msg(f'напряжение соответствует заданному \t {meas_volt:.2f}', 'orange')
-        self.reset_relay.sbros_kl63_proc_1_21_31()
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_min_volt=0.9):
+            return True
+        return False
 
     def st_test_12_bmz_apsh_4(self) -> bool:
         """

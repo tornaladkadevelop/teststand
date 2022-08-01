@@ -36,6 +36,7 @@ class TestTZP:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.proc = Procedure()
+        self.proc_full = ProcedureFull()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
@@ -86,26 +87,9 @@ class TestTZP:
         1.1.3. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         :return:
         """
-        self.logger.debug("старт теста 1.1")
-        self.mysql_conn.mysql_ins_result('идет тест 1.1', '1')
-        min_volt, max_volt = self.proc.procedure_1_21_31_v1()
-        self.mysql_conn.mysql_ins_result('идет тест 1.2', '1')
-        self.logger.debug('тест 1.2')
-        self.ctrl_kl.ctrl_relay('KL63', True)
-        self.logger.debug('включение KL63')
-        sleep(1)
-        meas_volt = self.read_mb.read_analog()
-        self.logger.debug(f'напряжение после включения KL63 \t{meas_volt:.2f}')
-        self.reset_relay.sbros_kl63_proc_1_21_31()
-        if min_volt <= meas_volt <= max_volt:
-            self.logger.debug("напряжение соответствует")
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
             return True
-        else:
-            # self.mysql_conn.mysql_ins_result('неисправен', '1')
-            # self.mysql_conn.mysql_error(281)
-            self.logger.debug("напряжение не соответствует")
-            raise HardwareException("Выходное напряжение не соответствует заданию. \n"
-                                    "Неисправность узла формирования напряжения в стенде")
+        return False
 
     def st_test_12(self) -> bool:
         """

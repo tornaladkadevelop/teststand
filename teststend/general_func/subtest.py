@@ -16,7 +16,7 @@ from .database import *
 from .resistance import Resistor
 from .reset import ResetRelay, ResetProtection
 
-__all__ = ["SubtestMTZ5", "SubtestProcAll", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
+__all__ = ["SubtestMTZ5", "ProcedureFull", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
 
 
 class SubtestMTZ5:
@@ -57,20 +57,20 @@ class SubtestMTZ5:
         return self.delta_t_mtz, self.in_1, self.in_5
 
 
-class SubtestProcAll:
+class ProcedureFull:
 
     def __init__(self):
         self.proc = Procedure()
         self.logger = logging.getLogger(__name__)
         self.reset_relay = ResetRelay()
-        self.reset_protect = ResetProtection()
+        # self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
-        self.di_read = DIRead()
+        # self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
 
-    def procedure_1(self, *, test_num: int = 1, subtest_num: float = 1.0, coef_min_volt: float = 0.6,
-                    coef_max_volt: float = 1.1):
+    def procedure_1_full(self, *, test_num: int = 1, subtest_num: float = 1.0, coef_min_volt: float = 0.6,
+                         coef_max_volt: float = 1.1):
         """
         1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока.
         :return: bool
@@ -79,15 +79,24 @@ class SubtestProcAll:
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=coef_min_volt, coef_max=coef_max_volt)
         self.ctrl_kl.ctrl_relay('KL63', True)
+        sleep(2)
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63:\t{meas_volt:.2f}\tдолжно быть '
                           f'от\t{min_volt:.2f}\tдо\t{max_volt:.2f}')
         self.reset_relay.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
+            self.mysql_conn.mysql_add_message(f'тест {subtest_num} пройден')
             return True
+        self.mysql_conn.mysql_add_message(f'тест {subtest_num} не пройден')
         self.mysql_conn.mysql_ins_result('неисправен', f'{test_num}')
-        self.mysql_conn.mysql_error(455)
+        self._subtest_err(455)
         return False
+
+    def _subtest_err(self, err_code):
+        self.mysql_conn.mysql_error(err_code)
+        read_err = self.mysql_conn.read_err(err_code)
+        self.mysql_conn.mysql_add_message(read_err)
+        self.logger.debug(f'код неисправности {err_code}: {read_err}')
 
 
 class SubtestBDU:
