@@ -17,7 +17,6 @@ from time import sleep
 
 from general_func.exception import *
 from general_func.subtest import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -34,7 +33,6 @@ class TestBKIP:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest2in()
 
         self.msg_1 = 'Переведите тумблер на блоке в режим «Предупредительный»'
@@ -145,7 +143,6 @@ if __name__ == '__main__':
     test_bki_p = TestBKIP()
     reset_test_bki_p = ResetRelay()
     mysql_conn_bki_p = MySQLConnect()
-    fault = Bug(None)
     try:
         if test_bki_p.st_test_bki_p():
             mysql_conn_bki_p.mysql_block_good()
@@ -158,7 +155,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bki_p.reset_all()

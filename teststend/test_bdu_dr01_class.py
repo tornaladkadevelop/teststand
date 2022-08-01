@@ -16,7 +16,6 @@ from time import sleep
 
 from general_func.exception import *
 from general_func.subtest import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -34,7 +33,6 @@ class TestBDUDR01:
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest4in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUDR01.log",
@@ -392,7 +390,6 @@ if __name__ == '__main__':
     test_bdu_dr01 = TestBDUDR01()
     reset_test_bdu_dr01 = ResetRelay()
     mysql_conn_test_bdu_dr01 = MySQLConnect()
-    fault = Bug(True)
     try:
         if test_bdu_dr01.st_test_bdu_dr01():
             mysql_conn_test_bdu_dr01.mysql_block_good()
@@ -405,7 +402,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bdu_dr01.reset_all()

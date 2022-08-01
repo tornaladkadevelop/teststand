@@ -14,7 +14,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -33,7 +32,6 @@ class TestMKZP6:
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
 
         self.ust_1: float = 45.1
         self.ust_2: float = 15.0
@@ -100,13 +98,13 @@ class TestMKZP6:
             pass
         else:
             return False
-        self.fault.debug_msg('тест 1.1', 3)
+        self.logger.debug('тест 1.1', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 1.1", '1')
         meas_volt_ust = self.proc.procedure_1_21_31()
         if meas_volt_ust != 0.0:
             pass
         else:
-            self.fault.debug_msg('неисправен', 1)
+            self.logger.debug('неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '1')
             return False
         self.ctrl_kl.ctrl_relay('KL73', True)
@@ -115,7 +113,7 @@ class TestMKZP6:
         sleep(5)
         self.ctrl_kl.ctrl_relay('KL63', True)
         meas_volt = self.read_mb.read_analog()
-        self.fault.debug_msg(f'измеренное напряжение:\t{meas_volt}', 2)
+        self.logger.debug(f'измеренное напряжение:\t{meas_volt}', 2)
         if 0.8 * meas_volt_ust <= meas_volt <= 1.0 * meas_volt_ust:
             pass
         else:
@@ -126,7 +124,7 @@ class TestMKZP6:
         return True
 
     def st_test_11(self) -> bool:
-        self.fault.debug_msg('тест 1.2', 3)
+        self.logger.debug('тест 1.2', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 1.2", '1')
         self.coef_volt = self.proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
@@ -149,13 +147,13 @@ class TestMKZP6:
         return True
 
     def st_test_12(self) -> bool:
-        self.fault.debug_msg('тест 1.3', 3)
+        self.logger.debug('тест 1.3', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 1.3", '1')
         if my_msg(self.msg_2):
             if my_msg(self.msg_3):
                 pass
             else:
-                self.fault.debug_msg('тест 1.3 неисправен', 1)
+                self.logger.debug('тест 1.3 неисправен', 1)
                 self.mysql_conn.mysql_ins_result("неисправен", '1')
                 my_msg(self.msg_4)
                 return False
@@ -166,13 +164,13 @@ class TestMKZP6:
         return True
 
     def st_test_13(self) -> bool:
-        self.fault.debug_msg('тест 1.4', 3)
+        self.logger.debug('тест 1.4', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
         sleep(5)
         if my_msg(self.msg_5):
             pass
         else:
-            self.fault.debug_msg('тест 1.4 неисправен', 1)
+            self.logger.debug('тест 1.4 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '1')
             my_msg(self.msg_6)
             return False
@@ -181,17 +179,17 @@ class TestMKZP6:
         return True
 
     def st_test_14(self) -> bool:
-        self.fault.debug_msg('тест 1.5', 3)
+        self.logger.debug('тест 1.5', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 1.5", '1')
         sleep(5)
         if my_msg(self.msg_7):
             pass
         else:
-            self.fault.debug_msg('тест 1.6 неисправен', 1)
+            self.logger.debug('тест 1.6 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '1')
             my_msg(self.msg_8)
             return False
-        self.fault.debug_msg('тест 1 пройден', 4)
+        self.logger.debug('тест 1 пройден', 4)
         self.mysql_conn.mysql_ins_result("исправен", '1')
         return True
 
@@ -200,7 +198,7 @@ class TestMKZP6:
         Тест 2. Контроль изоляции
         :return:
         """
-        self.fault.debug_msg('тест 2.1', 3)
+        self.logger.debug('тест 2.1', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 2.1", '2')
         sleep(5)
         self.ctrl_kl.ctrl_relay('KL99', True)
@@ -208,7 +206,7 @@ class TestMKZP6:
         if my_msg(self.msg_9):
             pass
         else:
-            self.fault.debug_msg('тест 2.1 неисправен', 1)
+            self.logger.debug('тест 2.1 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '2')
             my_msg(self.msg_6)
             return False
@@ -216,13 +214,13 @@ class TestMKZP6:
         return True
 
     def st_test_21(self) -> bool:
-        self.fault.debug_msg('тест 2.2', 3)
+        self.logger.debug('тест 2.2', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 2.2", '2')
         sleep(3)
         if my_msg(self.msg_11):
             pass
         else:
-            self.fault.debug_msg('тест 2.2 неисправен', 1)
+            self.logger.debug('тест 2.2 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '2')
             my_msg(self.msg_12)
             return False
@@ -230,7 +228,7 @@ class TestMKZP6:
         return True
 
     def st_test_22(self) -> bool:
-        self.fault.debug_msg('тест 2.3', 3)
+        self.logger.debug('тест 2.3', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 2.3", '2')
         if my_msg(self.msg_13):
             pass
@@ -242,14 +240,14 @@ class TestMKZP6:
         if my_msg(self.msg_14):
             pass
         else:
-            self.fault.debug_msg('тест 2.3 неисправен', 1)
+            self.logger.debug('тест 2.3 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '2')
             my_msg(self.msg_15)
             return False
         sleep(1.5)
         self.ctrl_kl.ctrl_relay('KL97', False)
         sleep(5)
-        self.fault.debug_msg('тест 2 пройден', 3)
+        self.logger.debug('тест 2 пройден', 3)
         self.mysql_conn.mysql_ins_result("исправен", '2')
         if my_msg(self.msg_13):
             pass
@@ -262,14 +260,14 @@ class TestMKZP6:
         Тест 3. Работа защиты минимального напряжения
         :return:
         """
-        self.fault.debug_msg('тест 3.1', 3)
+        self.logger.debug('тест 3.1', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 3.1", '3')
         self.ctrl_kl.ctrl_relay('KL69', True)
         sleep(1)
         if my_msg(self.msg_16):
             pass
         else:
-            self.fault.debug_msg('тест 3.1 неисправен', 1)
+            self.logger.debug('тест 3.1 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '3')
             my_msg(self.msg_17)
             return False
@@ -277,20 +275,20 @@ class TestMKZP6:
         return True
 
     def st_test_31(self) -> bool:
-        self.fault.debug_msg('тест 3.2', 3)
+        self.logger.debug('тест 3.2', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 3.2", '3')
         sleep(1)
         if my_msg(self.msg_13):
             if my_msg(self.msg_18):
                 pass
             else:
-                self.fault.debug_msg('тест 3.2 неисправен', 1)
+                self.logger.debug('тест 3.2 неисправен', 1)
                 self.mysql_conn.mysql_ins_result("неисправен", '3')
                 my_msg(self.msg_19)
                 return False
         else:
             return False
-        self.fault.debug_msg('тест 3 пройден', 3)
+        self.logger.debug('тест 3 пройден', 3)
         self.mysql_conn.mysql_ins_result("исправен", '3')
         return True
 
@@ -299,7 +297,7 @@ class TestMKZP6:
         # Тест 4. Проверка работоспособности токовой защиты
         :return
         """
-        self.fault.debug_msg('тест 4.1', 3)
+        self.logger.debug('тест 4.1', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 4.1", '4')
         if my_msg(self.msg_20):
             pass
@@ -311,13 +309,13 @@ class TestMKZP6:
         return True
 
     def st_test_41(self) -> bool:
-        self.fault.debug_msg('тест 4.2', 3)
+        self.logger.debug('тест 4.2', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 4.2", '4')
         sleep(5)
         if my_msg(self.msg_21):
             pass
         else:
-            self.fault.debug_msg('тест 4.2 неисправен', 1)
+            self.logger.debug('тест 4.2 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '4')
             my_msg(self.msg_6)
             return False
@@ -337,7 +335,7 @@ class TestMKZP6:
         if my_msg(self.msg_23):
             pass
         else:
-            self.fault.debug_msg('тест 4.3 неисправен', 1)
+            self.logger.debug('тест 4.3 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '4')
             my_msg(self.msg_24)
             return False
@@ -345,7 +343,7 @@ class TestMKZP6:
             pass
         else:
             return False
-        self.fault.debug_msg('тест 4 пройден', 3)
+        self.logger.debug('тест 4 пройден', 3)
         self.mysql_conn.mysql_ins_result("исправен", '4')
         return True
 
@@ -354,7 +352,7 @@ class TestMKZP6:
         Тест 5. Проверка работоспособности защит от несимметрии фаз
         :return
         """
-        self.fault.debug_msg('тест 5.1', 3)
+        self.logger.debug('тест 5.1', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 5.1", '5')
         self.ctrl_kl.ctrl_relay('KL99', False)
         sleep(5)
@@ -363,14 +361,14 @@ class TestMKZP6:
         if my_msg(self.msg_25):
             pass
         else:
-            self.fault.debug_msg('тест 5.1 неисправен', 1)
+            self.logger.debug('тест 5.1 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '5')
             my_msg(self.msg_6)
             return False
         return True
 
     def st_test_51(self) -> bool:
-        self.fault.debug_msg('тест 5.2', 3)
+        self.logger.debug('тест 5.2', 3)
         self.mysql_conn.mysql_ins_result("идёт тест 5.2", '5')
         if self.proc.procedure_x4_to_x5(setpoint_volt=self.ust_2, coef_volt=self.coef_volt):
             pass
@@ -387,7 +385,7 @@ class TestMKZP6:
         if my_msg(self.msg_27):
             pass
         else:
-            self.fault.debug_msg('тест 5.2 неисправен', 1)
+            self.logger.debug('тест 5.2 неисправен', 1)
             self.mysql_conn.mysql_ins_result("неисправен", '5')
             my_msg(self.msg_28)
             return False
@@ -398,7 +396,7 @@ class TestMKZP6:
             pass
         else:
             return False
-        self.fault.debug_msg('тест 5 пройден', 4)
+        self.logger.debug('тест 5 пройден', 4)
         self.mysql_conn.mysql_ins_result("исправен", '5')
         return True
 
@@ -427,7 +425,6 @@ if __name__ == '__main__':
     test_mkzp = TestMKZP6()
     reset_test_mkzp = ResetRelay()
     mysql_conn_mkzp = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_mkzp.st_test_mkzp_6_4sh()
         if test and not health_flag:

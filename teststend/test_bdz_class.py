@@ -18,7 +18,6 @@ from time import sleep
 
 from general_func.exception import *
 from general_func.subtest import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.reset import ResetRelay
@@ -118,7 +117,6 @@ if __name__ == '__main__':
     test_bdz = TestBDZ()
     reset_test_bdz = ResetRelay()
     mysql_conn_bdz = MySQLConnect()
-    fault = Bug(None)
     try:
         if test_bdz.st_test_bdz():
             mysql_conn_bdz.mysql_block_good()
@@ -131,7 +129,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bdz.reset_all()

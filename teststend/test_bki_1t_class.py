@@ -20,7 +20,6 @@ from time import sleep
 
 from general_func.exception import *
 from general_func.subtest import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -35,9 +34,7 @@ class TestBKI1T:
     def __init__(self):
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        # self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest2in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBKI1T.log",
@@ -132,7 +129,6 @@ if __name__ == '__main__':
     test_bki_1t = TestBKI1T()
     reset_test_bki_1t = ResetRelay()
     mysql_conn_bki_1t = MySQLConnect()
-    fault = Bug(None)
     try:
         if test_bki_1t.st_test_bki_1t():
             mysql_conn_bki_1t.mysql_block_good()
@@ -145,7 +141,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bki_1t.reset_all()

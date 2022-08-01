@@ -18,7 +18,6 @@ import logging
 from time import time, sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -41,7 +40,6 @@ class TestTZP:
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest2in()
 
         self._list_ust_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
@@ -285,7 +283,6 @@ if __name__ == '__main__':
     test_tzp = TestTZP()
     reset_test_tzp = ResetRelay()
     mysql_conn_tzp = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_tzp.st_test_tzp()
         if test and not health_flag:
@@ -301,7 +298,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

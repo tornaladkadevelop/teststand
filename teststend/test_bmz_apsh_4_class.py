@@ -16,7 +16,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -39,7 +38,6 @@ class TestBMZAPSH4:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(True)
 
         self.list_ust_num = (1, 2, 3, 4, 5)
         self.list_ust = (9.84, 16.08, 23.28, 34.44, 50.04)
@@ -75,11 +73,11 @@ class TestBMZAPSH4:
         if in_a1 is False:
             pass
         else:
-            self.fault.debug_msg("вход 1 не соответствует", 1)
+            self.logger.debug("вход 1 не соответствует", 1)
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(342)
             return False
-        self.fault.debug_msg("вход 1 соответствует", 4)
+        self.logger.debug("вход 1 соответствует", 4)
         return True
 
     def st_test_11_bmz_apsh_4(self) -> bool:
@@ -110,7 +108,7 @@ class TestBMZAPSH4:
         """
         Тест 2. Проверка срабатывания защиты блока по уставкам
         """
-        self.fault.debug_msg("запуск теста 2", 3)
+        self.logger.debug("запуск теста 2", 3)
         self.mysql_conn.mysql_ins_result('идёт тест 2', '1')
         k = 0
         for i in self.list_ust:
@@ -132,12 +130,12 @@ class TestBMZAPSH4:
                 self.mysql_conn.mysql_ins_result('неисправен TV1', '1')
             # 2.1.  Проверка срабатывания блока от сигнала нагрузки:
             calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(111)
-            self.fault.debug_msg(f'delta t:\t {calc_delta_t:.1f}', 2)
+            self.logger.debug(f'delta t:\t {calc_delta_t:.1f}', 2)
             self.list_delta_t.append(f'{calc_delta_t:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
             in_a1, *_ = self.di_read.di_read('in_a1')
             if in_a1 is True:
-                self.fault.debug_msg("вход 1 соответствует", 4)
+                self.logger.debug("вход 1 соответствует", 4)
                 self.reset_relay.stop_procedure_3()
                 if self.sbros_zashit():
                     k += 1
@@ -145,7 +143,7 @@ class TestBMZAPSH4:
                 else:
                     return False
             else:
-                self.fault.debug_msg("вход 1 не соответствует", 1)
+                self.logger.debug("вход 1 не соответствует", 1)
                 self.mysql_conn.mysql_ins_result('неисправен', '1')
                 self.mysql_conn.mysql_error(344)
                 self.reset_relay.stop_procedure_3()
@@ -158,8 +156,8 @@ class TestBMZAPSH4:
                 else:
                     return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.fault.debug_msg("тест 2 пройден", 3)
-        self.fault.debug_msg("сбрасываем все и завершаем проверку", 3)
+        self.logger.debug("тест 2 пройден", 3)
+        self.logger.debug("сбрасываем все и завершаем проверку", 3)
         for t1 in range(len(self.list_delta_t)):
             self.list_result.append((self.list_ust_num[t1], self.list_delta_t[t1]))
         self.mysql_conn.mysql_ubtz_btz_result(self.list_result)
@@ -175,14 +173,14 @@ class TestBMZAPSH4:
         else:
             return False
         calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(111)
-        self.fault.debug_msg(f'delta t: {calc_delta_t:.1f}', 'orange')
+        self.logger.debug(f'delta t: {calc_delta_t:.1f}', 'orange')
         self.list_delta_t[-1] = f'{calc_delta_t:.1f}'
         self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
         in_a1, *_ = self.di_read.di_read('in_a1')
         if in_a1 is True:
             pass
         else:
-            self.fault.debug_msg("вход 1 не соответствует", 1)
+            self.logger.debug("вход 1 не соответствует", 1)
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(346)
             return False
@@ -198,11 +196,11 @@ class TestBMZAPSH4:
         if in_a1 is False:
             pass
         else:
-            self.fault.debug_msg("вход 1 не соответствует", 1)
+            self.logger.debug("вход 1 не соответствует", 1)
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(344)
             return False
-        self.fault.debug_msg("вход 1 соответствует", 4)
+        self.logger.debug("вход 1 соответствует", 4)
         return True
 
     def st_test_bmz_apsh_4(self) -> [bool, bool]:
@@ -218,7 +216,6 @@ if __name__ == '__main__':
     test_bmz_apsh_4 = TestBMZAPSH4()
     reset_test_bmz_apsh_4 = ResetRelay()
     mysql_conn_bmz_apsh_4 = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_bmz_apsh_4.st_test_bmz_apsh_4()
         if test and not health_flag:
@@ -232,7 +229,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

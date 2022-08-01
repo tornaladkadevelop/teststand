@@ -16,7 +16,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -38,7 +37,6 @@ class TestBMZAPSHM:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest4in()
 
         self.ust_1: float = 85.6

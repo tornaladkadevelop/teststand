@@ -16,7 +16,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -39,7 +38,6 @@ class TestMMTZD:
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
 
         self.list_ust_num = (10, 20, 30, 40, 50)
         # self.ust = (7.7, 16.5, 25.4, 31.9, 39.4)
@@ -87,13 +85,13 @@ class TestMMTZD:
         else:
             self.mysql_conn.mysql_ins_result("неисправен", "1")
             if in_a1 is False:
-                self.fault.debug_msg("положение входа 1 не соответствует", 1)
+                self.logger.debug("положение входа 1 не соответствует", 1)
                 self.mysql_conn.mysql_error(412)
             elif in_a5 is False:
-                self.fault.debug_msg("положение входа 5 не соответствует", 1)
+                self.logger.debug("положение входа 5 не соответствует", 1)
                 self.mysql_conn.mysql_error(413)
             return False
-        self.fault.debug_msg("положение выходов блока соответствует", 3)
+        self.logger.debug("положение выходов блока соответствует", 3)
         return True
 
     def st_test_12(self) -> bool:
@@ -111,7 +109,7 @@ class TestMMTZD:
         :return:
         """
         self.coef_volt = self.proc.procedure_1_22_32()
-        self.fault.debug_msg(f'коэф. сети равен: {self.coef_volt:.2f}', 2)
+        self.logger.debug(f'коэф. сети равен: {self.coef_volt:.2f}', 2)
         if self.coef_volt != 0.0:
             pass
         else:
@@ -153,7 +151,7 @@ class TestMMTZD:
             in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is False:
-                self.fault.debug_msg("положение выходов блока соответствует", 3)
+                self.logger.debug("положение выходов блока соответствует", 3)
                 if self.subtest_23():
                     self.mysql_conn.mysql_ins_result('исправен', f'{self.list_num_yach_test_2[k]}')
                 else:
@@ -379,7 +377,6 @@ if __name__ == '__main__':
     test_mmtz_d = TestMMTZD()
     reset_test_mmtz_d = ResetRelay()
     mysql_conn_mmtz_d = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_mmtz_d.st_test_mmtz_d()
         if test and not health_flag:
@@ -393,7 +390,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

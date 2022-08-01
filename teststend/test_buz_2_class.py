@@ -19,7 +19,6 @@ import logging
 from time import sleep, time
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -37,7 +36,6 @@ class TestBUZ2:
         self.mb_ctrl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        # self.fault = Bug(True)
         self.subtest = Subtest2in()
 
         self.ust_1 = 75.8
@@ -272,7 +270,6 @@ if __name__ == '__main__':
     test_buz_2 = TestBUZ2()
     reset_test_buz_2 = ResetRelay()
     mysql_conn_buz_2 = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_buz_2.st_test_buz_2()
         if test and not health_flag:
@@ -286,7 +283,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

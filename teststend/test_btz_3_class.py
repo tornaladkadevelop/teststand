@@ -18,7 +18,6 @@ import logging
 from time import sleep, time
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -40,7 +39,6 @@ class TestBTZ3:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
 
         self.list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
         self.list_ust_tzp = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
@@ -110,7 +108,7 @@ class TestBTZ3:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
         self.mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
-        self.fault.debug_msg("1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального", 3)
+        self.logger.debug("1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального", 3)
         self.coef_volt = self.proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
             pass
@@ -130,7 +128,7 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.fault.debug_msg("тест 2.1", 'blue')
+        self.logger.debug("тест 2.1", 'blue')
         self.mysql_conn.mysql_ins_result('идёт тест 2', '2')
         if self.proc.procedure_x4_to_x5(setpoint_volt=self.ust_prov, coef_volt=self.coef_volt):
             pass
@@ -143,7 +141,7 @@ class TestBTZ3:
         """
         # 2.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.fault.debug_msg("тест 2.2", 'blue')
+        self.logger.debug("тест 2.2", 'blue')
         self.mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
@@ -152,7 +150,7 @@ class TestBTZ3:
         if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
             pass
         else:
-            self.fault.debug_msg("тест 2.2 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 2.2 положение выходов не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(373)
@@ -163,18 +161,18 @@ class TestBTZ3:
             elif in_a6 is True:
                 self.mysql_conn.mysql_error(376)
             return False
-        self.fault.debug_msg("тест 2.2 положение выходов соответствует", 'green')
+        self.logger.debug("тест 2.2 положение выходов соответствует", 'green')
         self.reset.stop_procedure_3()
         return True
 
     def st_test_22_btz_3(self) -> bool:
-        self.fault.debug_msg("тест 2.3", 'blue')
+        self.logger.debug("тест 2.3", 'blue')
         self.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.fault.debug_msg("тест 2.3 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 2.3 положение выходов не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(377)
@@ -185,7 +183,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(380)
             return False
-        self.fault.debug_msg("тест 2.3 положение выходов соответствует", 'green')
+        self.logger.debug("тест 2.3 положение выходов соответствует", 'green')
         self.mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -199,12 +197,12 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.fault.debug_msg("тест 3.1", 'blue')
+        self.logger.debug("тест 3.1", 'blue')
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.fault.debug_msg("тест 3.1 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 3.1 положение выходов не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is False:
                 self.mysql_conn.mysql_error(381)
@@ -215,7 +213,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(384)
             return False
-        self.fault.debug_msg("тест 3.1 положение выходов соответствует", 'green')
+        self.logger.debug("тест 3.1 положение выходов соответствует", 'green')
         return True
 
     def st_test_31_btz_3(self) -> bool:
@@ -227,13 +225,13 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.fault.debug_msg("тест 3.2", 'blue')
+        self.logger.debug("тест 3.2", 'blue')
         self.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.fault.debug_msg("тест 3.2 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 3.2 положение выходов не соответствует", 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(385)
@@ -244,7 +242,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(388)
             return False
-        self.fault.debug_msg("тест 3.2 положение выходов соответствует", 'green')
+        self.logger.debug("тест 3.2 положение выходов соответствует", 'green')
         self.mysql_conn.mysql_ins_result('исправен', '3')
         return True
 
@@ -259,7 +257,7 @@ class TestBTZ3:
             return False
         k = 0
         for i in self.list_ust_pmz:
-            self.fault.debug_msg(f'тест 4 уставка {self.list_ust_pmz_num[k]}', 'blue')
+            self.logger.debug(f'тест 4 уставка {self.list_ust_pmz_num[k]}', 'blue')
             msg_5 = 'Установите регулятор уставок ПМЗ на блоке в положение '
             msg_result_pmz = my_msg_2(f'{msg_5} {self.list_ust_pmz_num[k]}')
             if msg_result_pmz == 0:
@@ -294,7 +292,7 @@ class TestBTZ3:
                     continue
                 else:
                     break
-            self.fault.debug_msg(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
+            self.logger.debug(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
                                  f'уставка {self.list_ust_pmz_num[k]}', 'orange')
             if self.calc_delta_t_pmz < 10:
                 self.list_delta_t_pmz.append(f'< 10')
@@ -308,7 +306,7 @@ class TestBTZ3:
                                               f'дельта %: {calc_delta_percent_pmz:.2f}')
             in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
-                self.fault.debug_msg("тест 4.1 положение выходов соответствует", 'green')
+                self.logger.debug("тест 4.1 положение выходов соответствует", 'green')
                 self.reset.stop_procedure_3()
                 if self.subtest_45():
                     k += 1
@@ -316,7 +314,7 @@ class TestBTZ3:
                 else:
                     return False
             else:
-                self.fault.debug_msg("тест 4.1 положение выходов не соответствует", 1)
+                self.logger.debug("тест 4.1 положение выходов не соответствует", 1)
                 self.mysql_conn.mysql_ins_result('неисправен', '4')
                 self.mysql_conn.mysql_error(389)
                 if self.subtest_42(i, k):
@@ -374,7 +372,7 @@ class TestBTZ3:
             self.ctrl_kl.ctrl_relay('KL63', False)
             self.reset.stop_procedure_3()
             self.mysql_conn.progress_level(0.0)
-            self.fault.debug_msg(f'тест 5 delta t: {calc_delta_t_tzp:.1f} '
+            self.logger.debug(f'тест 5 delta t: {calc_delta_t_tzp:.1f} '
                                  f'уставка {self.list_ust_tzp_num[m]}', 'orange')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка ТЗП {self.list_ust_tzp_num[m]} '
@@ -606,7 +604,6 @@ if __name__ == '__main__':
     test_btz_3 = TestBTZ3()
     reset_test_btz_3 = ResetRelay()
     mysql_conn_btz_3 = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_btz_3.st_test_btz_3()
         if test and not health_flag:
@@ -622,7 +619,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

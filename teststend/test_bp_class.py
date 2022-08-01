@@ -17,7 +17,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.subtest import *
@@ -36,7 +35,6 @@ class TestBP:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
         self.subtest = Subtest4in()
 
         self.emkost_kond: float = 0.0
@@ -183,7 +181,6 @@ if __name__ == '__main__':
     test_bp = TestBP()
     reset_test_bp = ResetRelay()
     mysql_conn_bp = MySQLConnect()
-    fault = Bug(True)
     try:
         if test_bp.st_test_bp():
             mysql_conn_bp.mysql_block_good()
@@ -196,7 +193,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bp.reset_all()

@@ -13,7 +13,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.subtest import *
@@ -30,7 +29,6 @@ class TestBUAPSHM:
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        # self.fault = Bug(True)
         self.subtest = Subtest2in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBUAPShM.log",
@@ -220,7 +218,6 @@ if __name__ == '__main__':
     test_bu_apsh_m = TestBUAPSHM()
     reset_test_bu_apsh_m = ResetRelay()
     mysql_conn_bu_apsh_m = MySQLConnect()
-    fault = Bug(True)
     try:
         if test_bu_apsh_m.st_test_bu_apsh_m():
             mysql_conn_bu_apsh_m.mysql_block_good()
@@ -233,8 +230,7 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
-        my_msg(f'{mce}', 'red')
+        my_msg(f's{mce}', 'red')
     finally:
         reset_test_bu_apsh_m.reset_all()
         sys.exit()

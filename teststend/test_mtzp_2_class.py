@@ -14,7 +14,6 @@ import logging
 from time import sleep, time
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
@@ -35,7 +34,6 @@ class TestMTZP2:
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(None)
 
         self.ust_1 = 10.9 * 8.2
         self.ust_2 = 8.2 * 8.2
@@ -77,7 +75,7 @@ class TestMTZP2:
             pass
         else:
             return False
-        self.fault.debug_msg('тест 1.1', 'blue')
+        self.logger.debug('тест 1.1', 'blue')
         self.mysql_conn.mysql_ins_result("идёт тест 1.2", '1')
         return True
 
@@ -106,7 +104,7 @@ class TestMTZP2:
         meas_volt = self.read_mb.read_analog()
         min_volt = 0.8 * self.meas_volt_ust
         max_volt = 1.0 * self.meas_volt_ust
-        self.fault.debug_msg(f'измеренное напряжение\t{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
+        self.logger.debug(f'измеренное напряжение\t{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -121,7 +119,7 @@ class TestMTZP2:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return: bool
         """
-        self.fault.debug_msg('тест 1.3', 'blue')
+        self.logger.debug('тест 1.3', 'blue')
         self.mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
         self.coef_volt = self.proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
@@ -131,7 +129,7 @@ class TestMTZP2:
             self.reset.stop_procedure_32()
             return False
         self.reset.stop_procedure_32()
-        self.fault.debug_msg('тест 1.3 завершён', 'green')
+        self.logger.debug('тест 1.3 завершён', 'green')
         return True
 
     def st_test_14(self) -> bool:
@@ -152,11 +150,11 @@ class TestMTZP2:
         if in_b2 is True and in_a1 is False:
             pass
         else:
-            self.fault.debug_msg('тест 1.3 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 1.3 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.fault.debug_msg('тест 1.3 положение выходов соответствует', 'green')
+        self.logger.debug('тест 1.3 положение выходов соответствует', 'green')
         return True
 
     def st_test_20(self) -> bool:
@@ -175,7 +173,7 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 2.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 2.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             return False
         return True
@@ -186,7 +184,7 @@ class TestMTZP2:
         :return: bool
         """
         self.mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
-        self.fault.debug_msg('тест 2.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 2.1 положение выходов соответствует', 'green')
         sleep(0.5)
         self.ctrl_kl.ctrl_relay('KL94', True)
         sleep(1)
@@ -196,10 +194,10 @@ class TestMTZP2:
         if in_b2 is True and in_a1 is False:
             pass
         else:
-            self.fault.debug_msg('тест 2.2 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 2.2 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.fault.debug_msg('тест 2.2 положение выходов соответствует', 'green')
+        self.logger.debug('тест 2.2 положение выходов соответствует', 'green')
         self.mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -217,11 +215,11 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 3.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 3.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
         self.mysql_conn.mysql_ins_result('идёт тест 3.2', '3')
-        self.fault.debug_msg('тест 3.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 3.1 положение выходов соответствует', 'green')
         return True
 
     def st_test_31(self) -> bool:
@@ -236,10 +234,10 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 3.2 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 3.2 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.fault.debug_msg('тест 3.2 положение выходов соответствует', 'green')
+        self.logger.debug('тест 3.2 положение выходов соответствует', 'green')
         return True
 
     def st_test_32(self) -> bool:
@@ -255,10 +253,10 @@ class TestMTZP2:
         if in_b2 is True and in_a1 is False:
             pass
         else:
-            self.fault.debug_msg('тест 3.3 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 3.3 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.fault.debug_msg('тест 3.3 положение выходов соответствует', 'green')
+        self.logger.debug('тест 3.3 положение выходов соответствует', 'green')
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.ctrl_kl.ctrl_relay('KL25', False)
         self.resist.resist_ohm(255)
@@ -282,10 +280,10 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 4.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 4.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '4')
             return False
-        self.fault.debug_msg('тест 4.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 4.1 положение выходов соответствует', 'green')
         return True
 
     def st_test_41(self) -> bool:
@@ -307,10 +305,10 @@ class TestMTZP2:
             pass
         else:
             self.reset.stop_procedure_3()
-            self.fault.debug_msg('тест 4.2 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 4.2 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '4')
             return False
-        self.fault.debug_msg('тест 4.2 положение выходов соответствует', 'green')
+        self.logger.debug('тест 4.2 положение выходов соответствует', 'green')
         self.reset.stop_procedure_3()
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.ctrl_kl.ctrl_relay('KL24', True)
@@ -345,10 +343,10 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 5.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 5.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '5')
             return False
-        self.fault.debug_msg('тест 5.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 5.1 положение выходов соответствует', 'green')
         return True
 
     def st_test_51(self) -> bool:
@@ -371,15 +369,15 @@ class TestMTZP2:
             sleep(0.2)
             in_a1, in_b2 = self.di_read.di_read('in_a1', 'in_b2')
             __timer = time() - start_timer
-            self.fault.debug_msg(f'времени прошло\t{__timer}', 'orange')
+            self.logger.debug(f'времени прошло\t{__timer}', 'orange')
         in_a1, in_b2 = self.di_read.di_read('in_a1', 'in_b2')
         if in_b2 is True and in_a1 is False and __timer <= 35:
             pass
         else:
-            self.fault.debug_msg('тест 5.3 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 5.3 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '5')
             return False
-        self.fault.debug_msg('тест 5.3 положение выходов соответствует', 'green')
+        self.logger.debug('тест 5.3 положение выходов соответствует', 'green')
         self.ctrl_kl.ctrl_relay('KL63', False)
         self.reset.stop_procedure_3()
         self.sbros_mtzp()
@@ -415,10 +413,10 @@ class TestMTZP2:
             pass
         else:
             self.reset.stop_procedure_3()
-            self.fault.debug_msg('тест 6.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 6.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '6')
             return False
-        self.fault.debug_msg('тест 6.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 6.1 положение выходов соответствует', 'green')
         self.reset.stop_procedure_3()
         self.sbros_mtzp()
         self.mysql_conn.mysql_ins_result('исправен', '6')
@@ -446,10 +444,10 @@ class TestMTZP2:
         if in_b2 is False and in_a1 is True:
             pass
         else:
-            self.fault.debug_msg('тест 7.1 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 7.1 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '7')
             return False
-        self.fault.debug_msg('тест 7.1 положение выходов соответствует', 'green')
+        self.logger.debug('тест 7.1 положение выходов соответствует', 'green')
         if self.proc.procedure_x4_to_x5(setpoint_volt=self.ust_3, coef_volt=self.coef_volt):
             pass
         else:
@@ -464,16 +462,16 @@ class TestMTZP2:
             sleep(0.2)
             in_a1, in_b2 = self.di_read.di_read('in_a1', 'in_b2')
             __timer_2 = time() - start_timer_2
-            self.fault.debug_msg(f'времени прошло\t{__timer_2}', 'orange')
+            self.logger.debug(f'времени прошло\t{__timer_2}', 'orange')
         in_a1, in_b2 = self.di_read.di_read('in_a1', 'in_b2')
         if in_b2 is True and in_a1 is False and __timer_2 <= 65:
             pass
         else:
             self.reset.sbros_kl63_proc_all()
-            self.fault.debug_msg('тест 7.2 положение выходов не соответствует', 'red')
+            self.logger.debug('тест 7.2 положение выходов не соответствует', 'red')
             self.mysql_conn.mysql_ins_result('неисправен', '7')
             return False
-        self.fault.debug_msg('тест 7.2 положение выходов соответствует', 'green')
+        self.logger.debug('тест 7.2 положение выходов соответствует', 'green')
         self.reset.sbros_kl63_proc_all()
         self.sbros_mtzp()
         self.mysql_conn.mysql_ins_result('исправен', '7')
@@ -520,7 +518,6 @@ if __name__ == '__main__':
     test_mtzp = TestMTZP2()
     reset_test_mtzp = ResetRelay()
     mysql_conn_mtzp = MySQLConnect()
-    fault = Bug(True)
     try:
         test, health_flag = test_mtzp.st_test_mtzp_2()
         if test and not health_flag:
@@ -534,7 +531,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     except HardwareException as hwe:
         my_msg(f'{hwe}', 'red')

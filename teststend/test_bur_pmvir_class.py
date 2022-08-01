@@ -14,7 +14,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.subtest import *
@@ -32,7 +31,6 @@ class TestBURPMVIR:
         self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        # self.fault = Bug(True)
         self.subtest = Subtest2in()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBURPMVIR.log",
@@ -245,7 +243,6 @@ if __name__ == '__main__':
     test_bur_pmvir = TestBURPMVIR()
     reset_test_bur_pmvir = ResetRelay()
     mysql_conn_bur_pmvir = MySQLConnect()
-    fault = Bug(None)
     try:
         if test_bur_pmvir.st_test_bur_pmvir():
             mysql_conn_bur_pmvir.mysql_block_good()
@@ -258,7 +255,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bur_pmvir.reset_all()

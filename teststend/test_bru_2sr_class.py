@@ -15,7 +15,6 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.utils import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.subtest import *
@@ -267,7 +266,6 @@ if __name__ == '__main__':
     test_bru_2sr = TestBRU2SR()
     reset_test_bru_2sr = ResetRelay()
     mysql_conn_bru_2sr = MySQLConnect()
-    fault = Bug(None)
     try:
         if test_bru_2sr.st_test_bru_2sr():
             mysql_conn_bru_2sr.mysql_block_good()
@@ -280,7 +278,6 @@ if __name__ == '__main__':
     except SystemError:
         my_msg("внутренняя ошибка", 'red')
     except ModbusConnectException as mce:
-        fault.debug_msg(mce, 'red')
         my_msg(f'{mce}', 'red')
     finally:
         reset_test_bru_2sr.reset_all()
