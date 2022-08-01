@@ -49,6 +49,7 @@ class TestBDU014TP:
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def test_1(self) -> bool:
         """

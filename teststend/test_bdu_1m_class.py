@@ -38,6 +38,7 @@ class TestBDU1M:
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_1_bdu_1m(self) -> bool:
         """

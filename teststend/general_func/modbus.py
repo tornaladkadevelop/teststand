@@ -179,6 +179,7 @@ class CtrlKL:
                              'Устройство.tg.in_Q113_6', 'Устройство.tg.in_Q113_7')
         self.__analog_tags_value = []
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def ctrl_relay(self, rel, ctrl) -> None:
         kl = self.__dic_relay[f'{rel}']
@@ -316,6 +317,7 @@ class ReadMB:
         self.tags_value = []
         self.analog_tags_value = []
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
                    'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
@@ -471,6 +473,7 @@ class DIRead:
         self.opc = client()
         self.opc.connect('arOPC.arOpcServer.1')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
         # tags = ['in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4', 'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1', 'in_b2',
         #         'in_b3', 'in_b4', 'in_b5']

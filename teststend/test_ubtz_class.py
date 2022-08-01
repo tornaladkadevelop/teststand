@@ -61,15 +61,18 @@ class TestUBTZ:
         # self.msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
         self.msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestUBTZ.log",
+        # C:\Stend\project_class
+        logging.basicConfig(filename=".\log\TestUBTZ.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_10(self) -> bool:
+        self.logger.debug("старт теста 1.0")
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 pass
@@ -103,13 +106,13 @@ class TestUBTZ:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         :return:
         """
-        self.logger.debug('тест 1.3', 'blue')
+        self.logger.debug('тест 1.3')
         self.mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
         self.coef_volt = self.proc.procedure_1_22_32()
         self.reset_relay.stop_procedure_32()
         if self.coef_volt != 0.0:
             self.mysql_conn.mysql_ins_result('исправен', '1')
-            self.logger.debug('тест 1 завершён', 'blue')
+            self.logger.debug('тест 1 завершён')
             return True
         else:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
@@ -141,7 +144,7 @@ class TestUBTZ:
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
             for qw in range(4):
                 self.calc_delta_t_bmz = self.ctrl_kl.ctrl_ai_code_v0(109)
-                self.logger.debug(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', 'orange')
+                self.logger.debug(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', )
                 if self.calc_delta_t_bmz == 9999:
                     self.reset_protect.sbros_zashit_ubtz()
                     continue

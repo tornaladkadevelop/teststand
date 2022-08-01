@@ -37,6 +37,7 @@ class Resistor:
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def resist_ohm(self, ohm):
 

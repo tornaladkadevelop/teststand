@@ -54,6 +54,7 @@ class TestBZMPP1:
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_10_bzmp_p1(self) -> bool:
         """

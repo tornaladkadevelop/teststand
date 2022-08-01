@@ -26,6 +26,7 @@ class SubtestMTZ5:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
@@ -62,6 +63,7 @@ class ProcedureFull:
     def __init__(self):
         self.proc = Procedure()
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.reset_relay = ResetRelay()
         # self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
@@ -103,6 +105,7 @@ class SubtestBDU:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
@@ -265,6 +268,7 @@ class Subtest2in:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.resist = Resistor()
@@ -510,6 +514,7 @@ class SubtestBDU1M:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.resist = Resistor()
@@ -583,6 +588,7 @@ class Subtest4in:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.resist = Resistor()

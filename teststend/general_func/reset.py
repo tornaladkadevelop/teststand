@@ -22,6 +22,7 @@ class ResetRelay:
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def reset_all(self):
         self.logger.debug("отключение всех реле")
@@ -213,6 +214,7 @@ class ResetProtection:
     def __init__(self):
         self.ctrl_kl = CtrlKL()
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def sbros_zashit_mtz5(self):
         self.logger.debug("сброс защит МТЗ-5, KL1 1.5сек")

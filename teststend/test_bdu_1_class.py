@@ -33,17 +33,15 @@ class TestBDU1:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
-        self.fault = Bug(True)
 
-        file_log = logging.FileHandler('C:\Stend\project_class\log\TestBDU1.log')
-        console_out = logging.StreamHandler()
-        logging.basicConfig(handlers=(file_log, console_out),
+        logging.basicConfig(filename='C:\Stend\project_class\log\TestBDU1.log',
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_1_bdu_1(self) -> bool:
         """

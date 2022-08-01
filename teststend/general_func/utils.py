@@ -26,6 +26,7 @@ class DeltaTimeNoneKL63:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def calc_dt(self):
         self.ctrl_kl.ctrl_relay('KL63', True)

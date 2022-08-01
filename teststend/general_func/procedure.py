@@ -44,6 +44,7 @@ class Procedure:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
         self.perv_obm = PervObmTV1()
         self.vtor_obm = VtorObmTV1()
         self.reset = ResetRelay()

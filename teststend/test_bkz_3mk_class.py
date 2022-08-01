@@ -76,6 +76,7 @@ class TestBKZ3MK:
                             format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
+        # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_0_bkz_3mk(self) -> bool:
         self.di_read.di_read('in_a0')
