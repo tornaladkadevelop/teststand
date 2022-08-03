@@ -50,7 +50,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', True)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 0 ом")
+            self.logger.debug("включено 0 ом")
         elif ohm == 10:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -60,7 +60,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', True)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 10 ом")
+            self.logger.debug("включено 10 ом")
         elif ohm == 15:
             self.ctrl_kl.ctrl_relay('KL3', True)
             self.ctrl_kl.ctrl_relay('KL4', True)
@@ -70,7 +70,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', True)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 15 ом")
+            self.logger.debug("включено 15 ом")
         elif ohm == 20:
             self.ctrl_kl.ctrl_relay('KL3', True)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -80,7 +80,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', True)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 20 ом")
+            self.logger.debug("включено 20 ом")
         elif ohm == 35:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -90,7 +90,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 35 ом")
+            self.logger.debug("включено 35 ом")
         elif ohm == 46:
             self.ctrl_kl.ctrl_relay('KL3', True)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -100,7 +100,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 46 ом")
+            self.logger.debug("включено 46 ом")
         elif ohm == 50:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -110,7 +110,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 50 ом")
+            self.logger.debug("включено 50 ом")
         elif ohm == 100:
             self.ctrl_kl.ctrl_relay('KL3', True)
             self.ctrl_kl.ctrl_relay('KL4', True)
@@ -120,7 +120,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', False)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 100 ом")
+            self.logger.debug("включено 100 ом")
         elif ohm == 110:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', True)
@@ -130,7 +130,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', False)
             self.ctrl_kl.ctrl_relay('KL10', True)
-            self.logger.debug("включение 110 ом")
+            self.logger.debug("включено 110 ом")
         elif ohm == 150:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', True)
@@ -140,7 +140,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', True)
             self.ctrl_kl.ctrl_relay('KL9', True)
             self.ctrl_kl.ctrl_relay('KL10', False)
-            self.logger.debug("включение 150 ом")
+            self.logger.debug("включено 150 ом")
         elif ohm == 255:
             self.ctrl_kl.ctrl_relay('KL3', False)
             self.ctrl_kl.ctrl_relay('KL4', False)
@@ -150,7 +150,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL8', False)
             self.ctrl_kl.ctrl_relay('KL9', False)
             self.ctrl_kl.ctrl_relay('KL10', False)
-            self.logger.debug("включение 255 ом")
+            self.logger.debug("включено 255 ом")
 
     def resist_kohm(self, kohm):
 
@@ -163,7 +163,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 0 ком")
+            self.logger.debug("включено 0 ком")
         if kohm == 12:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', True)
@@ -173,7 +173,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 12 ком")
+            self.logger.debug("включено 12 ком")
         if kohm == 21:
             self.ctrl_kl.ctrl_relay('KL13', True)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -183,7 +183,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 21 ком")
+            self.logger.debug("включено 21 ком")
         elif kohm == 26:
             self.ctrl_kl.ctrl_relay('KL13', True)
             self.ctrl_kl.ctrl_relay('KL14', True)
@@ -193,7 +193,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 26 ком")
+            self.logger.debug("включено 26 ком")
         elif kohm == 30:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', True)
@@ -203,7 +203,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 30 ком")
+            self.logger.debug("включено 30 ком")
         elif kohm == 61:
             self.ctrl_kl.ctrl_relay('KL13', True)
             self.ctrl_kl.ctrl_relay('KL14', True)
@@ -213,7 +213,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 61 ком")
+            self.logger.debug("включено 61 ком")
         elif kohm == 65:
             self.ctrl_kl.ctrl_relay('KL13', True)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -223,7 +223,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 65 ком")
+            self.logger.debug("включено 65 ком")
         elif kohm == 100:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -233,7 +233,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', False)
             self.ctrl_kl.ctrl_relay('KL19', True)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 100 ком")
+            self.logger.debug("включено 100 ком")
         elif kohm == 200:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -243,7 +243,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', False)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 200 ком")
+            self.logger.debug("включено 200 ком")
         elif kohm == 220:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -253,7 +253,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', True)
             self.ctrl_kl.ctrl_relay('KL19', False)
             self.ctrl_kl.ctrl_relay('KL20', True)
-            self.logger.debug("включение 220 ком")
+            self.logger.debug("включено 220 ком")
         elif kohm == 590:
             self.ctrl_kl.ctrl_relay('KL13', False)
             self.ctrl_kl.ctrl_relay('KL14', False)
@@ -263,7 +263,7 @@ class Resistor:
             self.ctrl_kl.ctrl_relay('KL18', False)
             self.ctrl_kl.ctrl_relay('KL19', False)
             self.ctrl_kl.ctrl_relay('KL20', False)
-            self.logger.debug("включение 590 ком")
+            self.logger.debug("включено 590 ком")
 
     def resist_10_to_20_ohm(self):
         self.ctrl_kl.ctrl_relay('KL3', True)

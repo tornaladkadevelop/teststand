@@ -297,11 +297,11 @@ class Procedure:
         """
         self.logger.debug("процедура \"procedure_x4_to_x5\", при неудачном выполнении процедур 1, 2.4, 3.4 "
                           "будут выполнены процедуры 1, 2.5, 3.5")
-        if self.procedure_1_24_34(coef_volt, setpoint_volt):
+        if self.procedure_1_24_34(coef_volt=coef_volt, setpoint_volt=setpoint_volt, factor=1.0):
             return True
         else:
             self.reset.stop_procedure_3()
-            if self.procedure_1_24_34(coef_volt, setpoint_volt, factor=1.1):
+            if self.procedure_1_24_34(coef_volt=coef_volt, setpoint_volt=setpoint_volt, factor=1.1):
                 return True
             else:
                 self.logger.warning("Выходное напряжение не соответствует заданию.\n "

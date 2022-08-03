@@ -15,6 +15,7 @@ from .procedure import *
 from .database import *
 from .resistance import Resistor
 from .reset import ResetRelay, ResetProtection
+from .exception import HardwareException
 
 __all__ = ["SubtestMTZ5", "ProcedureFull", "SubtestBDU", "Subtest2in", "SubtestBDU1M", "Subtest4in"]
 
@@ -99,6 +100,22 @@ class ProcedureFull:
         read_err = self.mysql_conn.read_err(err_code)
         self.mysql_conn.mysql_add_message(read_err)
         self.logger.debug(f'код неисправности {err_code}: {read_err}')
+
+    def procedure_2_full(self, *, test_num: int = 1, subtest_num: float = 1.0) -> float:
+        """
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
+        """
+        self.logger.debug("Определение коэффициента Кс отклонения фактического напряжения от номинального")
+        self.mysql_conn.mysql_ins_result(f'идет тест {subtest_num}', f'{test_num}')
+        coef_volt = self.proc.procedure_1_22_32()
+        self.mysql_conn.mysql_add_message(f"Определение коэффициента Кс: {coef_volt}")
+        self.reset_relay.stop_procedure_32()
+        if coef_volt != 0.0:
+            self.mysql_conn.mysql_ins_result('исправен', f'{test_num}')
+            return coef_volt
+        self.mysql_conn.mysql_ins_result('неисправен', f'{test_num}')
+        raise HardwareException("Выходное напряжение не соответствует заданию.\n"
+                                "Неисправность узла формирования напряжения в стенде")
 
 
 class SubtestBDU:

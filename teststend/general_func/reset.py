@@ -289,6 +289,9 @@ class ResetProtection:
         """
         self.ctrl_kl.ctrl_relay('KL1', True)
         self.ctrl_kl.ctrl_relay('KL31', True)
+        self.logger.debug("включены KL1, KL31")
         sleep(12)
+        self.logger.info("таймаут 12 секунд")
         self.ctrl_kl.ctrl_relay('KL1', False)
         self.ctrl_kl.ctrl_relay('KL31', False)
+        self.logger.debug("отключены KL1, KL31")
