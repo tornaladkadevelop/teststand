@@ -131,24 +131,27 @@ class SubtestBDU:
         self.resist = Resistor()
         self.mysql_conn = MySQLConnect()
 
-    def subtest_bdu_inp_a1(self, position: bool = False, **kwargs) -> bool:
+    def subtest_bdu_inp_x(self, *, test_num: int = 1, subtest_num: float = 1, err_code: int = 30,
+                          position: bool = False, inp_x: str = 'in_a1') -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         Возвращает True если на входе False
         модуль используется в алгоритмах у которых только один вход in_a1
         общий тест для bdu_4_3, bdu_014tp, bdu, bdu_d, bru_2s, bu_pmvir
-        :param: test_num: int, subtest_num: float, err_code: int, position: bool
-        :return: bool
+        Код ошибки	30	–	Сообщение	«Блок не исправен. Контакты блока находятся в неисходном состоянии».
+        :param test_num:
+        :param subtest_num:
+        :param err_code:
+        :param position:
+        :param inp_x:
+        :return:
         """
-        test_num = kwargs.get("test_num")
-        subtest_num = kwargs.get("subtest_num")
-        err_code = kwargs.get("err_code")
         self.logger.debug(f"тест: {test_num}, подтест: {subtest_num}")
         self.mysql_conn.mysql_ins_result(f"идёт тест {subtest_num}", f'{test_num}')
         self.mysql_conn.mysql_add_message(f"идёт тест: {subtest_num}, подтест: {test_num}")
-        in_a1, *_ = self.di_read.di_read('in_a1')
-        self.logger.debug(f"состояние входа: {in_a1 = } is {position}")
-        if in_a1 is position:
+        in_x, *_ = self.di_read.di_read(inp_x)
+        self.logger.debug(f"состояние входа: {in_x = } is {position}")
+        if in_x is position:
             self.logger.debug("состояние выхода блока соответствует")
             self.mysql_conn.mysql_ins_result(f"исправен", f'{test_num}')
             self.mysql_conn.mysql_add_message(f"Исправен. тест: {subtest_num}, подтест: {test_num}")
@@ -178,7 +181,7 @@ class SubtestBDU:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включение KL12")
         sleep(1)
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=21, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=21, position=True):
             return True
         return False
 
@@ -198,7 +201,7 @@ class SubtestBDU:
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug('включение KL1, KL25')
         sleep(1)
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=22, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=22, position=True):
             return True
         return False
 
@@ -218,7 +221,7 @@ class SubtestBDU:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(f'включение KL12')
         sleep(3)
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=21, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=21, position=True):
             return True
         return False
 
@@ -242,7 +245,7 @@ class SubtestBDU:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(f'включение KL12')
         sleep(1)
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=26, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=26, position=True):
             return True
         return False
 
@@ -259,7 +262,7 @@ class SubtestBDU:
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug(f'включение KL25')
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=50, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=50, position=True):
             return True
         return False
 
@@ -276,7 +279,7 @@ class SubtestBDU:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(f'включение KL12')
         sleep(3)
-        if self.subtest_bdu_inp_a1(test_num=test_num, subtest_num=subtest_num, err_code=91, position=True):
+        if self.subtest_bdu_inp_x(test_num=test_num, subtest_num=subtest_num, err_code=91, position=True):
             return True
         return False
 
