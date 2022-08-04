@@ -4,11 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БТЗ-3 Нет производителя
-БТЗ-3	    ТЭТЗ-Инвест
-БТЗ-3	    Строй-энергомаш
-БТЗ-3	    Углеприбор
+Тип блока: БТЗ-3
+Производитель: Нет производителя, ТЭТЗ-Инвест, Строй-энергомаш, Углеприбор.
 
 """
 
@@ -98,27 +95,13 @@ class TestBTZ3:
 
     def st_test_11_btz_3(self) -> bool:
         """
-        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
-            return True
-        return False
-
-    def st_test_12_btz_3(self) -> bool:
-        """
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
-        self.logger.debug("1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального", 3)
-        self.coef_volt = self.proc.procedure_1_22_32()
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен TV1", "1")
-            return False
-        self.reset.stop_procedure_32()
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
+            return True
+        return False
 
     def st_test_20_btz_3(self) -> bool:
         """
@@ -293,8 +276,8 @@ class TestBTZ3:
                     continue
                 else:
                     break
-            self.logger.debug(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
-                                 f'уставка {self.list_ust_pmz_num[k]}', 'orange')
+            self.logger.info(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
+                             f'уставка {self.list_ust_pmz_num[k]}', 'orange')
             if self.calc_delta_t_pmz < 10:
                 self.list_delta_t_pmz.append(f'< 10')
             elif self.calc_delta_t_pmz > 3000:
@@ -373,8 +356,8 @@ class TestBTZ3:
             self.ctrl_kl.ctrl_relay('KL63', False)
             self.reset.stop_procedure_3()
             self.mysql_conn.progress_level(0.0)
-            self.logger.debug(f'тест 5 delta t: {calc_delta_t_tzp:.1f} '
-                                 f'уставка {self.list_ust_tzp_num[m]}', 'orange')
+            self.logger.info(f'тест 5 delta t: {calc_delta_t_tzp:.1f} '
+                             f'уставка {self.list_ust_tzp_num[m]}')
             self.list_delta_t_tzp.append(f'{calc_delta_t_tzp:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка ТЗП {self.list_ust_tzp_num[m]} '
                                               f'дельта t: {calc_delta_t_tzp:.1f}')
@@ -530,41 +513,6 @@ class TestBTZ3:
             return False
         return True
 
-    # def __inputs_a0(self):
-    #     in_a0 = self.read_mb.read_discrete(0)
-    #     if in_a0 is None:
-    #         # logging.error(f'нет связи с контроллером')
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_a0
-    #
-    # def __inputs_a(self):
-    #     in_a1 = self.read_mb.read_discrete(1)
-    #     in_a2 = self.read_mb.read_discrete(2)
-    #     in_a5 = self.read_mb.read_discrete(5)
-    #     in_a6 = self.read_mb.read_discrete(6)
-    #     if in_a1 is None or in_a2 is None or in_a5 is None or in_a6 is None:
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_a1, in_a2, in_a5, in_a6
-
-    # def __inputs_a5(self):
-    #     in_a5 = self.read_mb.read_discrete(5)
-    #     if in_a5 is None:
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_a5
-    #
-    # def __inputs_b(self):
-    #     in_b0 = self.read_mb.read_discrete(8)
-    #     in_b1 = self.read_mb.read_discrete(9)
-    #     if in_b0 is None or in_b1 is None:
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_b0, in_b1
-    #
-    # def __inputs_b1(self):
-    #     in_b1 = self.read_mb.read_discrete(9)
-    #     if in_b1 is None:
-    #         raise ModbusConnectException(f'нет связи с контроллером')
-    #     return in_b1
-    #
     def sbros_zashit_kl30(self):
         self.ctrl_kl.ctrl_relay('KL30', True)
         sleep(1.5)
@@ -574,20 +522,19 @@ class TestBTZ3:
     def st_test_btz_3(self) -> [bool, bool]:
         if self.st_test_10_btz_3():
             if self.st_test_11_btz_3():
-                if self.st_test_12_btz_3():
-                    if self.st_test_20_btz_3():
-                        if self.st_test_21_btz_3():
-                            if self.st_test_22_btz_3():
-                                if self.st_test_30_btz_3():
-                                    if self.st_test_31_btz_3():
-                                        if self.st_test_40_btz_3():
-                                            if self.st_test_50_btz_3():
-                                                return True, self.health_flag
+                if self.st_test_20_btz_3():
+                    if self.st_test_21_btz_3():
+                        if self.st_test_22_btz_3():
+                            if self.st_test_30_btz_3():
+                                if self.st_test_31_btz_3():
+                                    if self.st_test_40_btz_3():
+                                        if self.st_test_50_btz_3():
+                                            return True, self.health_flag
         return False, self.health_flag
 
     def result_test_btz_3(self):
         """
-        сведение всех результатов измерения, и запись в БД
+        Сведение всех результатов измерения, и запись в БД.
         """
         for g1 in range(len(self.list_delta_percent_pmz)):
             self.list_result_pmz.append((self.list_ust_pmz_num[g1],

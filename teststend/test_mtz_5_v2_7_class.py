@@ -107,31 +107,13 @@ class TestMTZ5V27:
 
     def st_test_11(self) -> bool:
         """
-        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        :return: bool
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_min_volt=0.6):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
             return True
         return False
-
-    def st_test_12(self) -> bool:
-        """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
-        :return: bool
-        """
-        self.mysql_conn.mysql_ins_result('идёт тест 1.2', '1')
-        self.logger.debug("1.2. Определение коэффициента Кс отклонения "
-                             "фактического напряжения от номинального", 'blue')
-        self.coef_volt = self.proc.procedure_1_22_32()
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен TV1", "1")
-            self.reset_relay.stop_procedure_32()
-            return False
-        self.reset_relay.stop_procedure_32()
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        return True
 
     def st_test_20(self) -> bool:
         """
@@ -507,13 +489,12 @@ class TestMTZ5V27:
         """
         if self.st_test_10():
             if self.st_test_11():
-                if self.st_test_12():
-                    if self.st_test_20():
-                        if self.st_test_21():
-                            if self.st_test_22():
-                                if self.st_test_30():
-                                    if self.st_test_40():
-                                        return True, self.health_flag
+                if self.st_test_20():
+                    if self.st_test_21():
+                        if self.st_test_22():
+                            if self.st_test_30():
+                                if self.st_test_40():
+                                    return True, self.health_flag
         return False, self.health_flag
 
 

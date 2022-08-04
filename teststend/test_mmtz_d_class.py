@@ -98,32 +98,16 @@ class TestMMTZD:
     def st_test_12(self) -> bool:
         """
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
-        :return:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_min_volt=0.4):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_max_volt=0.4):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.3)
             return True
         return False
 
-    def st_test_13(self) -> bool:
-        """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
-        :return:
-        """
-        self.coef_volt = self.proc.procedure_1_22_32()
-        self.logger.debug(f'коэф. сети равен: {self.coef_volt:.2f}', 2)
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.reset_relay.stop_procedure_32()
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset_relay.stop_procedure_32()
-        return True
-
     def st_test_20(self) -> bool:
         """
-        Тест 2. Проверка срабатывания защиты II канала по уставкам
+        Тест 2. Проверка срабатывания защиты II канала по уставкам.
         :return:
         """
         if my_msg(self.msg_3):
@@ -180,7 +164,7 @@ class TestMMTZD:
 
     def st_test_30(self) -> bool:
         """
-        Тест 3. Проверка срабатывания защиты III канала по уставкам
+        Тест 3. Проверка срабатывания защиты III канала по уставкам.
         :return:
         """
         self.ctrl_kl.ctrl_relay('KL73', True)
@@ -367,10 +351,9 @@ class TestMMTZD:
         if self.st_test_10():
             if self.st_test_11():
                 if self.st_test_12():
-                    if self.st_test_13():
-                        if self.st_test_20():
-                            if self.st_test_30():
-                                return True, self.health_flag
+                    if self.st_test_20():
+                        if self.st_test_30():
+                            return True, self.health_flag
         return False, self.health_flag
 
 

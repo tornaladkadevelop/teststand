@@ -4,11 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БТЗ-Т	    Нет производителя
-БТЗ-Т	    ТЭТЗ-Инвест
-БТЗ-Т	    Строй-энергомаш
-БТЗ-Т	    Углеприбор
+Тип блока: БТЗ-Т.
+Производитель: Нет производителя, ТЭТЗ-Инвест, Строй-энергомаш, Углеприбор.
 """
 
 import sys
@@ -112,29 +109,13 @@ class TestBTZT:
 
     def st_test_11_btz_t(self) -> bool:
         """
-        # 1.1. Проверка вероятности наличия короткого замыкания
-        # на входе измерительной цепи блока
-        """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_min_volt=0.4):
-            return True
-        return False
-
-    def st_test_12_btz_t(self) -> bool:
-        """
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.logger.debug("тест 1.2", 'blue')
-        self.mysql_conn.mysql_ins_result('идет тест 1.2', '1')
-        self.coef_volt = self.proc.procedure_1_22_32()
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset_relay.stop_procedure_32()
-        self.logger.debug("тест 1 завершен", 'blue')
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_max_volt=0.4):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
+            return True
+        return False
 
     def st_test_20_btz_t(self) -> bool:
         """
@@ -548,7 +529,7 @@ class TestBTZT:
         sleep(1)
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         self.logger.debug(f'{in_a1 = } (False), {in_a2 = } (True), '
-                             f'{in_a5 = } (False), {in_a6 = } (True)', 'purple')
+                          f'{in_a5 = } (False), {in_a6 = } (True)', 'purple')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
@@ -614,20 +595,19 @@ class TestBTZT:
     def st_test_btz_t(self) -> [bool, bool]:
         if self.st_test_10_btz_t():
             if self.st_test_11_btz_t():
-                if self.st_test_12_btz_t():
-                    if self.st_test_20_btz_t():
-                        if self.st_test_21_btz_t():
-                            if self.st_test_22_btz_t():
-                                if self.st_test_30_btz_t():
-                                    if self.st_test_31_btz_t():
-                                        if self.st_test_40_btz_t():
-                                            if self.st_test_50_btz_t():
-                                                return True, self.health_flag
+                if self.st_test_20_btz_t():
+                    if self.st_test_21_btz_t():
+                        if self.st_test_22_btz_t():
+                            if self.st_test_30_btz_t():
+                                if self.st_test_31_btz_t():
+                                    if self.st_test_40_btz_t():
+                                        if self.st_test_50_btz_t():
+                                            return True, self.health_flag
         return False, self.health_flag
 
     def result_test_btz_t(self):
         """
-        сведение всех результатов измерения, и запись в БД
+        Сведение всех результатов измерения, и запись в БД.
         """
         for g1 in range(len(self.list_delta_percent_pmz)):
             self.list_result_pmz.append((self.list_ust_pmz_num[g1],

@@ -82,32 +82,14 @@ class TestTZP:
 
     def st_test_11(self) -> bool:
         """
-        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        1.1.3. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_max_volt=0.6):
+            self._coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.3)
             return True
         return False
-
-    def st_test_12(self) -> bool:
-        """
-        1.2. Определение коэффициента отклонения фактического напряжения от номинального
-        :return:
-        """
-        self.mysql_conn.mysql_ins_result('идет тест 1.3', '1')
-        self.logger.debug("тест 1.3")
-        self._coef_volt = self.proc.procedure_1_22_32()
-        self.logger.debug(f"процедура 1, 2.2, 3.2, Ku: {self._coef_volt}")
-        self.reset_relay.stop_procedure_32()
-        self.logger.debug("сброс всех реле")
-        if self._coef_volt != 0.0:
-            self.mysql_conn.mysql_ins_result('исправен', '1')
-            self.logger.debug("тест 1 завершен")
-            return True
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
 
     def st_test_20(self) -> bool:
         """
@@ -144,7 +126,7 @@ class TestTZP:
 
     def st_test_30(self) -> bool:
         """
-        Тест 3. Проверка срабатывания блока по уставкам
+        Тест 3. Проверка срабатывания блока по уставкам.
         :return:
         """
         self.logger.debug(f'тест 3.0')
@@ -266,11 +248,10 @@ class TestTZP:
     def st_test_tzp(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
-                if self.st_test_12():
-                    if self.st_test_20():
-                        if self.st_test_21():
-                            if self.st_test_30():
-                                return True, self._health_flag
+                if self.st_test_20():
+                    if self.st_test_21():
+                        if self.st_test_30():
+                            return True, self._health_flag
         return False, self._health_flag
 
     def result_test_tzp(self):

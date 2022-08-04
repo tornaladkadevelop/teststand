@@ -94,33 +94,18 @@ class TestUBTZ:
 
     def st_test_11(self) -> bool:
         """
-        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_max_volt=0.6):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
             return True
         return False
 
-    def st_test_12(self) -> bool:
-        """
-        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
-        :return:
-        """
-        self.logger.debug('тест 1.3')
-        self.mysql_conn.mysql_ins_result("идёт тест 1.4", '1')
-        self.coef_volt = self.proc.procedure_1_22_32()
-        self.reset_relay.stop_procedure_32()
-        if self.coef_volt != 0.0:
-            self.mysql_conn.mysql_ins_result('исправен', '1')
-            self.logger.debug('тест 1 завершён')
-            return True
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-
     def st_test_20(self) -> bool:
         """
-        Тест 2. Проверка срабатывания защиты БМЗ блока по уставкам
+        Тест 2. Проверка срабатывания защиты БМЗ блока по уставкам.
         :return:
         """
         k = 0
@@ -205,7 +190,7 @@ class TestUBTZ:
 
     def st_test_30(self) -> bool:
         """
-        Тест 3. Проверка срабатывания защиты ТЗП блока по уставкам
+        Тест 3. Проверка срабатывания защиты ТЗП блока по уставкам.
         :return:
         """
         m = 0
@@ -351,22 +336,21 @@ class TestUBTZ:
     def st_test_ubtz(self) -> [bool, bool]:
         if self.st_test_10():
             if self.st_test_11():
-                if self.st_test_12():
-                    if self.st_test_20():
-                        if self.st_test_30():
-                            return True, self.health_flag
+                if self.st_test_20():
+                    if self.st_test_30():
+                        return True, self.health_flag
         return False, self.health_flag
 
     def result_test_ubtz(self):
         for g1 in range(len(self.list_delta_t_bmz)):
             self.list_bmz_result.append((self.list_ust_bmz_num[g1], self.list_delta_t_bmz[g1]))
             self.logger.debug(f"запись уставок МТЗ в БД: {self.list_ust_bmz_num[g1]} "
-                                 f"{self.list_delta_t_bmz[g1]}", 'blue')
+                              f"{self.list_delta_t_bmz[g1]}", 'blue')
         self.mysql_conn.mysql_ubtz_btz_result(self.list_bmz_result)
         for g2 in range(len(self.list_delta_t_tzp)):
             self.list_tzp_result.append((self.list_ust_tzp_num[g2], self.list_delta_t_tzp[g2]))
             self.logger.debug(f"запись уставок ТЗП в БД: {self.list_ust_tzp_num[g2]} "
-                                 f"{self.list_delta_t_tzp[g2]}", 'blue')
+                              f"{self.list_delta_t_tzp[g2]}", 'blue')
         self.mysql_conn.mysql_ubtz_tzp_result(self.list_tzp_result)
 
 

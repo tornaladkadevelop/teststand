@@ -110,29 +110,14 @@ class TestPMZ:
 
     def st_test_21(self) -> bool:
         """
-        2.1.4. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
+        1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_min_volt=0.4):
+        if self.proc_full.procedure_1_full(test_num=2, subtest_num=2.1, coef_max_volt=0.4):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=2, subtest_num=2.2)
             return True
         return False
-
-    def st_test_22(self) -> bool:
-        """
-        Процедура 2.2. Процедура определения коэффициента отклонения фактического напряжения от номинального
-        :return:
-        """
-        self.logger.debug("тест 2.2", 'blue')
-        self.mysql_conn.mysql_ins_result('идет тест 2.2', '2')
-        self.coef_volt = self.proc.procedure_1_22_32()
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '2')
-            self.reset_relay.stop_procedure_32()
-            return False
-        self.reset_relay.stop_procedure_32()
-        return True
 
     def st_test_23(self) -> bool:
         """
@@ -187,7 +172,7 @@ class TestPMZ:
 
     def st_test_30(self) -> bool:
         """
-        Тест 3. Проверка срабатывания блока по уставкам
+        Тест 3. Проверка срабатывания блока по уставкам.
         :return:
         """
         if my_msg(self.msg_2):
@@ -220,7 +205,7 @@ class TestPMZ:
                 self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(104)
                 self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс', 'orange')
                 self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                    f'дельта t: {self.calc_delta_t:.1f}')
+                                                  f'дельта t: {self.calc_delta_t:.1f}')
                 if self.calc_delta_t == 9999:
                     sleep(3)
                     # qw += 1
@@ -290,7 +275,7 @@ class TestPMZ:
             self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(104)
             self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс', 'orange')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
-                                                f'дельта t: {self.calc_delta_t:.1f}')
+                                              f'дельта t: {self.calc_delta_t:.1f}')
             if self.calc_delta_t == 9999:
                 sleep(3)
                 wq += 1
@@ -346,12 +331,11 @@ class TestPMZ:
             if self.st_test_11():
                 if self.st_test_20():
                     if self.st_test_21():
-                        if self.st_test_22():
-                            if self.st_test_23():
-                                if self.st_test_24():
-                                    if self.st_test_25():
-                                        if self.st_test_30():
-                                            return True, self.health_flag
+                        if self.st_test_23():
+                            if self.st_test_24():
+                                if self.st_test_25():
+                                    if self.st_test_30():
+                                        return True, self.health_flag
         return False, self.health_flag
 
     def result_test_pmz(self):

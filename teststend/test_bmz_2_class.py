@@ -100,27 +100,13 @@ class TestBMZ2:
 
     def st_test_11_bmz_2(self) -> bool:
         """
-        1.1. Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
-        """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
-            return True
-        return False
-
-    def st_test_12_bmz_2(self) -> bool:
-        """
+        1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.mysql_conn.mysql_ins_result('идет тест 1.2', '1')
-        self.coef_volt = self.proc.procedure_1_22_32()
-        if self.coef_volt != 0.0:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            return False
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.reset_relay.stop_procedure_3()
-        self.logger.debug("тест 1 пройден", 2)
-        return True
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1):
+            self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
+            return True
+        return False
 
     def st_test_20_bmz_2(self) -> bool:
         """
@@ -371,12 +357,11 @@ class TestBMZ2:
     def st_test_bmz_2(self) -> [bool, bool]:
         if self.st_test_10_bmz_2():
             if self.st_test_11_bmz_2():
-                if self.st_test_12_bmz_2():
-                    if self.st_test_20_bmz_2():
-                        if self.st_test_21_bmz_2():
-                            if self.st_test_22_bmz_2():
-                                if self.st_test_30_bmz_2():
-                                    return True, self.health_flag
+                if self.st_test_20_bmz_2():
+                    if self.st_test_21_bmz_2():
+                        if self.st_test_22_bmz_2():
+                            if self.st_test_30_bmz_2():
+                                return True, self.health_flag
         return False, self.health_flag
 
     def result_test_bmz_2(self):
