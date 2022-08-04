@@ -82,15 +82,15 @@ class TestPMZ:
         """
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.reset_protect.sbros_zashit_kl30_1s5()
-        self.logger.debug("сброс защит", 'blue')
+        self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
             self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         self.mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
@@ -128,7 +128,7 @@ class TestPMZ:
             pass
         else:
             return False
-        self.logger.debug("тест 2.3", 'blue')
+        self.logger.debug("тест 2.3")
         if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
             return True
         self.mysql_conn.mysql_ins_result('неисправен', '2')
@@ -144,11 +144,11 @@ class TestPMZ:
         if in_a1 is True and in_a2 is True and in_a5 is False:
             pass
         else:
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             self.reset_relay.stop_procedure_3()
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         self.reset_relay.stop_procedure_3()
         return True
 
@@ -158,15 +158,15 @@ class TestPMZ:
         :return:
         """
         self.reset_protect.sbros_zashit_kl30_1s5()
-        self.logger.debug("сброс защит", 'blue')
+        self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         self.mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -203,7 +203,7 @@ class TestPMZ:
             # 3.4.  Проверка срабатывания блока от сигнала нагрузки:
             for qw in range(4):
                 self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(104)
-                self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс', 'orange')
+                self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс')
                 self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
                                                   f'дельта t: {self.calc_delta_t:.1f}')
                 if self.calc_delta_t == 9999:
@@ -218,7 +218,7 @@ class TestPMZ:
                 #     continue
                 else:
                     break
-            self.logger.debug(f'время срабатывания: {self.calc_delta_t:.1f} мс', 'orange')
+            self.logger.debug(f'время срабатывания: {self.calc_delta_t:.1f} мс')
             if self.calc_delta_t < 10:
                 self.list_delta_t.append(f'< 10')
             elif self.calc_delta_t == 9999:
@@ -230,13 +230,13 @@ class TestPMZ:
             self.reset_relay.stop_procedure_3()
             in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
             if in_a1 is True and in_a2 is True and in_a5 is False:
-                self.logger.debug("положение выходов блока соответствует", 'green')
+                self.logger.debug("положение выходов блока соответствует")
                 if self.subtest_36():
                     k += 1
                     continue
                 return False
             else:
-                self.logger.debug("положение выходов блока не соответствует", 'red')
+                self.logger.debug("положение выходов блока не соответствует")
                 if self.subtest_35(i=i, k=k):
                     if self.subtest_36():
                         k += 1
@@ -254,15 +254,15 @@ class TestPMZ:
         :return:
         """
         self.reset_protect.sbros_zashit_kl30_1s5()
-        self.logger.debug("сброс защит", 'blue')
+        self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         if self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
             pass
         else:
@@ -273,7 +273,7 @@ class TestPMZ:
         self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'
         for wq in range(4):
             self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(104)
-            self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс', 'orange')
+            self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} '
                                               f'дельта t: {self.calc_delta_t:.1f}')
             if self.calc_delta_t == 9999:
@@ -288,7 +288,7 @@ class TestPMZ:
                 continue
             else:
                 break
-        self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс', 'orange')
+        self.logger.debug(f'время срабатывания, {self.calc_delta_t:.1f} мс')
         if self.calc_delta_t < 10:
             self.list_delta_t[-1] = f'< 10'
         elif self.calc_delta_t > 100:
@@ -301,11 +301,11 @@ class TestPMZ:
         if in_a1 is True and in_a2 is True and in_a5 is False:
             pass
         else:
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             self.reset_relay.stop_procedure_3()
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         self.reset_relay.stop_procedure_3()
         return True
 
@@ -315,15 +315,15 @@ class TestPMZ:
         :return:
         """
         self.reset_protect.sbros_zashit_kl30_1s5()
-        self.logger.debug("сброс защит", 'blue')
+        self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
             pass
         else:
-            self.logger.debug("положение выходов блока не соответствует", 'red')
+            self.logger.debug("положение выходов блока не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
-        self.logger.debug("положение выходов блока соответствует", 'green')
+        self.logger.debug("положение выходов блока соответствует")
         return True
 
     def st_test_pmz(self) -> [bool, bool]:

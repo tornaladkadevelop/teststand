@@ -69,7 +69,7 @@ class TestBZMPP1:
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
-        self.logger.debug("идёт тест 1.1", 'blue')
+        self.logger.debug("идёт тест 1.1")
         meas_volt_ust = self.proc.procedure_1_21_31()
         if meas_volt_ust != 0.0:
             pass
@@ -85,7 +85,7 @@ class TestBZMPP1:
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63 '
-                          f'{min_volt} <= {meas_volt} <= {max_volt}', 'orange')
+                          f'{min_volt} <= {meas_volt} <= {max_volt}')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -100,7 +100,7 @@ class TestBZMPP1:
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        self.logger.debug("идёт тест 1.2", 'blue')
+        self.logger.debug("идёт тест 1.2")
         self.coef_volt = self.proc.procedure_1_22_32()
         if self.coef_volt != 0.0:
             pass
@@ -111,7 +111,7 @@ class TestBZMPP1:
         return True
 
     def st_test_13_bzmp_p1(self) -> bool:
-        self.logger.debug("идёт тест 1.3", 'blue')
+        self.logger.debug("идёт тест 1.3")
         self.mb_ctrl.ctrl_relay('KL67', True)
         timer_test_1 = 0
         start_timer_test_1 = time()
@@ -119,7 +119,7 @@ class TestBZMPP1:
             sleep(0.2)
             timer_test_1 = time() - start_timer_test_1
             in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
-            self.logger.debug(f'времени прошло\t{timer_test_1:.1f}', 'orange')
+            self.logger.debug(f'времени прошло\t{timer_test_1:.1f}')
             if in_a1 is True and in_a6 is False:
                 break
             else:
@@ -143,14 +143,14 @@ class TestBZMPP1:
         return False
 
     def st_test_21_bzmp_p1(self) -> bool:
-        self.logger.debug("идёт тест 2.1", 'blue')
+        self.logger.debug("идёт тест 2.1")
         if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_pmz):
             return True
         self.mysql_conn.mysql_ins_result("неисправен TV1", "2")
         return False
 
     def st_test_22_bzmp_p1(self) -> bool:
-        self.logger.debug("идёт тест 2.2", 'blue')
+        self.logger.debug("идёт тест 2.2")
         self.mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
         self.mb_ctrl.ctrl_relay('KL63', False)
@@ -159,7 +159,7 @@ class TestBZMPP1:
         if in_a1 is False and in_a6 is True:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             self.reset.stop_procedure_3()
             return False
@@ -170,14 +170,14 @@ class TestBZMPP1:
         """
         2.4.2. Сброс защит после проверки
         """
-        self.logger.debug("идёт тест 2.3", 'blue')
+        self.logger.debug("идёт тест 2.3")
         self.sbros_zashit()
         sleep(1)
         in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         self.mysql_conn.mysql_ins_result("исправен", "2")
@@ -187,7 +187,7 @@ class TestBZMPP1:
         """
         Тест 3. Проверка защиты от несимметрии фаз
         """
-        self.logger.debug("идёт тест 3.0", 'blue')
+        self.logger.debug("идёт тест 3.0")
         if my_msg(self.msg_4):
             pass
         else:
@@ -198,7 +198,7 @@ class TestBZMPP1:
         return False
 
     def st_test_31_bzmp_p1(self) -> bool:
-        self.logger.debug("идёт тест 3.1", 'blue')
+        self.logger.debug("идёт тест 3.1")
         self.mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
         self.mb_ctrl.ctrl_relay('KL63', True)
@@ -214,17 +214,17 @@ class TestBZMPP1:
             in_a6, *_ = self.di_read.di_read('in_a6')
             stop_timer = time() - start_timer
         self.timer_test_5_2 = stop_timer
-        self.logger.debug(f'таймер тест 3: {self.timer_test_5_2:.1f}', 'orange')
+        self.logger.debug(f'таймер тест 3: {self.timer_test_5_2:.1f}')
         in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
         if in_a1 is False and in_a6 is True and self.timer_test_5_2 <= 12:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "3")
             self.reset.sbros_kl63_proc_all()
             self.mb_ctrl.ctrl_relay('KL81', False)
             return False
-        self.logger.debug("положение выходов соответствует", 'green')
+        self.logger.debug("положение выходов соответствует")
         self.reset.sbros_kl63_proc_all()
         self.mb_ctrl.ctrl_relay('KL81', False)
         return True
@@ -233,7 +233,7 @@ class TestBZMPP1:
         """
         3.5. Сброс защит после проверки
         """
-        self.logger.debug("идёт тест 3.2", 'blue')
+        self.logger.debug("идёт тест 3.2")
         self.mb_ctrl.ctrl_relay('KL24', True)
         sleep(4)
         self.mb_ctrl.ctrl_relay('KL24', False)
@@ -242,10 +242,10 @@ class TestBZMPP1:
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "5")
             return False
-        self.logger.debug("положение выходов соответствует", 'green')
+        self.logger.debug("положение выходов соответствует")
         self.mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_5_2:.1f} сек', "3")
         return True
 
@@ -253,7 +253,7 @@ class TestBZMPP1:
         """
         Тест 4. Проверка защиты от перегрузки
         """
-        self.logger.debug("идёт тест 4.0", 'blue')
+        self.logger.debug("идёт тест 4.0")
         if my_msg(self.msg_5):
             pass
         else:
@@ -267,7 +267,7 @@ class TestBZMPP1:
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.logger.debug("идёт тест 4.1", 'blue')
+        self.logger.debug("идёт тест 4.1")
         self.mb_ctrl.ctrl_relay('KL63', True)
         in_b1, *_ = self.di_read.di_read('in_b1')
         k = 0
@@ -280,18 +280,18 @@ class TestBZMPP1:
         while in_a6 is False and stop_timer <= 360:
             in_a6, *_ = self.di_read.di_read('in_a6')
             stop_timer = time() - start_timer
-            self.logger.debug(f'таймер тест 4: {stop_timer:.1f}', 'orange')
+            self.logger.debug(f'таймер тест 4: {stop_timer:.1f}')
         self.timer_test_6_2 = stop_timer
-        self.logger.debug(f'таймер тест 4: {self.timer_test_6_2:.1f}', 'orange')
+        self.logger.debug(f'таймер тест 4: {self.timer_test_6_2:.1f}')
         in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
         if in_a1 is False and in_a6 is True and self.timer_test_6_2 <= 360:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "4")
             self.reset.sbros_kl63_proc_all()
             return False
-        self.logger.debug("положение выходов соответствует", 'green')
+        self.logger.debug("положение выходов соответствует")
         self.reset.sbros_kl63_proc_all()
         return True
 
@@ -299,14 +299,14 @@ class TestBZMPP1:
         """
         4.6. Сброс защит после проверки
         """
-        self.logger.debug("идёт тест 4.2", 'blue')
+        self.logger.debug("идёт тест 4.2")
         self.sbros_zashit()
         sleep(1)
         in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
         if in_a1 is True and in_a6 is False:
             pass
         else:
-            self.logger.debug("положение выходов не соответствует", 'red')
+            self.logger.debug("положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result("неисправен", "4")
             return False
         self.mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "4")

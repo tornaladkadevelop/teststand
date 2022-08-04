@@ -104,22 +104,6 @@ class TestUMZ:
             return True
         return False
 
-    # def st_test_13(self) -> bool:
-    #     """
-    #     1.2) Определение коэффициента Кс отклонения фактического напряжения от номинального.
-    #     :return:
-    #     """
-    #     self.mysql_conn.mysql_ins_result("идет тест 1.2", "1")
-    #     self.coef_volt = self.proc.procedure_1_22_32()
-    #     if self.coef_volt != 0.0:
-    #         self.logger.info(f'коэффициент сети\t {self.coef_volt:.2f}')
-    #         self.mysql_conn.mysql_ins_result('исправен', '1')
-    #         self.reset.stop_procedure_32()
-    #         return True
-    #     self.mysql_conn.mysql_ins_result('неисправен', '1')
-    #     self.mysql_conn.mysql_error(150)
-    #     return False
-
     def st_test_20(self) -> bool:
         """
         Тест 2. Проверка срабатывания защиты канала АБ по уставкам.

@@ -161,7 +161,7 @@ class TestBMZAPSH4:
         else:
             return False
         calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(111)
-        self.logger.debug(f'delta t: {calc_delta_t:.1f}', 'orange')
+        self.logger.info(f'delta t: {calc_delta_t:.1f}')
         self.list_delta_t[-1] = f'{calc_delta_t:.1f}'
         self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
         in_a1, *_ = self.di_read.di_read('in_a1')

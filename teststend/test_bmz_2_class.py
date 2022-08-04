@@ -205,7 +205,7 @@ class TestBMZ2:
             # qw = 0
             for qw in range(4):
                 self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(code=104)
-                self.logger.debug(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
+                self.logger.info(f'дельта t \t {self.calc_delta_t:.1f}')
                 if self.calc_delta_t == 9999:
                     self.reset_protect.sbros_zashit_kl30()
                     sleep(3)
@@ -299,7 +299,7 @@ class TestBMZ2:
         # wq = 0
         for wq in range(4):
             self.calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(code=104)
-            self.logger.debug(f'дельта t \t {self.calc_delta_t:.1f}', 'orange')
+            self.logger.info(f'дельта t \t {self.calc_delta_t:.1f}')
             if self.calc_delta_t == 9999:
                 self.reset_protect.sbros_zashit_kl30()
                 sleep(3)

@@ -112,7 +112,7 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.logger.debug("тест 2.1", 'blue')
+        self.logger.debug("тест 2.1")
         self.mysql_conn.mysql_ins_result('идёт тест 2', '2')
         if self.proc.procedure_x4_to_x5(setpoint_volt=self.ust_prov, coef_volt=self.coef_volt):
             pass
@@ -125,7 +125,7 @@ class TestBTZ3:
         """
         # 2.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.logger.debug("тест 2.2", 'blue')
+        self.logger.debug("тест 2.2")
         self.mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
@@ -134,7 +134,7 @@ class TestBTZ3:
         if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
             pass
         else:
-            self.logger.debug("тест 2.2 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 2.2 положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(373)
@@ -145,18 +145,18 @@ class TestBTZ3:
             elif in_a6 is True:
                 self.mysql_conn.mysql_error(376)
             return False
-        self.logger.debug("тест 2.2 положение выходов соответствует", 'green')
+        self.logger.debug("тест 2.2 положение выходов соответствует")
         self.reset.stop_procedure_3()
         return True
 
     def st_test_22_btz_3(self) -> bool:
-        self.logger.debug("тест 2.3", 'blue')
+        self.logger.debug("тест 2.3")
         self.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.logger.debug("тест 2.3 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 2.3 положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '2')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(377)
@@ -167,7 +167,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(380)
             return False
-        self.logger.debug("тест 2.3 положение выходов соответствует", 'green')
+        self.logger.debug("тест 2.3 положение выходов соответствует")
         self.mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
@@ -181,12 +181,12 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.logger.debug("тест 3.1", 'blue')
+        self.logger.debug("тест 3.1")
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is True and in_a5 is False and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.logger.debug("тест 3.1 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 3.1 положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is False:
                 self.mysql_conn.mysql_error(381)
@@ -197,7 +197,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(384)
             return False
-        self.logger.debug("тест 3.1 положение выходов соответствует", 'green')
+        self.logger.debug("тест 3.1 положение выходов соответствует")
         return True
 
     def st_test_31_btz_3(self) -> bool:
@@ -209,13 +209,13 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.logger.debug("тест 3.2", 'blue')
+        self.logger.debug("тест 3.2")
         self.sbros_zashit_kl30()
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
             pass
         else:
-            self.logger.debug("тест 3.2 положение выходов не соответствует", 'red')
+            self.logger.debug("тест 3.2 положение выходов не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             if in_a1 is True:
                 self.mysql_conn.mysql_error(385)
@@ -226,7 +226,7 @@ class TestBTZ3:
             elif in_a6 is False:
                 self.mysql_conn.mysql_error(388)
             return False
-        self.logger.debug("тест 3.2 положение выходов соответствует", 'green')
+        self.logger.debug("тест 3.2 положение выходов соответствует")
         self.mysql_conn.mysql_ins_result('исправен', '3')
         return True
 
@@ -241,7 +241,7 @@ class TestBTZ3:
             return False
         k = 0
         for i in self.list_ust_pmz:
-            self.logger.debug(f'тест 4 уставка {self.list_ust_pmz_num[k]}', 'blue')
+            self.logger.debug(f'тест 4 уставка {self.list_ust_pmz_num[k]}')
             msg_5 = 'Установите регулятор уставок ПМЗ на блоке в положение '
             msg_result_pmz = my_msg_2(f'{msg_5} {self.list_ust_pmz_num[k]}')
             if msg_result_pmz == 0:
@@ -277,7 +277,7 @@ class TestBTZ3:
                 else:
                     break
             self.logger.info(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
-                             f'уставка {self.list_ust_pmz_num[k]}', 'orange')
+                             f'уставка {self.list_ust_pmz_num[k]}')
             if self.calc_delta_t_pmz < 10:
                 self.list_delta_t_pmz.append(f'< 10')
             elif self.calc_delta_t_pmz > 3000:
@@ -290,7 +290,7 @@ class TestBTZ3:
                                               f'дельта %: {calc_delta_percent_pmz:.2f}')
             in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
-                self.logger.debug("тест 4.1 положение выходов соответствует", 'green')
+                self.logger.debug("тест 4.1 положение выходов соответствует")
                 self.reset.stop_procedure_3()
                 if self.subtest_45():
                     k += 1
