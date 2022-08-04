@@ -56,7 +56,7 @@ class TestBZMPD:
         self.msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         self.msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBZMPD.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBZMPD.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

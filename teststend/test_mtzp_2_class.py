@@ -57,7 +57,7 @@ class TestMTZP2:
                      "- Защита введена: ДА; - Уставка по току: 200А; \n" \
                      "- Уставка по времени: 60000 мс; - Отключение КА – ДА."
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestMTZP2.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestMTZP2.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

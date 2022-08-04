@@ -64,7 +64,7 @@ class TestBTZT:
         self.msg_5 = f'Установите регулятор уставок ПМЗ (1-11) на блоке в положение'
         self.msg_7 = f'Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение'
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBTZT.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBTZT.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

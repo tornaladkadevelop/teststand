@@ -67,7 +67,7 @@ class TestMTZ5V28:
         self.msg_7 = "Установите регулятор уставок на блоке в положение\t"
         self.msg_8 = "Переключите тумблер, расположенный на корпусе блока в положение «Работа»"
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestMTZ5_v28.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestMTZ5_v28.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

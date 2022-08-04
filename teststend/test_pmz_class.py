@@ -59,7 +59,7 @@ class TestPMZ:
         self.msg_3 = 'Установите регулятор уставок на блоке в положение'
         self.msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestPMZ.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestPMZ.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

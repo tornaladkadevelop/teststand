@@ -61,8 +61,8 @@ class TestUBTZ:
         # self.msg_4 = "Установите регулятор МТЗ, расположенный на блоке, в положение «0»"
         self.msg_5 = "Установите регулятор ТЗП, расположенный на блоке в положение"
 
-        # C:\Stend\project_class
-        logging.basicConfig(filename=".\log\TestUBTZ.log",
+        #
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestUBTZ.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

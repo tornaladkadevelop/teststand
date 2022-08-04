@@ -57,7 +57,7 @@ class TestBMZ2:
         self.msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
         self.msg_4 = 'Установите регулятор уставок на блоке в положение '
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBMZ2.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBMZ2.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

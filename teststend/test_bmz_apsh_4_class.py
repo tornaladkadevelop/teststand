@@ -48,7 +48,7 @@ class TestBMZAPSH4:
         self.coef_volt: float = 0.0
         self.health_flag: bool = False
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBMZAPSh4.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBMZAPSh4.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

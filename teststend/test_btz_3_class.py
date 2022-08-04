@@ -54,7 +54,7 @@ class TestBTZ3:
 
         self.health_flag: bool = False
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestBTZ3.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBTZ3.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",

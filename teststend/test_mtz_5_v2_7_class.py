@@ -67,7 +67,7 @@ class TestMTZ5V27:
         self.msg_7 = "Установите регулятор времени перегруза на блоке в положение «21 сек»"
         self.msg_8 = "Установите регулятор уставок на блоке в положение\t"
 
-        logging.basicConfig(filename="C:\Stend\project_class\TestMTZ5_v27.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestMTZ5_v27.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
