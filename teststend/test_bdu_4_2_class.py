@@ -139,7 +139,7 @@ class TestBDU42:
         """
         self.logger.debug("старт теста 4.2")
         self.ctrl_kl.ctrl_relay('KL11', True)
-        self.logger.debug("втключен KL11")
+        self.logger.debug("включен KL11")
         sleep(1)
         if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=9, err_code_a2=10, position_a1=False,
                                     position_a2=False):

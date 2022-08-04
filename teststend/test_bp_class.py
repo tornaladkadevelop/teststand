@@ -27,6 +27,10 @@ __all__ = ["TestBP"]
 
 
 class TestBP:
+    """
+    capacitor capacitance - емкость конденсатора
+    charge - заряд
+    """
 
     def __init__(self):
         self.mb_ctrl = CtrlKL()
@@ -37,8 +41,8 @@ class TestBP:
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest4in()
 
-        self.emkost_kond: float = 0.0
-        self.emkost_kond_d: float = 0.0
+        self.capacitor_capacitance: float = 0.0
+        self.capacitor_capacitance_d: float = 0.0
 
         self.msg_1 = "Убедитесь в отсутствии других блоков и вставьте блок БП в соответствующий разъем"
 
@@ -86,40 +90,40 @@ class TestBP:
         sleep(5)
         self.mb_ctrl.ctrl_relay('KL76', True)
         sleep(5)
-        zaryad_1 = self.read_mb.read_analog_ai2()
-        self.logger.info(f'заряд конденсатора по истечении 5с:\t{zaryad_1} В')
-        if zaryad_1 != 999:
+        charge_1 = self.read_mb.read_analog_ai2()
+        self.logger.info(f'заряд конденсатора по истечении 5с:\t{charge_1} В')
+        if charge_1 != 999:
             pass
         else:
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         sleep(15)
-        zaryad_2 = self.read_mb.read_analog_ai2()
-        self.logger.info(f'заряд конденсатора по истечении 15с:\t{zaryad_2} В')
-        if zaryad_2 != 999:
+        charge_2 = self.read_mb.read_analog_ai2()
+        self.logger.info(f'заряд конденсатора по истечении 15с:\t{charge_2} В')
+        if charge_2 != 999:
             pass
         else:
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
-        delta_zaryad = zaryad_1 - zaryad_2
-        self.logger.info(f'дельта заряда конденсатора:\t{delta_zaryad} В')
-        if delta_zaryad != 0:
+        delta_charge = charge_1 - charge_2
+        self.logger.info(f'дельта заряда конденсатора:\t{delta_charge} В')
+        if delta_charge != 0:
             pass
         else:
             self.reset_protect.sbros_testa_bp_0()
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
-        self.emkost_kond = math.log(zaryad_1 / zaryad_2)
-        self.logger.info(f'ёмкость:\t{self.emkost_kond:.2f}')
-        self.emkost_kond = (15000 / self.emkost_kond / 31300) * 1000
-        self.logger.info(f'ёмкость:\t{self.emkost_kond:.2f}')
-        self.emkost_kond_d = 100 - 100 * (self.emkost_kond / 2000)
-        self.logger.info(f'ёмкость:\t{self.emkost_kond_d:.2f}')
-        if self.emkost_kond >= 1600:
+        self.capacitor_capacitance = math.log(charge_1 / charge_2)
+        self.logger.info(f'ёмкость:\t{self.capacitor_capacitance:.2f}')
+        self.capacitor_capacitance = (15000 / self.capacitor_capacitance / 31300) * 1000
+        self.logger.info(f'ёмкость:\t{self.capacitor_capacitance:.2f}')
+        self.capacitor_capacitance_d = 100 - 100 * (self.capacitor_capacitance / 2000)
+        self.logger.info(f'ёмкость:\t{self.capacitor_capacitance_d:.2f}')
+        if self.capacitor_capacitance >= 1600:
             pass
         else:
             self.reset_protect.sbros_testa_bp_0()
-            self.mysql_conn.mysql_ins_result(f'неиспр. емкость снижена на {self.emkost_kond_d:.1f} %', "2")
+            self.mysql_conn.mysql_ins_result(f'неисправен емкость снижена на {self.capacitor_capacitance_d:.1f} %', "2")
             return False
         # 2.3. Форсированный разряд
         self.mysql_conn.mysql_ins_result("идёт тест 2.3", "2")
@@ -128,8 +132,8 @@ class TestBP:
         self.mb_ctrl.ctrl_relay('KL79', False)
         sleep(0.3)
         self.mysql_conn.mysql_ins_result("исправен", "2")
-        self.mysql_conn.mysql_ins_result(f'{self.emkost_kond:.1f}', "3")
-        self.mysql_conn.mysql_ins_result(f'{self.emkost_kond_d:.1f}', "4")
+        self.mysql_conn.mysql_ins_result(f'{self.capacitor_capacitance:.1f}', "3")
+        self.mysql_conn.mysql_ins_result(f'{self.capacitor_capacitance_d:.1f}', "4")
         return True
 
     def st_test_30_bp(self) -> bool:

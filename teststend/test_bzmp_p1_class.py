@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Тип блока     Производитель
-БЗМП-П1	Пульсар
+Тип блока: БЗМП-П1
+Производитель: Пульсар.
 """
 
 import sys
@@ -85,7 +85,7 @@ class TestBZMPP1:
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63 '
-                             f'{min_volt} <= {meas_volt} <= {max_volt}', 'orange')
+                          f'{min_volt} <= {meas_volt} <= {max_volt}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:

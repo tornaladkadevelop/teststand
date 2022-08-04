@@ -26,6 +26,9 @@ from gui.msgbox_1 import *
 
 
 class TestBZMPP:
+    """
+    overload - перегрузка
+    """
 
     def __init__(self):
         self.proc = Procedure()
@@ -38,7 +41,7 @@ class TestBZMPP:
 
         self.ust_pmz: float = 25.2
         self.ust_faz: float = 8.2
-        self.ust_peregruz: float = 10.7
+        self.ust_overload: float = 10.7
 
         self.coef_volt: float = 0.0
         self.timer_test_6_2: float = 0.0
@@ -88,7 +91,7 @@ class TestBZMPP:
         max_volt = 1.0 * meas_volt_ust
         meas_volt = self.read_mb.read_analog()
         self.logger.debug(f'напряжение после включения KL63 '
-                             f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
+                          f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}', 'orange')
         if min_volt <= meas_volt <= max_volt:
             pass
         else:
@@ -318,7 +321,7 @@ class TestBZMPP:
             pass
         else:
             return False
-        if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_peregruz):
+        if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_overload):
             return True
         self.mysql_conn.mysql_ins_result("неисправен", "6")
         return False
