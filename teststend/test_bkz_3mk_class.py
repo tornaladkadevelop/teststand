@@ -203,22 +203,23 @@ class TestBKZ3MK:
             # если не прошел предыдущий тест, то повышаем напряжение в 1.1 раза и повторяем проверку
             if self.calc_delta_t_mtz == 9999 or self.malfunction is True:
                 self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1)
-                self.meas_volt = self.read_mb.read_analog() * 9.19125
+                self.meas_volt = self.read_mb.read_analog()
                 self.func_delta_t_mtz(k=k)
                 self.reset_relay.stop_procedure_3()
 
             # обработка полученных результатов
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_mtz_num[k]}, подтест 4.2')
+            self.calc_delta_percent_mtz = self.meas_volt * 9.19125
             if self.calc_delta_t_mtz == 9999 or self.malfunction is True:
                 self.delta_t_mtz = 'неисправен'
                 self.delta_percent_mtz = 'неисправен'
                 self.health_flag_mtz = True
             elif self.calc_delta_t_mtz <= 10 and self.malfunction is False:
                 self.delta_t_mtz = '< 10'
-                self.delta_percent_mtz = f"{self.meas_volt:.2f}"
-            elif self.calc_delta_percent_mtz != 9999 and self.malfunction is False:
+                self.delta_percent_mtz = f"{self.calc_delta_percent_mtz:.2f}"
+            elif self.calc_delta_t_mtz != 9999 and self.malfunction is False:
                 self.delta_t_mtz = f"{self.calc_delta_t_mtz:.1f}"
-                self.delta_percent_mtz = f"{self.meas_volt:.2f}"
+                self.delta_percent_mtz = f"{self.calc_delta_percent_mtz:.2f}"
 
             # запись результатов в БД
             result = f'уставка МТЗ: {self.list_ust_mtz_num[k]} [дельта %: {self.delta_percent_mtz:.2f}, ' \
