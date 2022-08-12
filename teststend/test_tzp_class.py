@@ -4,11 +4,13 @@
 """
 Алгоритм проверки
 
-Тип блока Производитель Уникальный номер
-ТЗП Нет производителя 61
-ТЗП Углеприбор 62
-ТЗП-П Нет производителя 63
-ТЗП-П Пульсар 64
+Тип блока: ТЗП
+Производитель: Нет производителя, Углеприбор
+Уникальный номер: 61, 62
+Тип блока: ТЗП-П
+Производитель: Нет производителя, Пульсар
+Уникальный номер: 63, 64
+
 
 """
 
@@ -74,7 +76,7 @@ class TestTZP:
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=277, err_code_a2=278, position_a1=False,
                                     position_a2=True, inp_2='in_a5'):
             return True
@@ -118,7 +120,7 @@ class TestTZP:
         else:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.1', '2')
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         if self.subtest.subtest_2di(test_num=2, subtest_num=2.1, err_code_a1=284, err_code_a2=285,
                                     position_a1=False, position_a2=True, inp_2='in_a5'):
             return True
@@ -237,7 +239,7 @@ class TestTZP:
     def subtest_35(self) -> bool:
         self.mysql_conn.mysql_ins_result('идет тест 3.5', '3')
         self.logger.debug("идет тест 3.5")
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         sleep(1)
         if self.subtest.subtest_2di(test_num=3, subtest_num=3.5, err_code_a1=284, err_code_a2=285,

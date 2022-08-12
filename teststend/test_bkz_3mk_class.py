@@ -114,7 +114,7 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включение KL21")
         sleep(2)
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         sleep(1)
         if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=317, err_code_a2=318,
                                     position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
@@ -163,7 +163,7 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL22', False)
         self.logger.debug("отключение KL22")
         sleep(2)
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         if self.subtest.subtest_2di(test_num=3, subtest_num=3.1, err_code_a1=321, err_code_a2=322,
                                     position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
             return True
@@ -328,7 +328,7 @@ class TestBKZ3MK:
         """
         self.logger.debug(f"подтест {subtest}, сброс защиты блока")
         self.mysql_conn.mysql_ins_result(f'идет тест {subtest}', f'{test_num}')
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         if self.subtest.subtest_2di(test_num=test_num, subtest_num=subtest, err_code_a1=err1, err_code_a2=err2,
                                     position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
             return True

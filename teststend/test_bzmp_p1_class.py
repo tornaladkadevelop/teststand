@@ -56,7 +56,7 @@ class TestBZMPP1:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_bzmp_p1(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
@@ -65,7 +65,7 @@ class TestBZMPP1:
             return True
         return False
 
-    def st_test_11_bzmp_p1(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
@@ -96,7 +96,7 @@ class TestBZMPP1:
         self.reset.sbros_kl63_proc_1_21_31()
         return True
 
-    def st_test_12_bzmp_p1(self) -> bool:
+    def st_test_12(self) -> bool:
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
@@ -110,7 +110,7 @@ class TestBZMPP1:
         self.reset.stop_procedure_32()
         return True
 
-    def st_test_13_bzmp_p1(self) -> bool:
+    def st_test_13(self) -> bool:
         self.logger.debug("идёт тест 1.3")
         self.mb_ctrl.ctrl_relay('KL67', True)
         timer_test_1 = 0
@@ -133,7 +133,7 @@ class TestBZMPP1:
         self.mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
-    def st_test_20_bzmp_p1(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка защиты ПМЗ
         """
@@ -142,14 +142,14 @@ class TestBZMPP1:
                 return True
         return False
 
-    def st_test_21_bzmp_p1(self) -> bool:
+    def st_test_21(self) -> bool:
         self.logger.debug("идёт тест 2.1")
         if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_pmz):
             return True
         self.mysql_conn.mysql_ins_result("неисправен TV1", "2")
         return False
 
-    def st_test_22_bzmp_p1(self) -> bool:
+    def st_test_22(self) -> bool:
         self.logger.debug("идёт тест 2.2")
         self.mb_ctrl.ctrl_relay('KL63', True)
         sleep(0.5)
@@ -166,7 +166,7 @@ class TestBZMPP1:
         self.reset.stop_procedure_3()
         return True
 
-    def st_test_23_bzmp_p1(self) -> bool:
+    def st_test_23(self) -> bool:
         """
         2.4.2. Сброс защит после проверки
         """
@@ -183,7 +183,7 @@ class TestBZMPP1:
         self.mysql_conn.mysql_ins_result("исправен", "2")
         return True
 
-    def st_test_30_bzmp_p1(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка защиты от несимметрии фаз
         """
@@ -197,7 +197,7 @@ class TestBZMPP1:
         self.mysql_conn.mysql_ins_result("неисправен TV1", "3")
         return False
 
-    def st_test_31_bzmp_p1(self) -> bool:
+    def st_test_31(self) -> bool:
         self.logger.debug("идёт тест 3.1")
         self.mb_ctrl.ctrl_relay('KL81', True)
         sleep(0.1)
@@ -229,7 +229,7 @@ class TestBZMPP1:
         self.mb_ctrl.ctrl_relay('KL81', False)
         return True
 
-    def st_test_32_bzmp_p1(self) -> bool:
+    def st_test_32(self) -> bool:
         """
         3.5. Сброс защит после проверки
         """
@@ -249,7 +249,7 @@ class TestBZMPP1:
         self.mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_5_2:.1f} сек', "3")
         return True
 
-    def st_test_40_bzmp_p1(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка защиты от перегрузки
         """
@@ -263,7 +263,7 @@ class TestBZMPP1:
         self.mysql_conn.mysql_ins_result("неисправен TV1", "4")
         return False
 
-    def st_test_41_bzmp_p1(self) -> bool:
+    def st_test_41(self) -> bool:
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
@@ -295,7 +295,7 @@ class TestBZMPP1:
         self.reset.sbros_kl63_proc_all()
         return True
 
-    def st_test_42_bzmp_p1(self) -> bool:
+    def st_test_42(self) -> bool:
         """
         4.6. Сброс защит после проверки
         """
@@ -318,20 +318,20 @@ class TestBZMPP1:
         self.mb_ctrl.ctrl_relay('KL24', False)
 
     def st_test_bzmp_p1(self) -> [bool, bool]:
-        if self.st_test_10_bzmp_p1():
-            if self.st_test_11_bzmp_p1():
-                if self.st_test_12_bzmp_p1():
-                    if self.st_test_13_bzmp_p1():
-                        if self.st_test_20_bzmp_p1():
-                            if self.st_test_21_bzmp_p1():
-                                if self.st_test_22_bzmp_p1():
-                                    if self.st_test_23_bzmp_p1():
-                                        if self.st_test_30_bzmp_p1():
-                                            if self.st_test_31_bzmp_p1():
-                                                if self.st_test_32_bzmp_p1():
-                                                    if self.st_test_40_bzmp_p1():
-                                                        if self.st_test_41_bzmp_p1():
-                                                            if self.st_test_42_bzmp_p1():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_12():
+                    if self.st_test_13():
+                        if self.st_test_20():
+                            if self.st_test_21():
+                                if self.st_test_22():
+                                    if self.st_test_23():
+                                        if self.st_test_30():
+                                            if self.st_test_31():
+                                                if self.st_test_32():
+                                                    if self.st_test_40():
+                                                        if self.st_test_41():
+                                                            if self.st_test_42():
                                                                 return True, self.health_flag
         return False, self.health_flag
 

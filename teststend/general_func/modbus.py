@@ -181,7 +181,7 @@ class CtrlKL:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def ctrl_relay(self, rel, ctrl) -> None:
+    def ctrl_relay(self, rel: str, ctrl: bool) -> None:
         kl = self.__dic_relay[f'{rel}']
         self.opc[kl] = ctrl
 

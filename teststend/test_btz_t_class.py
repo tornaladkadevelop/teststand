@@ -93,7 +93,7 @@ class TestBTZT:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_btz_t(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
@@ -113,7 +113,7 @@ class TestBTZT:
             return True
         return False
 
-    def st_test_11_btz_t(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
@@ -123,7 +123,7 @@ class TestBTZT:
             return True
         return False
 
-    def st_test_20_btz_t(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работоспособности защиты ПМЗ блока в режиме «Проверка»
         """
@@ -138,7 +138,7 @@ class TestBTZT:
         self.mysql_conn.mysql_ins_result('неисправен', '2')
         return False
 
-    def st_test_21_btz_t(self) -> bool:
+    def st_test_21(self) -> bool:
         """
         2.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
@@ -156,7 +156,7 @@ class TestBTZT:
         self.reset_relay.stop_procedure_3()
         return False
 
-    def st_test_22_btz_t(self) -> bool:
+    def st_test_22(self) -> bool:
         """
         2.4.2. Сброс защит после проверки
         """
@@ -171,7 +171,7 @@ class TestBTZT:
                 return True
         return False
 
-    def st_test_30_btz_t(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работоспособности защиты ТЗП блока в режиме «Проверка»
         """
@@ -183,7 +183,7 @@ class TestBTZT:
                 return True
         return False
 
-    def st_test_31_btz_t(self) -> bool:
+    def st_test_31(self) -> bool:
         """
         3.2. Сброс защит после проверки
         """
@@ -202,7 +202,7 @@ class TestBTZT:
             return True
         return False
 
-    def st_test_40_btz_t(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка срабатывания защиты ПМЗ блока по уставкам
         """
@@ -273,7 +273,7 @@ class TestBTZT:
         self.logger.debug("тест 4 завершен")
         return True
 
-    def st_test_50_btz_t(self) -> bool:
+    def st_test_50(self) -> bool:
         """
         Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         """
@@ -415,15 +415,15 @@ class TestBTZT:
             self.malfunction = True
 
     def st_test_btz_t(self) -> [bool, bool]:
-        if self.st_test_10_btz_t():
-            if self.st_test_11_btz_t():
-                if self.st_test_20_btz_t():
-                    if self.st_test_21_btz_t():
-                        if self.st_test_22_btz_t():
-                            if self.st_test_30_btz_t():
-                                if self.st_test_31_btz_t():
-                                    if self.st_test_40_btz_t():
-                                        if self.st_test_50_btz_t():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_20():
+                    if self.st_test_21():
+                        if self.st_test_22():
+                            if self.st_test_30():
+                                if self.st_test_31():
+                                    if self.st_test_40():
+                                        if self.st_test_50():
                                             return True, self.health_flag_pmz, self.health_flag_tzp
         return False, self.health_flag_pmz, self.health_flag_tzp
 

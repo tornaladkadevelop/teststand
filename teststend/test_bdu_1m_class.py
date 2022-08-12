@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
+Алгоритм проверки
 Тип блока: БДУ-1М
 Производитель: Пульсар, Нет производителя
 """
@@ -40,7 +41,7 @@ class TestBDU1M:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_1_bdu_1m(self) -> bool:
+    def st_test_1(self) -> bool:
         """
             Тест 1. Проверка исходного состояния блока
         """
@@ -48,7 +49,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_20_bdu_1m(self) -> bool:
+    def st_test_20(self) -> bool:
         """
             Тест 2. Проверка включения / выключения блока от кнопки «Пуск / Стоп».
         """
@@ -67,7 +68,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_21_bdu_1m(self) -> bool:
+    def st_test_21(self) -> bool:
         """
             2.2. Включение блока от кнопки «Пуск»
             2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
@@ -77,7 +78,7 @@ class TestBDU1M:
                 return True
         return False
 
-    def st_test_23_bdu_1m(self) -> bool:
+    def st_test_23(self) -> bool:
         """
             2.4. Выключение блока от кнопки «Стоп»
         """
@@ -92,7 +93,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_30_bdu_1m(self) -> bool:
+    def st_test_30(self) -> bool:
         """
             3. подготовительные операции (повторение тестов 2.2 и 2.3)
         """
@@ -101,7 +102,7 @@ class TestBDU1M:
                 return True
         return False
 
-    def st_test_32_bdu_1m(self) -> bool:
+    def st_test_32(self) -> bool:
         """
             3. Удержание исполнительного элемента при увеличении сопротивления цепи заземления до 50 Ом
         """
@@ -111,7 +112,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_40_bdu_1m(self) -> bool:
+    def st_test_40(self) -> bool:
         """
             Тест 4. подготовительные операции (повторение тестов 2.2 и 2.3)
         """
@@ -120,7 +121,7 @@ class TestBDU1M:
                 return True
         return False
 
-    def st_test_42_bdu_1m(self) -> bool:
+    def st_test_42(self) -> bool:
         """
             Тест 4. Отключение исполнительного элемента при увеличении сопротивления
             цепи заземления на величину свыше 50 Ом
@@ -134,7 +135,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_50_bdu_1m(self) -> bool:
+    def st_test_50(self) -> bool:
         """
             Тест 5. подготовительные операции (повторение тестов 2.2 и 2.3)
         """
@@ -143,7 +144,7 @@ class TestBDU1M:
                 return True
         return False
 
-    def st_test_52_bdu_1m(self) -> bool:
+    def st_test_52(self) -> bool:
         """
             Тест 5. Защита от потери управляемости при замыкании проводов ДУ
         """
@@ -159,7 +160,7 @@ class TestBDU1M:
             return True
         return False
 
-    def st_test_60_bdu_1m(self) -> bool:
+    def st_test_60(self) -> bool:
         """
             Тест 6. Защита от потери управляемости при обрыве проводов ДУ
         """
@@ -168,7 +169,7 @@ class TestBDU1M:
                 return True
         return False
 
-    def st_test_62_bdu_1m(self) -> bool:
+    def st_test_62(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(2)
@@ -180,18 +181,18 @@ class TestBDU1M:
         """
             Главная функция которая собирает все остальные.
         """
-        if self.st_test_1_bdu_1m():
-            if self.st_test_20_bdu_1m():
-                if self.st_test_21_bdu_1m():
-                    if self.st_test_23_bdu_1m():
-                        if self.st_test_30_bdu_1m():
-                            if self.st_test_32_bdu_1m():
-                                if self.st_test_40_bdu_1m():
-                                    if self.st_test_42_bdu_1m():
-                                        if self.st_test_50_bdu_1m():
-                                            if self.st_test_52_bdu_1m():
-                                                if self.st_test_60_bdu_1m():
-                                                    if self.st_test_62_bdu_1m():
+        if self.st_test_1():
+            if self.st_test_20():
+                if self.st_test_21():
+                    if self.st_test_23():
+                        if self.st_test_30():
+                            if self.st_test_32():
+                                if self.st_test_40():
+                                    if self.st_test_42():
+                                        if self.st_test_50():
+                                            if self.st_test_52():
+                                                if self.st_test_60():
+                                                    if self.st_test_62():
                                                         return True
         return False
 

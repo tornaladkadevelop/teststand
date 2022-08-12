@@ -4,11 +4,10 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-ПМЗ	Нет производителя
-ПМЗ	Углеприбор
-ПМЗ-П	Нет производителя
-ПМЗ-П	Пульсар
+Тип блока: ПМЗ
+Производитель: Нет производителя, Углеприбор
+Тип блока: ПМЗ-П
+Производитель: Нет производителя, Пульсар
 
 """
 
@@ -81,7 +80,7 @@ class TestPMZ:
         :return:
         """
         self.ctrl_kl.ctrl_relay('KL21', True)
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
@@ -157,7 +156,7 @@ class TestPMZ:
         2.4.2. Сброс защит после проверки
         :return:
         """
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
@@ -209,7 +208,7 @@ class TestPMZ:
                 if self.calc_delta_t == 9999:
                     sleep(3)
                     # qw += 1
-                    self.reset_protect.sbros_zashit_kl30_1s5()
+                    self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
                     continue
                 # elif 100 < self.calc_delta_t < 9999:
                 #     sleep(3)
@@ -253,7 +252,7 @@ class TestPMZ:
         :param k:
         :return:
         """
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:
@@ -279,12 +278,12 @@ class TestPMZ:
             if self.calc_delta_t == 9999:
                 sleep(3)
                 wq += 1
-                self.reset_protect.sbros_zashit_kl30_1s5()
+                self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
                 continue
             elif 100 < self.calc_delta_t < 9999:
                 sleep(3)
                 wq += 1
-                self.reset_protect.sbros_zashit_kl30_1s5()
+                self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
                 continue
             else:
                 break
@@ -314,7 +313,7 @@ class TestPMZ:
         3.6. Сброс защит после проверки
         :return:
         """
-        self.reset_protect.sbros_zashit_kl30_1s5()
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
         if in_a1 is False and in_a2 is False and in_a5 is True:

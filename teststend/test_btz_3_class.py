@@ -18,8 +18,8 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.reset import ResetRelay
-from general_func.subtest import ProcedureFull
+from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ProcedureFull, Subtest4in
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -27,15 +27,20 @@ __all__ = ["TestBTZ3"]
 
 
 class TestBTZ3:
-
+    """
+    Для сброса защиты блока нужно использовать следующие таймеры:
+        Время включения 1.5 сек, время после отключения 3.0 сек
+    """
     def __init__(self):
         self.reset = ResetRelay()
+        self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
+        self.subtest = Subtest4in()
 
         self.list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
         self.list_ust_tzp = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
@@ -63,7 +68,7 @@ class TestBTZ3:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_btz_3(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
@@ -76,24 +81,12 @@ class TestBTZ3:
             return False
         self.mysql_conn.mysql_ins_result('идёт тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(368)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(369)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(370)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(371)
-            return False
-        return True
+        if self.reset_protection(test_num=1, subtest_num=1.0, err_code_a=368, err_code_b=369, err_code_c=370,
+                                 err_code_d=371):
+            return True
+        return False
 
-    def st_test_11_btz_3(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
@@ -103,7 +96,7 @@ class TestBTZ3:
             return True
         return False
 
-    def st_test_20_btz_3(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работоспособности защиты ПМЗ блока в режиме «Проверка»
         """
@@ -112,8 +105,8 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.logger.debug("тест 2.1")
-        self.mysql_conn.mysql_ins_result('идёт тест 2', '2')
+        self.logger.debug("тест 2.0")
+        self.mysql_conn.mysql_ins_result('идёт тест 2.0', '2')
         if self.proc.procedure_x4_to_x5(setpoint_volt=self.ust_prov, coef_volt=self.coef_volt):
             pass
         else:
@@ -121,12 +114,12 @@ class TestBTZ3:
             return False
         return True
 
-    def st_test_21_btz_3(self) -> bool:
+    def st_test_21(self) -> bool:
         """
         # 2.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
-        self.logger.debug("тест 2.2")
-        self.mysql_conn.mysql_ins_result('идёт тест 2.2', '2')
+        self.logger.debug("тест 2.1")
+        self.mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
         self.ctrl_kl.ctrl_relay('KL63', False)
@@ -149,29 +142,12 @@ class TestBTZ3:
         self.reset.stop_procedure_3()
         return True
 
-    def st_test_22_btz_3(self) -> bool:
-        self.logger.debug("тест 2.3")
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.logger.debug("тест 2.3 положение выходов не соответствует")
-            self.mysql_conn.mysql_ins_result('неисправен', '2')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(377)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(378)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(379)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(380)
-            return False
-        self.logger.debug("тест 2.3 положение выходов соответствует")
-        self.mysql_conn.mysql_ins_result('исправен', '2')
-        return True
+    def st_test_22(self) -> bool:
+        if self.reset_protection(test_num=2, subtest_num=2.2):
+            return True
+        return False
 
-    def st_test_30_btz_3(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работоспособности защиты ТЗП блока в режиме «Проверка»
         """
@@ -200,7 +176,7 @@ class TestBTZ3:
         self.logger.debug("тест 3.1 положение выходов соответствует")
         return True
 
-    def st_test_31_btz_3(self) -> bool:
+    def st_test_31(self) -> bool:
         """
         3.2. Сброс защит после проверки
         """
@@ -209,28 +185,13 @@ class TestBTZ3:
             pass
         else:
             return False
-        self.logger.debug("тест 3.2")
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.logger.debug("тест 3.2 положение выходов не соответствует")
-            self.mysql_conn.mysql_ins_result('неисправен', '3')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(385)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(386)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(387)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(388)
-            return False
-        self.logger.debug("тест 3.2 положение выходов соответствует")
-        self.mysql_conn.mysql_ins_result('исправен', '3')
-        return True
+        self.logger.debug("тест 3.1")
+        if self.reset_protection(test_num=3, subtest_num=3.1, err_code_a=385, err_code_b=386, err_code_c=387,
+                                 err_code_d=388):
+            return True
+        return False
 
-    def st_test_40_btz_3(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка срабатывания защиты ПМЗ блока по уставкам
         """
@@ -270,10 +231,11 @@ class TestBTZ3:
                 self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_pmz_num[k]} '
                                                   f'дельта t: {self.calc_delta_t_pmz:.1f}')
                 if 3000 < self.calc_delta_t_pmz <= 9999:
-                    self.sbros_zashit_kl30()
-                    sleep(3)
-                    qw += 1
-                    continue
+                    if self.reset_protection(test_num=4, subtest_num=4.1):
+                        qw += 1
+                        continue
+                    else:
+                        break
                 else:
                     break
             self.logger.info(f'тест 4.1 дельта t: {self.calc_delta_t_pmz:.1f} '
@@ -292,7 +254,7 @@ class TestBTZ3:
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
                 self.logger.debug("тест 4.1 положение выходов соответствует")
                 self.reset.stop_procedure_3()
-                if self.subtest_45():
+                if self.reset_protection(test_num=1, subtest_num=1.0):
                     k += 1
                     continue
                 else:
@@ -309,7 +271,7 @@ class TestBTZ3:
         self.mysql_conn.mysql_ins_result('исправен', '4')
         return True
 
-    def st_test_50_btz_3(self) -> bool:
+    def st_test_50(self) -> bool:
         """
         Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         """
@@ -365,13 +327,13 @@ class TestBTZ3:
                                               f'дельта %: {calc_delta_percent_tzp:.2f}')
             in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
             if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False and calc_delta_t_tzp <= 360:
-                if self.subtest_56():
+                if self.reset_protection(test_num=5, subtest_num=5.5):
                     m += 1
                     continue
                 else:
                     return False
             else:
-                if self.subtest_55():
+                if self.reset_protection(test_num=5, subtest_num=5.5):
                     m += 1
                     continue
                 else:
@@ -379,62 +341,16 @@ class TestBTZ3:
         self.mysql_conn.mysql_ins_result('исправен', '5')
         return True
 
-    def subtest_55(self):
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '5')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(377)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(378)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(379)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(380)
-            return False
-        return True
-
-    def subtest_56(self):
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '5')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(377)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(378)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(379)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(380)
-            return False
-        return True
-
     def subtest_42(self, i, k) -> bool:
         """
         4.2. Формирование нагрузочного сигнала 1,1*U3[i]:
         4.2.1. Сброс защит после проверки
         """
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
+        if self.reset_protection(test_num=4, subtest_num=4.2):
             pass
         else:
-            self.mysql_conn.mysql_ins_result('неисправен', '4')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(377)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(378)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(379)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(380)
             return False
+
         if self.proc.procedure_1_24_34(setpoint_volt=i, coef_volt=self.coef_volt, factor=1.1):
             pass
         else:
@@ -448,10 +364,9 @@ class TestBTZ3:
         for wq in range(4):
             self.calc_delta_t_pmz = self.ctrl_kl.ctrl_ai_code_v0(103)
             if 3000 < self.calc_delta_t_pmz <= 9999:
-                self.sbros_zashit_kl30()
-                sleep(3)
-                wq += 1
-                continue
+                if self.reset_protection(test_num=4, subtest_num=4.3):
+                    wq += 1
+                    continue
             else:
                 break
         if self.calc_delta_t_pmz < 10:
@@ -466,7 +381,7 @@ class TestBTZ3:
                                           f'дельта %: {calc_delta_percent_pmz:.2f}')
         in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
         if in_a1 is False and in_a5 is True and in_a2 is True and in_a6 is False:
-            if self.subtest_45():
+            if self.reset_protection(test_num=4, subtest_num=4.4):
                 pass
             else:
                 self.mysql_conn.mysql_ins_result('неисправен', '4')
@@ -474,61 +389,43 @@ class TestBTZ3:
             self.mysql_conn.mysql_error(389)
             self.reset.stop_procedure_3()
             # 4.3. Сброс защит после проверки
-            self.sbros_zashit_kl30()
-            in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-            if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
+            if self.reset_protection(test_num=4, subtest_num=4.4):
                 pass
             else:
-                self.mysql_conn.mysql_ins_result('неисправен', '4')
-                if in_a1 is True:
-                    self.mysql_conn.mysql_error(377)
-                elif in_a5 is False:
-                    self.mysql_conn.mysql_error(378)
-                elif in_a2 is True:
-                    self.mysql_conn.mysql_error(379)
-                elif in_a6 is False:
-                    self.mysql_conn.mysql_error(380)
                 return False
         return True
 
-    def subtest_45(self) -> bool:
+    def reset_protection(self, *, test_num: int, subtest_num: float, err_code_a: int = 377, err_code_b: int = 378,
+                         err_code_c: int = 379, err_code_d: int = 380) -> bool:
         """
-        4.5. Расчет относительной нагрузки сигнала
-        4.6. Сброс защит после проверки
+        Модуль сброса защиты блока.
+        :param test_num: номер теста
+        :param subtest_num: номер подтеста
+        :param err_code_a: код ошибки при неисправности 1-го выхода блока, по умолчанию 377
+        :param err_code_b: код ошибки при неисправности 2-го выхода блока, по умолчанию 378
+        :param err_code_c: код ошибки при неисправности 3-го выхода блока, по умолчанию 379
+        :param err_code_d: код ошибки при неисправности 4-го выхода блока, по умолчанию 380
+        :return: bool
         """
-        self.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5, in_a6 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5', 'in_a6')
-        if in_a1 is False and in_a5 is True and in_a2 is False and in_a6 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '4')
-            if in_a1 is True:
-                self.mysql_conn.mysql_error(377)
-            elif in_a5 is False:
-                self.mysql_conn.mysql_error(378)
-            elif in_a2 is True:
-                self.mysql_conn.mysql_error(379)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(380)
-            return False
-        return True
-
-    def sbros_zashit_kl30(self):
-        self.ctrl_kl.ctrl_relay('KL30', True)
-        sleep(1.5)
-        self.ctrl_kl.ctrl_relay('KL30', False)
-        sleep(3)
+        self.logger.debug(f"сброс защит блока, тест {test_num}, подтест {subtest_num}")
+        self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=3.0)
+        if self.subtest.subtest_4di(test_num=test_num, subtest_num=subtest_num, err_code_a=err_code_a,
+                                    err_code_b=err_code_b, err_code_c=err_code_c, err_code_d=err_code_d,
+                                    position_a=False, position_b=True, position_c=False, position_d=True,
+                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+            return True
+        return False
 
     def st_test_btz_3(self) -> [bool, bool]:
-        if self.st_test_10_btz_3():
-            if self.st_test_11_btz_3():
-                if self.st_test_20_btz_3():
-                    if self.st_test_21_btz_3():
-                        if self.st_test_22_btz_3():
-                            if self.st_test_30_btz_3():
-                                if self.st_test_31_btz_3():
-                                    if self.st_test_40_btz_3():
-                                        if self.st_test_50_btz_3():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_20():
+                    if self.st_test_21():
+                        if self.st_test_22():
+                            if self.st_test_30():
+                                if self.st_test_31():
+                                    if self.st_test_40():
+                                        if self.st_test_50():
                                             return True, self.health_flag
         return False, self.health_flag
 

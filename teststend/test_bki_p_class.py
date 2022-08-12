@@ -3,10 +3,10 @@
 
 """
 Алгоритм проверки
-Тип блока	Производитель
-БКИ	нет производителя
-БКИ	Углеприбор
-БКИ-П	Пульсар
+Тип блока: БКИ
+Производитель: нет производителя, Углеприбор
+Тип блока: БКИ-П
+Производитель: Пульсар
 
 """
 
@@ -47,7 +47,7 @@ class TestBKIP:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_1_bki_p(self):
+    def st_test_1(self):
         """
         Тест 1. Проверка исходного состояния блока
         """
@@ -56,7 +56,7 @@ class TestBKIP:
             return True
         return False
 
-    def st_test_20_bki_p(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работы блока при нормальном сопротивлении изоляции
         """
@@ -76,7 +76,7 @@ class TestBKIP:
             return True
         return False
 
-    def st_test_30_bki_p(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работы блока в режиме «Предупредительный» при снижении
         уровня сопротивлении изоляции до 100 кОм
@@ -97,7 +97,7 @@ class TestBKIP:
         self.mysql_conn.mysql_ins_result("исправен", "3")
         return True
 
-    def st_test_40_bki_p(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка работы блока в режиме «Аварийный» при сопротивлении изоляции 100 кОм
         """
@@ -115,7 +115,7 @@ class TestBKIP:
         self.logger.debug("отключен KL21")
         return False
 
-    def st_test_50_bki_p(self) -> bool:
+    def st_test_50(self) -> bool:
         """
         Тест 5. Работа блока в режиме «Аварийный» при сопротивлении изоляции
         ниже 30 кОм (Подключение на внутреннее сопротивление)
@@ -131,11 +131,11 @@ class TestBKIP:
         return False
 
     def st_test_bki_p(self) -> bool:
-        if self.st_test_1_bki_p():
-            if self.st_test_20_bki_p():
-                if self.st_test_30_bki_p():
-                    if self.st_test_40_bki_p():
-                        if self.st_test_50_bki_p():
+        if self.st_test_1():
+            if self.st_test_20():
+                if self.st_test_30():
+                    if self.st_test_40():
+                        if self.st_test_50():
                             return True
         return False
 

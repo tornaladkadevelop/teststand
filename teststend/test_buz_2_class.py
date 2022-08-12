@@ -4,10 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БУЗ-2	Строй-энергомаш
-БУЗ-2	ТЭТЗ-Инвест
-БУЗ-2	нет производителя
+Тип блока: БУЗ-2
+Производитель: Строй-энергомаш, ТЭТЗ-Инвест, нет производителя
 
 """
 
@@ -59,7 +57,7 @@ class TestBUZ2:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_buz_2(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Включение/выключение блока в нормальном режиме:
         """
@@ -69,7 +67,7 @@ class TestBUZ2:
                 return True
         return False
 
-    def st_test_11_buz_2(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
@@ -87,7 +85,7 @@ class TestBUZ2:
         self.mysql_conn.mysql_error(455)
         return False
 
-    def st_test_12_buz_2(self) -> bool:
+    def st_test_12(self) -> bool:
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
@@ -118,7 +116,7 @@ class TestBUZ2:
             return False
         return True
 
-    def st_test_13_buz_2(self) -> bool:
+    def st_test_13(self) -> bool:
         """
         1.4.	Выключение блока
         """
@@ -136,7 +134,7 @@ class TestBUZ2:
         self.mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
-    def st_test_20_buz_2(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работоспособности защиты МТЗ:
         2.1. Пуск блока
@@ -172,7 +170,7 @@ class TestBUZ2:
             return False
         return True
 
-    def st_test_21_buz_2(self) -> bool:
+    def st_test_21(self) -> bool:
         if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_1):
             pass
         else:
@@ -192,7 +190,7 @@ class TestBUZ2:
         self.reset.stop_procedure_3()
         return True
 
-    def st_test_22_buz_2(self) -> bool:
+    def st_test_22(self) -> bool:
         """
         2.3.  Финишные операции при положительном завершении теста:
         """
@@ -206,7 +204,7 @@ class TestBUZ2:
         self.mysql_conn.mysql_ins_result("исправен", "2")
         return True
 
-    def st_test_30_buz_2(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работоспособности защиты ТЗП
         3.1. Пуск блока
@@ -223,7 +221,7 @@ class TestBUZ2:
             return False
         return True
 
-    def st_test_31_buz_2(self) -> bool:
+    def st_test_31(self) -> bool:
         if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=self.ust_2):
             pass
         else:
@@ -254,15 +252,15 @@ class TestBUZ2:
         return True
 
     def st_test_buz_2(self) -> [bool, bool]:
-        if self.st_test_10_buz_2():
-            if self.st_test_11_buz_2():
-                if self.st_test_12_buz_2():
-                    if self.st_test_13_buz_2():
-                        if self.st_test_20_buz_2():
-                            if self.st_test_21_buz_2():
-                                if self.st_test_22_buz_2():
-                                    if self.st_test_30_buz_2():
-                                        if self.st_test_31_buz_2():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_12():
+                    if self.st_test_13():
+                        if self.st_test_20():
+                            if self.st_test_21():
+                                if self.st_test_22():
+                                    if self.st_test_30():
+                                        if self.st_test_31():
                                             return True, self.health_flag
         return False, self.health_flag
 

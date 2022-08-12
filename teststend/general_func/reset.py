@@ -236,25 +236,15 @@ class ResetProtection:
         sleep(2)
         self.logger.debug('таймаут 2сек, выполнен сброс защит')
 
-    def sbros_zashit_kl30(self):
-        self.logger.debug("сброс защит KL30 0.5сек")
+    def sbros_zashit_kl30(self, *, time_on: float = 0.5, time_off: float = 0.5):
+        self.logger.debug(f"сброс защит KL30, {time_on =}, {time_off =}")
         self.ctrl_kl.ctrl_relay('KL30', True)
         self.logger.debug('включение KL30')
-        sleep(0.5)
+        sleep(time_on)
         self.ctrl_kl.ctrl_relay('KL30', False)
         self.logger.debug('отключение KL30')
-        sleep(0.5)
-        self.logger.debug('таймаут 0.5сек, выполнен сброс защит')
-
-    def sbros_zashit_kl30_1s5(self):
-        self.logger.debug("сброс защит KL30 1.5сек")
-        self.ctrl_kl.ctrl_relay('KL30', True)
-        self.logger.debug('включение KL30')
-        sleep(1.5)
-        self.ctrl_kl.ctrl_relay('KL30', False)
-        self.logger.debug('отключение KL30')
-        sleep(2.0)
-        self.logger.debug('таймаут 2сек, выполнен сброс защит')
+        sleep(time_off)
+        self.logger.debug('таймаут, выполнен сброс защит')
 
     def sbros_testa_bp_0(self):
         """

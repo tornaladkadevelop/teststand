@@ -4,8 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БЗМП-Д	ДИГ, ООО
+Тип блока: БЗМП-Д
+Производитель: ДИГ, ООО
 
 """
 
@@ -65,7 +65,7 @@ class TestBZMPD:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_bzmp_d(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         """
@@ -80,7 +80,7 @@ class TestBZMPD:
         else:
             return False
 
-    def st_test_11_bzmp_d(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.	Проверка вероятности наличия короткого замыкания на входе измерительной цепи блока
         """
@@ -110,7 +110,7 @@ class TestBZMPD:
         self.reset.sbros_kl63_proc_1_21_31()
         return True
 
-    def st_test_12_bzmp_d(self) -> bool:
+    def st_test_12(self) -> bool:
         """
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
@@ -125,7 +125,7 @@ class TestBZMPD:
         self.reset.stop_procedure_32()
         return True
 
-    def st_test_13_bzmp_d(self) -> bool:
+    def st_test_13(self) -> bool:
         """
         Подача напряжения питания ~50В
         """
@@ -158,7 +158,7 @@ class TestBZMPD:
         self.mysql_conn.mysql_ins_result("исправен", "1")
         return True
 
-    def st_test_20_bzmp_d(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка срабатывания блока при снижении изоляции цепей 36В
         """
@@ -167,7 +167,7 @@ class TestBZMPD:
                 return True
         return False
 
-    def st_test_21_bzmp_d(self) -> bool:
+    def st_test_21(self) -> bool:
         self.logger.debug("идёт тест 2.1")
         self.mysql_conn.mysql_ins_result('идёт тест 2.1', '2')
         self.mb_ctrl.ctrl_relay('KL21', True)
@@ -186,7 +186,7 @@ class TestBZMPD:
         self.logger.debug("тест 2.1 положение выходов соответствует")
         return True
 
-    def st_test_22_bzmp_d(self) -> bool:
+    def st_test_22(self) -> bool:
         """
         2.2. Сброс защит после проверки
         """
@@ -207,7 +207,7 @@ class TestBZMPD:
         self.logger.debug("тест 2.2 положение выходов соответствует")
         return True
 
-    def st_test_30_bzmp_d(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка срабатывания блока при снижении силовой изоляции
         """
@@ -230,7 +230,7 @@ class TestBZMPD:
         self.logger.debug("тест 3.0 положение выходов соответствует")
         return True
 
-    def st_test_31_bzmp_d(self) -> bool:
+    def st_test_31(self) -> bool:
         self.logger.debug("идёт тест 3.1")
         self.resist.resist_kohm(590)
         sleep(2)
@@ -251,7 +251,7 @@ class TestBZMPD:
         self.mysql_conn.mysql_ins_result("исправен", "3")
         return True
 
-    def st_test_40_bzmp_d(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка защиты ПМЗ
         """
@@ -268,7 +268,7 @@ class TestBZMPD:
             return False
         return True
 
-    def st_test_41_bzmp_d(self) -> bool:
+    def st_test_41(self) -> bool:
         """
         4.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
@@ -289,7 +289,7 @@ class TestBZMPD:
         self.reset.stop_procedure_3()
         return True
 
-    def st_test_42_bzmp_d(self) -> bool:
+    def st_test_42(self) -> bool:
         self.logger.debug("идёт тест 4.2")
         self.mysql_conn.mysql_ins_result('идёт тест 4.3', '4')
         self.mb_ctrl.ctrl_relay('KL24', True)
@@ -307,7 +307,7 @@ class TestBZMPD:
         self.mysql_conn.mysql_ins_result("исправен", "4")
         return True
 
-    def st_test_50_bzmp_d(self) -> bool:
+    def st_test_50(self) -> bool:
         """
         Тест 5. Проверка защиты от перегрузки
         """
@@ -320,7 +320,7 @@ class TestBZMPD:
             return False
         return True
 
-    def st_test_51_bzmp_d(self) -> bool:
+    def st_test_51(self) -> bool:
         """
         5.2.  Проверка срабатывания блока от сигнала нагрузки:
         """
@@ -360,7 +360,7 @@ class TestBZMPD:
         self.reset.sbros_kl63_proc_all()
         return True
 
-    def st_test_52_bzmp_d(self) -> bool:
+    def st_test_52(self) -> bool:
         self.logger.debug("идёт тест 5.2")
         self.mysql_conn.mysql_ins_result('идёт тест 5.3', '5')
         self.sbros_zashit()
@@ -382,21 +382,21 @@ class TestBZMPD:
         sleep(0.7)
 
     def st_test_bzmp_d(self) -> [bool, bool]:
-        if self.st_test_10_bzmp_d():
-            if self.st_test_11_bzmp_d():
-                if self.st_test_12_bzmp_d():
-                    if self.st_test_13_bzmp_d():
-                        if self.st_test_20_bzmp_d():
-                            if self.st_test_21_bzmp_d():
-                                if self.st_test_22_bzmp_d():
-                                    if self.st_test_30_bzmp_d():
-                                        if self.st_test_31_bzmp_d():
-                                            if self.st_test_40_bzmp_d():
-                                                if self.st_test_41_bzmp_d():
-                                                    if self.st_test_42_bzmp_d():
-                                                        if self.st_test_50_bzmp_d():
-                                                            if self.st_test_51_bzmp_d():
-                                                                if self.st_test_52_bzmp_d():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_12():
+                    if self.st_test_13():
+                        if self.st_test_20():
+                            if self.st_test_21():
+                                if self.st_test_22():
+                                    if self.st_test_30():
+                                        if self.st_test_31():
+                                            if self.st_test_40():
+                                                if self.st_test_41():
+                                                    if self.st_test_42():
+                                                        if self.st_test_50():
+                                                            if self.st_test_51():
+                                                                if self.st_test_52():
                                                                     return True, self.health_flag
         return False, self.health_flag
 

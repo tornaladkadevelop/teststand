@@ -4,10 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БП	Строй-энергомаш
-БП	ТЭТЗ-Инвест
-БП	нет производителя
+Тип блока: БП
+Производитель: Строй-энергомаш, ТЭТЗ-Инвест, нет производителя
 """
 
 import math
@@ -55,7 +53,7 @@ class TestBP:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_bp(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         Тест 1. Проверка исходного состояния блока:
         Переключение АЦП на AI.1 канал
@@ -75,7 +73,7 @@ class TestBP:
             return True
         return False
 
-    def st_test_20_bp(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Определение ёмкости пусковых конденсаторов
         2.1. Заряд конденсаторов
@@ -136,7 +134,7 @@ class TestBP:
         self.mysql_conn.mysql_ins_result(f'{self.capacitor_capacitance_d:.1f}', "4")
         return True
 
-    def st_test_30_bp(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работоспособности реле удержания
         """
@@ -154,7 +152,7 @@ class TestBP:
         self.mysql_conn.mysql_ins_result("исправен", "5")
         return False
 
-    def st_test_40_bp(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка работоспособности реле удержания
         """
@@ -174,10 +172,10 @@ class TestBP:
         return True
 
     def st_test_bp(self) -> bool:
-        if self.st_test_10_bp():
-            if self.st_test_20_bp():
-                if self.st_test_30_bp():
-                    if self.st_test_40_bp():
+        if self.st_test_10():
+            if self.st_test_20():
+                if self.st_test_30():
+                    if self.st_test_40():
                         return True
         return False
 

@@ -4,9 +4,8 @@
 """
 Алгоритм проверки
 
-Тип блока	Производитель
-БМЗ АПШ 4.0	Нет производителя
-БМЗ АПШ 4.0	Горэкс-Светотехника
+Тип блока: БМЗ АПШ 4.0
+Производитель: Нет производителя, Горэкс-Светотехника
 
 """
 
@@ -57,7 +56,7 @@ class TestBMZAPSH4:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_10_bmz_apsh_4(self) -> bool:
+    def st_test_10(self) -> bool:
         """
         # Тест 1. Проверка исходного состояния блока:
         """
@@ -81,7 +80,7 @@ class TestBMZAPSH4:
         self.logger.debug("вход 1 соответствует", 4)
         return True
 
-    def st_test_11_bmz_apsh_4(self) -> bool:
+    def st_test_11(self) -> bool:
         """
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
@@ -92,7 +91,7 @@ class TestBMZAPSH4:
             return True
         return False
 
-    def st_test_20_bmz_apsh_4(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка срабатывания защиты блока по уставкам
         """
@@ -192,9 +191,9 @@ class TestBMZAPSH4:
         return True
 
     def st_test_bmz_apsh_4(self) -> [bool, bool]:
-        if self.st_test_10_bmz_apsh_4():
-            if self.st_test_11_bmz_apsh_4():
-                if self.st_test_20_bmz_apsh_4():
+        if self.st_test_10():
+            if self.st_test_11():
+                if self.st_test_20():
                     return True, self.health_flag
         return False, self.health_flag
 

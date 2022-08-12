@@ -3,10 +3,8 @@
 
 """
 Алгоритм проверки
-Тип блока Производитель
-БДУ-4-2 Нет производителя
-БДУ-4-2 ДонЭнергоЗавод
-БДУ-4-2 ИТЭП
+Тип блока: БДУ-4-2
+Производитель: Нет производителя, ДонЭнергоЗавод, ИТЭП
 
 """
 
@@ -106,6 +104,7 @@ class TestBDU42:
                 return True
         return False
 
+    # noinspection DuplicatedCode
     def st_test_32(self) -> bool:
         """
             3. Отключение исполнительного элемента при увеличении сопротивления цепи заземления
@@ -135,7 +134,8 @@ class TestBDU42:
 
     def st_test_42(self) -> bool:
         """
-            Тест 4. Защита от потери управляемости при замыкании проводов ДУ
+        Тест 4. Защита от потери управляемости при замыкании проводов ДУ.
+        :return:
         """
         self.logger.debug("старт теста 4.2")
         self.ctrl_kl.ctrl_relay('KL11', True)
@@ -153,7 +153,8 @@ class TestBDU42:
 
     def st_test_50(self) -> bool:
         """
-            Тест 5. повторяем тесты 2.2 и 2.3
+        Тест 5. повторяем тесты 2.2 и 2.3
+        :return:
         """
         if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a1=15, err_code_a2=16,
                                       position_a1=True, position_a2=True):
@@ -164,7 +165,8 @@ class TestBDU42:
 
     def st_test_52(self) -> bool:
         """
-            Тест 5. Защита от потери управляемости при обрыве проводов ДУ
+        Тест 5. Защита от потери управляемости при обрыве проводов ДУ
+        :return: bool
         """
         self.logger.debug("старт теста 5.2")
         self.ctrl_kl.ctrl_relay('KL12', False)
@@ -177,7 +179,8 @@ class TestBDU42:
 
     def st_test_bdu_4_2(self) -> bool:
         """
-            Главная функция которая собирает все остальные.
+        Главная функция которая собирает все остальные.
+        :return: bool
         """
         if self.st_test_1():
             if self.st_test_20():
@@ -188,7 +191,7 @@ class TestBDU42:
                                 if self.st_test_40():
                                     if self.st_test_42():
                                         if self.st_test_50():
-                                            if self.st_test_52():
+                                            if self.st_test_52:
                                                 return True
         return False
 
