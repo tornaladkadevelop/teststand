@@ -85,13 +85,13 @@ class TestMMTZD:
         else:
             self.mysql_conn.mysql_ins_result("неисправен", "1")
             if in_a1 is False:
-                self.logger.debug("положение входа 1 не соответствует", 1)
+                self.logger.debug("положение входа 1 не соответствует")
                 self.mysql_conn.mysql_error(412)
             elif in_a5 is False:
-                self.logger.debug("положение входа 5 не соответствует", 1)
+                self.logger.debug("положение входа 5 не соответствует")
                 self.mysql_conn.mysql_error(413)
             return False
-        self.logger.debug("положение выходов блока соответствует", 3)
+        self.logger.debug("положение выходов блока соответствует")
         return True
 
     def st_test_12(self) -> bool:
@@ -135,7 +135,7 @@ class TestMMTZD:
             in_a1, in_a5 = self.di_read.di_read('in_a1', 'in_a5')
             self.reset_relay.stop_procedure_3()
             if in_a1 is False and in_a5 is False:
-                self.logger.debug("положение выходов блока соответствует", 3)
+                self.logger.debug("положение выходов блока соответствует")
                 if self.subtest_23():
                     self.mysql_conn.mysql_ins_result('исправен', f'{self.list_num_yach_test_2[k]}')
                 else:

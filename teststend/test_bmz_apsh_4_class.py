@@ -12,8 +12,6 @@
 import sys
 import logging
 
-from time import sleep
-
 from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
@@ -68,17 +66,9 @@ class TestBMZAPSH4:
             return False
         self.mysql_conn.mysql_ins_result('идёт тест 1.1', '1')
         self.ctrl_kl.ctrl_relay('KL66', True)
-        self.reset_protect.sbros_zashit_kl1()
-        in_a1, *_ = self.di_read.di_read('in_a1')
-        if in_a1 is False:
-            pass
-        else:
-            self.logger.debug("вход 1 не соответствует", 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(342)
-            return False
-        self.logger.debug("вход 1 соответствует", 4)
-        return True
+        if self.reset_protection(test_num=1, subtest_num=1.0, err_code=342):
+            return True
+        return False
 
     def st_test_11(self) -> bool:
         """
@@ -95,8 +85,8 @@ class TestBMZAPSH4:
         """
         Тест 2. Проверка срабатывания защиты блока по уставкам
         """
-        self.logger.debug("запуск теста 2", 3)
-        self.mysql_conn.mysql_ins_result('идёт тест 2', '1')
+        self.logger.debug("запуск теста 2")
+        self.mysql_conn.mysql_ins_result('идёт тест 2.0', '1')
         k = 0
         for i in self.list_ust:
             msg_4 = 'Установите регулятор уставок на блоке в положение:'
@@ -117,25 +107,25 @@ class TestBMZAPSH4:
                 self.mysql_conn.mysql_ins_result('неисправен TV1', '1')
             # 2.1.  Проверка срабатывания блока от сигнала нагрузки:
             calc_delta_t = self.ctrl_kl.ctrl_ai_code_v0(111)
-            self.logger.debug(f'delta t:\t {calc_delta_t:.1f}', 2)
+            self.logger.debug(f'delta t:\t {calc_delta_t:.1f}')
             self.list_delta_t.append(f'{calc_delta_t:.1f}')
             self.mysql_conn.mysql_add_message(f'уставка {self.list_ust_num[k]} дельта t: {calc_delta_t:.1f}')
             in_a1, *_ = self.di_read.di_read('in_a1')
             if in_a1 is True:
-                self.logger.debug("вход 1 соответствует", 4)
+                self.logger.debug("вход 1 соответствует")
                 self.reset_relay.stop_procedure_3()
-                if self.sbros_zashit():
+                if self.reset_protection(test_num=2, subtest_num=2.2):
                     k += 1
                     continue
                 else:
                     return False
             else:
-                self.logger.debug("вход 1 не соответствует", 1)
+                self.logger.debug("вход 1 не соответствует")
                 self.mysql_conn.mysql_ins_result('неисправен', '1')
                 self.mysql_conn.mysql_error(344)
                 self.reset_relay.stop_procedure_3()
                 if self.subtest_2_2(i=i, k=k):
-                    if self.sbros_zashit():
+                    if self.reset_protection(test_num=2, subtest_num=2.2):
                         k += 1
                         continue
                     else:
@@ -143,15 +133,15 @@ class TestBMZAPSH4:
                 else:
                     return False
         self.mysql_conn.mysql_ins_result('исправен', '1')
-        self.logger.debug("тест 2 пройден", 3)
-        self.logger.debug("сбрасываем все и завершаем проверку", 3)
+        self.logger.debug("тест 2 пройден")
+        self.logger.debug("сбрасываем все и завершаем проверку")
         for t1 in range(len(self.list_delta_t)):
             self.list_result.append((self.list_ust_num[t1], self.list_delta_t[t1]))
         self.mysql_conn.mysql_ubtz_btz_result(self.list_result)
         return True
 
     def subtest_2_2(self, i, k):
-        if self.sbros_zashit():
+        if self.reset_protection(test_num=2, subtest_num=2.2):
             pass
         else:
             return False
@@ -167,28 +157,31 @@ class TestBMZAPSH4:
         if in_a1 is True:
             pass
         else:
-            self.logger.debug("вход 1 не соответствует", 1)
+            self.logger.debug("вход 1 не соответствует")
             self.mysql_conn.mysql_ins_result('неисправен', '1')
             self.mysql_conn.mysql_error(346)
             return False
         self.reset_relay.stop_procedure_3()
         return True
 
-    def sbros_zashit(self):
-        self.ctrl_kl.ctrl_relay('KL1', True)
-        sleep(1.5)
-        self.ctrl_kl.ctrl_relay('KL1', False)
-        sleep(2)
+    def reset_protection(self, *, test_num: int, subtest_num: float, err_code: int = 344) -> bool:
+        """
+        Метод сброса защиты блока.
+        :param test_num:
+        :param subtest_num:
+        :param err_code:
+        :return:
+        """
+        self.logger.debug(f"сброс защит блока, тест {test_num}, подтест {subtest_num}")
+        self.reset_protect.sbros_zashit_kl1()
         in_a1, *_ = self.di_read.di_read('in_a1')
         if in_a1 is False:
-            pass
-        else:
-            self.logger.debug("вход 1 не соответствует", 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            self.mysql_conn.mysql_error(344)
-            return False
-        self.logger.debug("вход 1 соответствует", 4)
-        return True
+            self.logger.debug("вход 1 соответствует")
+            return True
+        self.logger.debug("вход 1 не соответствует")
+        self.mysql_conn.mysql_ins_result('неисправен', f'{test_num}')
+        self.mysql_conn.mysql_error(err_code)
+        return False
 
     def st_test_bmz_apsh_4(self) -> [bool, bool]:
         if self.st_test_10():

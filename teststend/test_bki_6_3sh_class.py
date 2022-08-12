@@ -45,7 +45,7 @@ class TestBKI6:
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
-    def st_test_1_bki6(self) -> bool:
+    def st_test_1(self) -> bool:
         """
         Тест 1. Проверка исходного состояния контактов блока при отсутствии напряжения питания
         """
@@ -75,7 +75,7 @@ class TestBKI6:
         self.mysql_conn.mysql_ins_result('исправен', '1')
         return True
 
-    def st_test_20_bki6(self) -> bool:
+    def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работы контактов блока при подаче питания на блок и отсутствии утечки
         """
@@ -107,7 +107,7 @@ class TestBKI6:
         self.logger.debug('тест 2.0 положение выходов соответствует', 4)
         return True
 
-    def st_test_21_bki6(self) -> bool:
+    def st_test_21(self) -> bool:
         """
         2.1. Проверка установившегося состояния контактов по истечению 20 сек
         """
@@ -128,7 +128,7 @@ class TestBKI6:
         self.mysql_conn.mysql_ins_result('исправен', '2')
         return True
 
-    def st_test_30_bki6(self) -> bool:
+    def st_test_30(self) -> bool:
         """
         Тест 3. Проверка работы контактов реле К4 «Блокировка ВКЛ».
         """
@@ -150,7 +150,7 @@ class TestBKI6:
         self.logger.debug('тест 3.1 положение выходов соответствует', 4)
         return True
 
-    def st_test_31_bki6(self) -> bool:
+    def st_test_31(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL36', False)
         k3 = 0
         in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
@@ -179,7 +179,7 @@ class TestBKI6:
         self.logger.debug('тест 3.2 положение выходов соответствует', 4)
         return True
 
-    def st_test_32_bki6(self) -> bool:
+    def st_test_32(self) -> bool:
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
         if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
             pass
@@ -197,7 +197,7 @@ class TestBKI6:
         self.mysql_conn.mysql_ins_result('исправен', '3')
         return True
 
-    def st_test_40_bki6(self) -> bool:
+    def st_test_40(self) -> bool:
         """
         Тест 4. Проверка работы контактов реле К6 «Срабатывание БКИ»
         """
@@ -220,7 +220,7 @@ class TestBKI6:
         self.logger.debug('тест 4.1 положение выходов соответствует', 4)
         return True
 
-    def st_test_41_bki6(self) -> bool:
+    def st_test_41(self) -> bool:
         """
         4.2. Отключение 30 кОм
         """
@@ -243,7 +243,7 @@ class TestBKI6:
         self.mysql_conn.mysql_ins_result('исправен', '4')
         return True
 
-    def st_test_50_bki6(self) -> bool:
+    def st_test_50(self) -> bool:
         """
         Тест 5. Проверка исправности контактов реле К5 «Срабатывание БКИ на сигнал
         """
@@ -265,7 +265,7 @@ class TestBKI6:
         self.logger.debug('тест 5.1 положение выходов соответствует', 4)
         return True
 
-    def st_test_51_bki6(self) -> bool:
+    def st_test_51(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL22', False)
         sleep(5)
         in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
@@ -286,16 +286,16 @@ class TestBKI6:
         return True
 
     def st_test_bki_6_3sh(self) -> bool:
-        if self.st_test_1_bki6():
-            if self.st_test_20_bki6():
-                if self.st_test_21_bki6():
-                    if self.st_test_30_bki6():
-                        if self.st_test_31_bki6():
-                            if self.st_test_32_bki6():
-                                if self.st_test_40_bki6():
-                                    if self.st_test_41_bki6():
-                                        if self.st_test_50_bki6():
-                                            if self.st_test_51_bki6():
+        if self.st_test_1():
+            if self.st_test_20():
+                if self.st_test_21():
+                    if self.st_test_30():
+                        if self.st_test_31():
+                            if self.st_test_32():
+                                if self.st_test_40():
+                                    if self.st_test_41():
+                                        if self.st_test_50():
+                                            if self.st_test_51():
                                                 return True
         return False
 

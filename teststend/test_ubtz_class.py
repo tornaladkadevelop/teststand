@@ -128,7 +128,7 @@ class TestUBTZ:
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
             for qw in range(4):
                 self.calc_delta_t_bmz = self.ctrl_kl.ctrl_ai_code_v0(109)
-                self.logger.debug(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}', )
+                self.logger.debug(f'тест 2, дельта t\t{self.calc_delta_t_bmz:.1f}')
                 if self.calc_delta_t_bmz == 9999:
                     self.reset_protect.sbros_zashit_ubtz()
                     continue
