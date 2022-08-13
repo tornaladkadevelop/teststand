@@ -50,6 +50,7 @@ class Procedure:
         self.reset = ResetRelay()
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
+        self.di_read = DIRead()
 
     def start_procedure_1(self) -> bool:
         """
@@ -68,7 +69,7 @@ class Procedure:
         self.logger.debug("включение KL37")
         sleep(1)
         for i in range(3):
-            in_b0 = self.read_mb.read_discrete(8)
+            in_b0, *_ = self.di_read.di_read('in_b0')
             self.logger.debug(f"in_b0 = {in_b0} (False)")
             if in_b0 is False:
                 self.logger.debug(f"попытка: {i}, процедура 1 пройдена")

@@ -6,7 +6,7 @@ import logging
 
 from time import time
 
-from .modbus import *
+from .modbus import DIRead, CtrlKL
 from .exception import *
 
 __all__ = ["Bug", "DeltaTimeNoneKL63"]
@@ -24,7 +24,7 @@ class DeltaTimeNoneKL63:
 
     def __init__(self):
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
+        self.di_read = DIRead()
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
@@ -42,11 +42,11 @@ class DeltaTimeNoneKL63:
         return delta_t_calc
 
     def __inputs_a6(self):
-        in_a6 = self.read_mb.read_discrete(6)
+        in_a6, *_ = self.di_read.di_read('in_a6')
         return in_a6
 
     def __inputs_b1(self):
-        in_b1 = self.read_mb.read_discrete(9)
+        in_b1, *_ = self.di_read.di_read('in_b1')
         return in_b1
 
 

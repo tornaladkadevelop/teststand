@@ -135,6 +135,7 @@ class ResetRelay:
         self.ctrl_kl.ctrl_relay('KL58', False)
         self.ctrl_kl.ctrl_relay('KL59', False)
         self.ctrl_kl.ctrl_relay('KL60', False)
+        self.logger.debug("реле вторичной обмотки отключены")
 
     def stop_procedure_1(self):
         self.logger.debug("отключение реле процедуры 1")

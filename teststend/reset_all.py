@@ -5,8 +5,8 @@ import sys
 
 from time import time
 
-from gen_func_utils import ResetRelay
-from gen_mb_client import CtrlKL
+from general_func.reset import ResetRelay
+from general_func.modbus import CtrlKL
 
 
 def res_rel_0():
