@@ -3,13 +3,13 @@
 
 import logging
 
-from time import sleep
+from time import sleep, time
 
 from OpenOPC import client
 
 from general_func.exception import ModbusConnectException
 
-__all__ = ['CtrlKL', 'ReadMB', 'DIRead']
+__all__ = ['CtrlKL', 'ReadMB', 'DIRead', "AIRead"]
 
 
 class CtrlKL:
@@ -186,14 +186,14 @@ class CtrlKL:
         self.opc[kl] = ctrl
 
     def reset_all_v1(self) -> None:
-        for i in range(len(self.__list_relay)):
-            kl = self.__list_relay[i]
+        for i1 in range(len(self.__list_relay)):
+            kl = self.__list_relay[i1]
             self.opc[kl] = False
 
     def reset_all_v2(self) -> None:
         kl = self.__dic_relay.keys()
-        for i in kl:
-            rele = self.__dic_relay[i]
+        for i2 in kl:
+            rele = self.__dic_relay[i2]
             self.opc[rele] = False
 
     def ctrl_ai_code_v0(self, code: int) -> [int, float]:
@@ -313,8 +313,8 @@ class ReadMB:
         self.analog_tags_value = []
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
-        self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
-                   'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
+        # self.di = {'in_a0': 0, 'in_a1': 1, 'in_a2': 2, 'in_a3': 3, 'in_a4': 4, 'in_a5': 5, 'in_a6': 6, 'in_a7': 7,
+        #            'in_b0': 8, 'in_b1': 9, 'in_b2': 10, 'in_b3': 11, 'in_b4': 12, 'in_b5': 13}
 
     # def read_discrete(self, tag_index):
     #     self.tags_value.append(self.opc.list('Выходы.inputs')[tag_index])
@@ -362,57 +362,57 @@ class ReadMB:
     #     else:
     #         return list_result
 
-    def read_analog(self) -> [int, float, None]:
-        """
-            #in_analog_real := INT_TO_REAL(#in_analog);
-            #out_analog := ((#in_analog_real - #analog_min_code) * (#analog_max - #analog_min)) /
-            (#analog_max_code - #analog_min_code) + #analog_min;
-            еще варианты вычисления:
-            # meas_volt = analog_inp_fl / 69.12
-            # meas_volt = ((analog_inp_fl - analog_min_code) * (analog_max - analog_min)) / \
-            #             (analog_max_code - analog_min_code) + analog_min
-        :return:
-        """
-        analog_max_code = 27648.0
-        analog_max = 400
-        self.analog_tags_value.append(self.opc.list('AI.AI')[0])
-        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
-        conv_lst = ' '.join(map(str, val))
-        list_str = conv_lst.split(', ', 5)
-        list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
-            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
-                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
-        analog_inp_fl = float(list_str[1])
-        meas_volt = analog_inp_fl * analog_max / analog_max_code
-        return meas_volt
-
-    def read_analog_ai2(self) -> [int, float]:
-        """
-        #in_analog_real := INT_TO_REAL(#in_analog);
-        #out_analog := ((#in_analog_real - #analog_min_code) * (#analog_max - #analog_min)) /
-        (#analog_max_code - #analog_min_code) + #analog_min;
-        :return:
-        """
-        analog_max_code = 27648.0
-        analog_min_code = 0
-        analog_max = 10
-        analog_min = 0
-        self.analog_tags_value.append(self.opc.list('AI.AI')[2])
-        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
-        conv_lst = ' '.join(map(str, val))
-        list_str = conv_lst.split(', ', 5)
-        list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
-            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
-                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
-        analog_inp_fl = float(list_str[1])
-        # meas_volt = analog_inp_fl / 69.12
-        meas_volt = ((analog_inp_fl - analog_min_code) * (analog_max - analog_min)) / \
-                    (analog_max_code - analog_min_code) + analog_min
-        return meas_volt
+    # def read_analog(self) -> [int, float, None]:
+    #     """
+    #         #in_analog_real := INT_TO_REAL(#in_analog);
+    #         #out_analog := ((#in_analog_real - #analog_min_code) * (#analog_max - #analog_min)) /
+    #         (#analog_max_code - #analog_min_code) + #analog_min;
+    #         еще варианты вычисления:
+    #         # meas_volt = analog_inp_fl / 69.12
+    #         # meas_volt = ((analog_inp_fl - analog_min_code) * (analog_max - analog_min)) / \
+    #         #             (analog_max_code - analog_min_code) + analog_min
+    #     :return:
+    #     """
+    #     analog_max_code = 27648.0
+    #     analog_max = 400
+    #     self.analog_tags_value.append(self.opc.list('AI.AI')[0])
+    #     val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
+    #     conv_lst = ' '.join(map(str, val))
+    #     list_str = conv_lst.split(', ', 5)
+    #     list_str[0] = list_str[0][2:-1]
+    #     if list_str[2] != 'Good':
+    #         self.logger.warning(f'качество сигнала {list_str[2]}')
+    #         raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+    #                                      "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
+    #     analog_inp_fl = float(list_str[1])
+    #     meas_volt = analog_inp_fl * analog_max / analog_max_code
+    #     return meas_volt
+    #
+    # def read_analog_ai2(self) -> [int, float]:
+    #     """
+    #     #in_analog_real := INT_TO_REAL(#in_analog);
+    #     #out_analog := ((#in_analog_real - #analog_min_code) * (#analog_max - #analog_min)) /
+    #     (#analog_max_code - #analog_min_code) + #analog_min;
+    #     :return:
+    #     """
+    #     analog_max_code = 27648.0
+    #     analog_min_code = 0
+    #     analog_max = 10
+    #     analog_min = 0
+    #     self.analog_tags_value.append(self.opc.list('AI.AI')[2])
+    #     val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
+    #     conv_lst = ' '.join(map(str, val))
+    #     list_str = conv_lst.split(', ', 5)
+    #     list_str[0] = list_str[0][2:-1]
+    #     if list_str[2] != 'Good':
+    #         self.logger.warning(f'качество сигнала {list_str[2]}')
+    #         raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+    #                                      "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
+    #     analog_inp_fl = float(list_str[1])
+    #     # meas_volt = analog_inp_fl / 69.12
+    #     meas_volt = ((analog_inp_fl - analog_min_code) * (analog_max - analog_min)) / \
+    #                 (analog_max_code - analog_min_code) + analog_min
+    #     return meas_volt
 
     def read_uint_error_4(self) -> [int, float]:
         """
@@ -433,7 +433,7 @@ class ReadMB:
 
     def read_uint_error_1(self) -> [int, float]:
         """
-            считывание тега модбас error_1
+            считывание тега modbus error_1
         :return:
         """
         self.analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
@@ -450,7 +450,7 @@ class ReadMB:
 
     def read_uint_error_2(self) -> [int, float]:
         """
-            считывание тега модбас error_2
+            считывание тега modbus error_2
         :return:
         """
         self.analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
@@ -510,7 +510,7 @@ class DIRead:
         gr_di = 'Выходы.inputs'
         read_tags = self.opc.read(tag_list, group=gr_di, update=1, include_error=True)
         self.opc.remove(gr_di)
-        self.logger.debug(f'считанные значения {read_tags}')
+        self.logger.info(f'считанные значения {read_tags}')
         if read_tags[0][2] != 'Good':
             self.logger.warning(f'качество сигнала {read_tags[0][2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
@@ -518,6 +518,53 @@ class DIRead:
         for k in range(len(args)):
             position.append(read_tags[k][1])
         return position
+
+
+class AIRead:
+    """
+    Класс для считывания аналоговых значений из OPC сервера.
+    """
+    def __init__(self):
+        self.opc = client()
+        self.opc.connect('arOPC.arOpcServer.1')
+        self.logger = logging.getLogger(__name__)
+
+    def ai_read(self, teg: str) -> float:
+        """
+        Метод считывания аналоговых значений из OPC сервера, по входам измеряющим напряжение в стенде.
+        :param teg: принимает значение тега который нужно прочитать ('AI0' или 'AI2')
+        :return: возвращает вычисленное значение напряжения в первичных величинах.
+        """
+        read_tags: list = []
+
+        analog_max_code = 27648.0
+        analog_max_ai0 = 400.0
+        analog_max_ai2 = 10.0
+
+        read_tags.clear()
+
+        self.logger.debug("старт считывания аналоговых входов ПЛК")
+        gr_ai = 'AI.AI.'
+        read_tags = self.opc.read(f'AI.AI.{teg}', group=gr_ai, update=1, include_error=True)
+        print(read_tags)
+        self.opc.remove(gr_ai)
+        self.logger.info(f'считанные значения {read_tags}')
+        if read_tags[1] != 'Good':
+            self.logger.warning(f'качество сигнала {read_tags[1]}')
+            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
+        analog_inp_fl = read_tags[0]
+        if teg == 'AI0':
+            calc_volt = analog_inp_fl * analog_max_ai0 / analog_max_code
+            self.logger.info(f'возврат результата AI0 = {calc_volt}')
+            return calc_volt
+        elif teg == 'AI2':
+            calc_volt = analog_inp_fl * analog_max_ai2 / analog_max_code
+            self.logger.info(f'возврат результата AI2 = {calc_volt}')
+            return calc_volt
+        else:
+            self.logger.info(f'возврат результата (небыл получен аргумент) = {analog_inp_fl}')
+            return analog_inp_fl
 
 
 class CtrlRead:
@@ -629,8 +676,8 @@ class CtrlRead:
 
     def ctrl_read(self, relay):
 
-        position: list = []
-        tag_list = []
+        # position: list = []
+        # tag_list = []
         read_tags = []
         read_tags.clear()
 
@@ -656,7 +703,8 @@ if __name__ == '__main__':
     try:
         # read_mb = DIRead()
         # read_mb = ReadMB()
-        read_ctrl = CtrlRead()
+        # read_ctrl = CtrlRead()
+        read_ai = AIRead()
         # st_timer = time()
         # a = read_mb.read_discrete(0)
         # b = read_mb.read_discrete(1)
@@ -682,27 +730,36 @@ if __name__ == '__main__':
         # # print(a)
         # print(type(a))
         # print(stop_timer - st_timer)
-    #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
-    #     print(in_1, in_5, in_6)
-    #     read_mb.di_read('in_b1')
-    #     for i in range(10):
-    #         in_b1, *_ = read_mb.di_read('in_b1')
-    #         print(in_b1)
-    #     # read_mb.di_read('in_a3')
-    #     in_a3, *_ = read_mb.di_read('in_a3')
-    #     print(in_a3)
-    # #     in_a0 = read_mb.read_discrete('inp_00')
-    # #     read_mb.di_read('in_a0', 'in_a1')
-    # #     read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
-    #     in_a0, in_a1, in_b0, in_a5 = read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
-    #     print(in_a0, in_a1, in_b0, in_a5)
-    #     in_a7, in_b3, in_b5, in_a6 = read_mb.di_read('in_a7', 'in_b3', 'in_b5', 'in_a6')
-    #     print(in_a7, in_b3, in_b5, in_a6)
-    #     in_a2, in_a4 = read_mb.di_read('in_a3', 'in_a4')
-    #     print(in_a3, in_a4)
+        #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
+        #     print(in_1, in_5, in_6)
+        #     read_mb.di_read('in_b1')
+        #     for i in range(10):
+        #         in_b1, *_ = read_mb.di_read('in_b1')
+        #         print(in_b1)
+        #     # read_mb.di_read('in_a3')
+        #     in_a3, *_ = read_mb.di_read('in_a3')
+        #     print(in_a3)
+        # #     in_a0 = read_mb.read_discrete('inp_00')
+        # #     read_mb.di_read('in_a0', 'in_a1')
+        # #     read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
+        #     in_a0, in_a1, in_b0, in_a5 = read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
+        #     print(in_a0, in_a1, in_b0, in_a5)
+        #     in_a7, in_b3, in_b5, in_a6 = read_mb.di_read('in_a7', 'in_b3', 'in_b5', 'in_a6')
+        #     print(in_a7, in_b3, in_b5, in_a6)
+        #     in_a2, in_a4 = read_mb.di_read('in_a3', 'in_a4')
+        #     print(in_a3, in_a4)
         # print(in_a0, in_a1, in_b0, in_b1)
-        KL1 = read_ctrl.ctrl_read('KL1')
-        print(KL1)
+        # KL1 = read_ctrl.ctrl_read('KL1')
+        # print(KL1)
+        st_time = time()
+        for i in range(20):
+            ai0_res = read_ai.ai_read('AI0')
+            ai2_res = read_ai.ai_read('AI2')
+
+            print(ai0_res)
+            print(ai2_res)
+        stop_time = time()
+        print(stop_time - st_time)
     except IOError:
         print('системная ошибка')
     except ModbusConnectException as mce:

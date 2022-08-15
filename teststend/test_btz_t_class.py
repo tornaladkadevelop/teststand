@@ -32,7 +32,7 @@ class TestBTZT:
         self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -228,12 +228,12 @@ class TestBTZT:
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_pmz_num[k]}, подтест 4.1')
             self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i)
-            self.meas_volt = self.read_mb.read_analog()
+            self.meas_volt = self.ai_read.ai_read('AI0')
             self.func_delta_t_pmz(k=k)
             self.reset_relay.stop_procedure_3()
             if self.calc_delta_t_pmz == 9999 or self.malfunction is True:
                 self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1)
-                self.meas_volt = self.read_mb.read_analog()
+                self.meas_volt = self.ai_read.ai_read('AI0')
                 self.func_delta_t_pmz(k=k)
                 self.reset_relay.stop_procedure_3()
 
@@ -304,7 +304,7 @@ class TestBTZT:
 
             # измерение испытательного напряжения и вычисление процентного соотношения
             self.mysql_conn.mysql_ins_result('идет тест 5.2', '5')
-            self.meas_volt = self.read_mb.read_analog()
+            self.meas_volt = self.ai_read.ai_read('AI0')
             # Δ%= 0.0044*U42[i]+2.274* U4[i]
             calc_delta_percent_tzp = 0.0044 * self.meas_volt ** 2 + 2.274 * self.meas_volt
 

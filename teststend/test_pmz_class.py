@@ -35,7 +35,7 @@ class TestPMZ:
         self.proc_full = ProcedureFull()
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -196,7 +196,7 @@ class TestPMZ:
             else:
                 return False
             # Δ%= 0.0038*U42[i]+2.27* U4[i]
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             calc_delta_percent = 0.0038 * meas_volt ** 2 + 2.27 * meas_volt
             self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
             # 3.4.  Проверка срабатывания блока от сигнала нагрузки:
@@ -267,7 +267,7 @@ class TestPMZ:
         else:
             return False
         # Δ%= 0.0038*U42[i]+2.27* U4[i]
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         calc_delta_percent = 0.0038 * meas_volt ** 2 + 2.27 * meas_volt
         self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'
         for wq in range(4):

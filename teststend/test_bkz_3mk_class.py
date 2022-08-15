@@ -44,6 +44,7 @@ class TestBKZ3MK:
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.ai_read = AIRead()
 
         # Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         # медленные
@@ -197,13 +198,13 @@ class TestBKZ3MK:
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_mtz_num[k]}, подтест 4.1')
             self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.0)
-            self.meas_volt = self.read_mb.read_analog()
+            self.meas_volt = self.ai_read.ai_read('AI0')
             self.func_delta_t_mtz(k=k)
             self.reset_relay.stop_procedure_3()
             # если не прошел предыдущий тест, то повышаем напряжение в 1.1 раза и повторяем проверку
             if self.calc_delta_t_mtz == 9999 or self.malfunction is True:
                 self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1)
-                self.meas_volt = self.read_mb.read_analog()
+                self.meas_volt = self.ai_read.ai_read('AI0')
                 self.func_delta_t_mtz(k=k)
                 self.reset_relay.stop_procedure_3()
 
@@ -276,7 +277,7 @@ class TestBKZ3MK:
 
             # формирование напряжения для проверки по уставкам
             self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=n)
-            self.meas_volt = self.read_mb.read_analog()
+            self.meas_volt = self.ai_read.ai_read('AI0')
 
             # 5.4.  Проверка срабатывания блока от сигнала нагрузки:
             self.func_delta_t_tzp()

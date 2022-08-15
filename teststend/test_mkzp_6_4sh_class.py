@@ -28,7 +28,7 @@ class TestMKZP6:
     def __init__(self):
         self.reset = ResetRelay()
         self.proc = Procedure()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -113,7 +113,7 @@ class TestMKZP6:
         self.ctrl_kl.ctrl_relay('KL90', True)
         sleep(5)
         self.ctrl_kl.ctrl_relay('KL63', True)
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.debug(f'измеренное напряжение:\t{meas_volt}')
         if 0.8 * meas_volt_ust <= meas_volt <= 1.0 * meas_volt_ust:
             pass

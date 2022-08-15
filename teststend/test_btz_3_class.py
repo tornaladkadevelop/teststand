@@ -37,7 +37,7 @@ class TestBTZ3:
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest4in()
@@ -222,7 +222,7 @@ class TestBTZ3:
                 self.mysql_conn.mysql_ins_result("неисправен TV1", "4")
                 return False
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             # Δ%= 0.0062*U42+1.992* U4
             calc_delta_percent_pmz = 0.0062 * meas_volt ** 2 + 1.992 * meas_volt
             self.list_delta_percent_pmz.append(f'{calc_delta_percent_pmz:.2f}')
@@ -295,7 +295,7 @@ class TestBTZ3:
             else:
                 self.mysql_conn.mysql_ins_result("неисправен TV1", "5")
                 return False
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             # Δ%= 0.003*U42[i]+2.404* U4[i]
             calc_delta_percent_tzp = 0.003 * meas_volt ** 2 + 2.404 * meas_volt
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
@@ -357,7 +357,7 @@ class TestBTZ3:
             self.mysql_conn.mysql_ins_result("неисправен TV1", "4")
             return False
         # 4.2.2.  Проверка срабатывания блока от сигнала нагрузки:
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         # Δ%= 0.0062*U42+1.992* U4
         calc_delta_percent_pmz = 0.0062 * meas_volt ** 2 + 1.992 * meas_volt
         self.list_delta_percent_pmz[-1] = f'{calc_delta_percent_pmz:.2f}'

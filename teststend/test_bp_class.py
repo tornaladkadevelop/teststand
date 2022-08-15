@@ -32,7 +32,7 @@ class TestBP:
 
     def __init__(self):
         self.mb_ctrl = CtrlKL()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.di_read = DIRead()
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
@@ -88,7 +88,7 @@ class TestBP:
         sleep(5)
         self.mb_ctrl.ctrl_relay('KL76', True)
         sleep(5)
-        charge_1 = self.read_mb.read_analog_ai2()
+        charge_1 = self.ai_read.ai_read('AI2')
         self.logger.info(f'заряд конденсатора по истечении 5с:\t{charge_1} В')
         if charge_1 != 999:
             pass
@@ -96,7 +96,7 @@ class TestBP:
             self.mysql_conn.mysql_ins_result("неисправен", "2")
             return False
         sleep(15)
-        charge_2 = self.read_mb.read_analog_ai2()
+        charge_2 = self.ai_read.ai_read('AI2')
         self.logger.info(f'заряд конденсатора по истечении 15с:\t{charge_2} В')
         if charge_2 != 999:
             pass
@@ -158,7 +158,7 @@ class TestBP:
         """
         self.logger.debug("старт теста 4.0")
         self.mysql_conn.mysql_ins_result("идёт тест 4", "6")
-        meas_volt = self.read_mb.read_analog_ai2()
+        meas_volt = self.ai_read.ai_read('AI2')
         calc_volt = meas_volt * (103 / 3)
         self.logger.debug(f'вычисленное напряжение, должно быть больше 6\t{calc_volt:.2f}')
         if calc_volt >= 6:

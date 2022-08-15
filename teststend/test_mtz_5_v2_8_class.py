@@ -32,7 +32,7 @@ class TestMTZ5V28:
         self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -214,7 +214,7 @@ class TestMTZ5V28:
             # 3.1.  Проверка срабатывания блока от сигнала нагрузки:
             self.mysql_conn.mysql_ins_result(f'уставка {self.list_ust_mtz_num[k]}', '3')
             # Δ%= 3.4364*(U4[i])/0.63
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             calc_delta_percent_mtz = 3.4364 * meas_volt / 0.63
             self.logger.debug(f'дельта %\t{calc_delta_percent_mtz:.2f}')
             self.list_delta_percent_mtz.append(f'{calc_delta_percent_mtz:.2f}')
@@ -285,7 +285,7 @@ class TestMTZ5V28:
                 self.mysql_conn.mysql_ins_result("неисправен TV1", "4")
                 return False
             # Δ%= 3.4364*U4[i]/0.63
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             calc_delta_percent_tzp = 3.4364 * meas_volt / 0.63
             self.logger.debug(f'дельта %\t {calc_delta_percent_tzp:.2f}')
             self.list_delta_percent_tzp.append(f'{calc_delta_percent_tzp:.2f}')
@@ -358,7 +358,7 @@ class TestMTZ5V28:
             self.mysql_conn.mysql_ins_result('неисправен', '3')
             return False
         # 3.2.2.  Проверка срабатывания блока от сигнала нагрузки:
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         calc_delta_percent_mtz = 3.4364 * meas_volt / 0.63
         self.list_delta_percent_mtz[-1] = f'{calc_delta_percent_mtz:.2f}'
 

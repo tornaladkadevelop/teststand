@@ -30,7 +30,7 @@ class TestBUZ2:
     def __init__(self):
         self.proc = Procedure()
         self.reset = ResetRelay()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.mb_ctrl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -77,7 +77,7 @@ class TestBUZ2:
         self.mb_ctrl.ctrl_relay('KL90', True)
         sleep(5)
         self.mb_ctrl.ctrl_relay('KL63', True)
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.reset.sbros_kl63_proc_1_21_31()
         if min_volt <= meas_volt <= max_volt:
             return True

@@ -30,7 +30,7 @@ class TestMTZP2:
         self.reset = ResetRelay()
         self.proc = Procedure()
         self.resist = Resistor()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -102,7 +102,7 @@ class TestMTZP2:
         self.ctrl_kl.ctrl_relay('KL91', True)
         sleep(5)
         self.ctrl_kl.ctrl_relay('KL63', True)
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         min_volt = 0.8 * self.meas_volt_ust
         max_volt = 1.0 * self.meas_volt_ust
         self.logger.debug(f'измеренное напряжение\t{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')

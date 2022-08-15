@@ -38,7 +38,7 @@ class TestTZP:
         self.reset_protect = ResetProtection()
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
@@ -158,7 +158,7 @@ class TestTZP:
                 self.mysql_conn.mysql_ins_result('неисправен', '4')
                 self.logger.debug(f'процедура 1, 2.4, 3.4: не пройдена')
                 return False
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             self.logger.debug(f'измеренное напряжение: {meas_volt}')
             calc_delta_percent = 0.0044 * meas_volt ** 2 + 2.274 * meas_volt
             self.logger.debug(f'd%: {calc_delta_percent}')

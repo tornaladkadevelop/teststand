@@ -51,6 +51,7 @@ class Procedure:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.di_read = DIRead()
+        self.ai_read = AIRead()
 
     def start_procedure_1(self) -> bool:
         """
@@ -163,7 +164,7 @@ class Procedure:
         self.ctrl_kl.ctrl_relay('KL60', True)
         self.logger.debug("включение KL60")
         sleep(3)
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.info(f"измеренное U: {min_volt = } <= {meas_volt = } <= {max_volt = }")
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.1 пройдена")
@@ -188,7 +189,7 @@ class Procedure:
         sleep(3)
         min_volt = 41.232
         max_volt = 61.848
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.info(f'процедура 3.2 напряжение: {min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.2 пройдена")
@@ -215,7 +216,7 @@ class Procedure:
         sleep(3)
         min_volt = 0.88 * setpoint_volt
         max_volt = 1.11 * setpoint_volt
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.info(f'процедура 3.4 напряжение: {min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')
         if min_volt <= meas_volt <= max_volt:
             self.logger.debug(f"процедура 3.4 пройдена")
@@ -311,7 +312,7 @@ class Procedure:
                                         "Неисправность узла формирования напряжения в стенде")
 
     def sbros_vtor_obm(self) -> bool:
-        in_ai = self.read_mb.read_analog()
+        in_ai = self.ai_read.ai_read('AI0')
         if in_ai <= 1.1:
             return True
         if in_ai > 1.1:
@@ -327,7 +328,7 @@ class Procedure:
         """
         self.logger.debug("измерение U в процедуре 2.х")
         for i in range(3):
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             self.logger.info(f"измерение U: {meas_volt:.2f}")
             if meas_volt <= 1.1:
                 self.logger.debug("напряжение соответствует")

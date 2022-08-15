@@ -31,7 +31,7 @@ class TestUMZ:
         self.reset = ResetRelay()
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
@@ -151,7 +151,7 @@ class TestUMZ:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
                 progress_msg = f'канал АБ дельта %'
                 self.mysql_conn.mysql_ins_result(f'{progress_msg} {self.k}', '2')
-                self.meas_volt_ab = self.read_mb.read_analog()
+                self.meas_volt_ab = self.ai_read.ai_read('AI0')
                 calc_delta_percent_ab = 0.00004762 * self.meas_volt_ab ** 2 + 9.5648 * self.meas_volt_ab
                 self.list_delta_percent_ab.append(f'{calc_delta_percent_ab:.2f}')
                 self.test_setpoint_ab = True
@@ -181,7 +181,7 @@ class TestUMZ:
                 # Δ%= 0,00004762*(U4)2+9,5648* U4
                 progress_msg = f'канал ВГ дельта %'
                 self.mysql_conn.mysql_ins_result(f'{progress_msg} {self.k}', '2')
-                self.meas_volt_vg = self.read_mb.read_analog()
+                self.meas_volt_vg = self.ai_read.ai_read('AI0')
                 calc_delta_percent_vg = 0.00004762 * self.meas_volt_vg ** 2 + 9.5648 * self.meas_volt_vg
                 self.list_delta_percent_vg.append(f'{calc_delta_percent_vg:.2f}')
                 self.test_setpoint_vg = True
@@ -263,7 +263,7 @@ class TestUMZ:
                 my_msg(self.msg_4, "darkgrey")
                 self.test_setpoint_ab = False
                 continue
-        self.meas_volt_ab = self.read_mb.read_analog()
+        self.meas_volt_ab = self.ai_read.ai_read('AI0')
         self.ctrl_kl.ctrl_relay('KL73', True)
         if my_msg(self.msg_4):
             pass
@@ -280,7 +280,7 @@ class TestUMZ:
                 my_msg(self.msg_4, "darkgrey")
                 self.test_setpoint_vg = False
                 continue
-        self.meas_volt_vg = self.read_mb.read_analog()
+        self.meas_volt_vg = self.ai_read.ai_read('AI0')
         self.ctrl_kl.ctrl_relay('KL73', False)
         self.reset.stop_procedure_3()
         # Δ%= 0,00004762*(U4)2+9,5648* U4
@@ -330,7 +330,7 @@ class TestUMZ:
                 my_msg(self.msg_4, "darkgrey")
                 self.test_setpoint_ab = False
                 continue
-        self.meas_volt_ab = self.read_mb.read_analog()
+        self.meas_volt_ab = self.ai_read.ai_read('AI0')
         self.reset.stop_procedure_3()
         # Δ%= 0,00004762*(U4)2+9,5648* U4
         calc_delta_percent_ab = 0.00004762 * self.meas_volt_ab ** 2 + 9.5648 * self.meas_volt_ab
@@ -366,7 +366,7 @@ class TestUMZ:
                 my_msg(self.msg_4, "darkgrey")
                 self.test_setpoint_vg = False
                 continue
-        self.meas_volt_vg = self.read_mb.read_analog()
+        self.meas_volt_vg = self.ai_read.ai_read('AI0')
         self.ctrl_kl.ctrl_relay('KL73', False)
         self.reset.stop_procedure_3()
         # Δ%= 0,00004762*(U4)2+9,5648* U4

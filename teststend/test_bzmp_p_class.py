@@ -34,7 +34,7 @@ class TestBZMPP:
         self.proc = Procedure()
         self.reset = ResetRelay()
         self.resist = Resistor()
-        self.read_mb = ReadMB()
+        self.ai_read = AIRead()
         self.mb_ctrl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
@@ -89,7 +89,7 @@ class TestBZMPP:
         self.mb_ctrl.ctrl_relay('KL63', True)
         min_volt = 0.6 * meas_volt_ust
         max_volt = 1.0 * meas_volt_ust
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.debug(f'напряжение после включения KL63 '
                           f'{min_volt:.2f} <= {meas_volt:.2f} <= {max_volt:.2f}')
         if min_volt <= meas_volt <= max_volt:

@@ -37,6 +37,7 @@ class TestBMZ2:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
+        self.ai_read = AIRead()
 
         self.ust_test = 80.0
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
@@ -221,7 +222,7 @@ class TestBMZ2:
             else:
                 self.list_delta_t.append(f'{self.calc_delta_t:.1f}')
             # Δ%= 6,1085*U4
-            meas_volt = self.read_mb.read_analog()
+            meas_volt = self.ai_read.ai_read('AI0')
             calc_delta_percent = meas_volt * 6.1085
             self.logger.debug(f'дельта % \t {calc_delta_percent:.2f}')
             self.list_delta_percent.append(f'{calc_delta_percent:.2f}')
@@ -291,7 +292,7 @@ class TestBMZ2:
         else:
             return False
         # Δ%= 6,1085*U4
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         calc_delta_percent = meas_volt * 6.1085
         self.logger.debug(f'дельта % \t {calc_delta_percent:.2f}')
         self.list_delta_percent[-1] = f'{calc_delta_percent:.2f}'

@@ -71,6 +71,7 @@ class ProcedureFull:
         self.read_mb = ReadMB()
         # self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
+        self.ai_read = AIRead()
 
     def procedure_1_full(self, *, test_num: int = 1, subtest_num: float = 1.0, coef_min_volt: float = 0.6,
                          coef_max_volt: float = 1.1):
@@ -83,7 +84,7 @@ class ProcedureFull:
         min_volt, max_volt = self.proc.procedure_1_21_31_v1(coef_min=coef_min_volt, coef_max=coef_max_volt)
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
-        meas_volt = self.read_mb.read_analog()
+        meas_volt = self.ai_read.ai_read('AI0')
         self.logger.debug(f'напряжение после включения KL63:\t{meas_volt:.2f}\tдолжно быть '
                           f'от\t{min_volt:.2f}\tдо\t{max_volt:.2f}')
         self.reset_relay.sbros_kl63_proc_1_21_31()
