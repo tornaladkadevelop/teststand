@@ -15,7 +15,8 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.reset import ResetRelay
+from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import Subtest2in
 from gui.msgbox_1 import *
 
 __all__ = ["TestBZMPP1"]
@@ -30,6 +31,8 @@ class TestBZMPP1:
         self.mb_ctrl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
+        self.reset_protect = ResetProtection()
+        self.subtest = Subtest2in()
 
         self.ust: float = 14.64
         self.ust_pmz: float = 25.2
@@ -170,18 +173,9 @@ class TestBZMPP1:
         """
         2.4.2. Сброс защит после проверки
         """
-        self.logger.debug("идёт тест 2.3")
-        self.sbros_zashit()
-        sleep(1)
-        in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
-        if in_a1 is True and in_a6 is False:
-            pass
-        else:
-            self.logger.debug("положение выходов не соответствует")
-            self.mysql_conn.mysql_ins_result("неисправен", "2")
-            return False
-        self.mysql_conn.mysql_ins_result("исправен", "2")
-        return True
+        if self.reset_protection(test_num=2, subtest_num=2.3):
+            return True
+        return False
 
     def st_test_30(self) -> bool:
         """
@@ -299,23 +293,24 @@ class TestBZMPP1:
         """
         4.6. Сброс защит после проверки
         """
-        self.logger.debug("идёт тест 4.2")
-        self.sbros_zashit()
-        sleep(1)
-        in_a1, in_a6 = self.di_read.di_read('in_a1', 'in_a6')
-        if in_a1 is True and in_a6 is False:
-            pass
-        else:
-            self.logger.debug("положение выходов не соответствует")
-            self.mysql_conn.mysql_ins_result("неисправен", "4")
-            return False
-        self.mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "4")
-        return True
+        if self.reset_protection(test_num=4, subtest_num=4.2):
+            self.mysql_conn.mysql_ins_result(f'исправен, {self.timer_test_6_2:.1f} сек', "4")
+            return True
+        return False
 
-    def sbros_zashit(self):
-        self.mb_ctrl.ctrl_relay('KL24', True)
-        sleep(3)
-        self.mb_ctrl.ctrl_relay('KL24', False)
+    def reset_protection(self, *, test_num: int, subtest_num: float) -> bool:
+        """
+        Код ошибки	345	–	Сообщение	«Блок не исправен. Не работает сброс защиты блока после срабатывания».
+        :param test_num:
+        :param subtest_num:
+        :return:
+        """
+        self.reset_protect.sbros_zashit_kl24()
+        sleep(1)
+        if self.subtest.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=345, err_code_a2=345,
+                                    position_a1=True, position_a2=False, inp_1='in_a1', inp_2='in_a6'):
+            return True
+        return False
 
     def st_test_bzmp_p1(self) -> [bool, bool]:
         if self.st_test_10():

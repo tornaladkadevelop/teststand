@@ -286,3 +286,12 @@ class ResetProtection:
         self.ctrl_kl.ctrl_relay('KL1', False)
         self.ctrl_kl.ctrl_relay('KL31', False)
         self.logger.debug("отключены KL1, KL31")
+
+    def sbros_zashit_kl24(self):
+        """
+        Сброс защит блока через KL24.
+        :return:
+        """
+        self.ctrl_kl.ctrl_relay('KL24', True)
+        sleep(3)
+        self.ctrl_kl.ctrl_relay('KL24', False)
