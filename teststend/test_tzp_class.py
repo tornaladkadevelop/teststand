@@ -23,7 +23,7 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import *
+from general_func.subtest import ReadOPCServer, ProcedureFull
 from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
@@ -42,7 +42,7 @@ class TestTZP:
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         self._list_ust_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
         self._list_ust_volt = (25.7, 29.8, 34.3, 39.1, 43.7, 48.5)
@@ -77,8 +77,8 @@ class TestTZP:
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=277, err_code_a2=278, position_a1=False,
-                                    position_a2=True, inp_2='in_a5'):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=277, err_code_b=278, position_a=False,
+                                    position_b=True, di_b='in_a5'):
             return True
         return False
 
@@ -104,8 +104,8 @@ class TestTZP:
         else:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.0', '2')
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=282, err_code_a2=283,
-                                    position_a1=True, position_a2=False, inp_2='in_a5'):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=282, err_code_b=283,
+                                    position_a=True, position_b=False, di_b='in_a5'):
             return True
         return False
 
@@ -121,8 +121,8 @@ class TestTZP:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.1', '2')
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.1, err_code_a1=284, err_code_a2=285,
-                                    position_a1=False, position_a2=True, inp_2='in_a5'):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.1, err_code_a=284, err_code_b=285,
+                                    position_a=False, position_b=True, di_b='in_a5'):
             return True
         return False
 
@@ -242,8 +242,8 @@ class TestTZP:
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.5, err_code_a1=284, err_code_a2=285,
-                                    position_a1=False, position_a2=True, inp_2='in_a5'):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.5, err_code_a=284, err_code_b=285,
+                                    position_a=False, position_b=True, di_b='in_a5'):
             return True
         return False
 

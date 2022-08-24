@@ -19,7 +19,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
-from general_func.subtest import ProcedureFull, Subtest4in
+from general_func.subtest import ProcedureFull, ReadOPCServer
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -40,7 +40,7 @@ class TestBTZ3:
         self.ai_read = AIRead()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest4in()
+        self.di_read_full = ReadOPCServer()
 
         self.list_ust_tzp_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
         self.list_ust_tzp = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
@@ -409,10 +409,10 @@ class TestBTZ3:
         """
         self.logger.debug(f"сброс защит блока, тест {test_num}, подтест {subtest_num}")
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=3.0)
-        if self.subtest.subtest_4di(test_num=test_num, subtest_num=subtest_num, err_code_a=err_code_a,
-                                    err_code_b=err_code_b, err_code_c=err_code_c, err_code_d=err_code_d,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=test_num, subtest_num=subtest_num, err_code_a=err_code_a,
+                                         err_code_b=err_code_b, err_code_c=err_code_c, err_code_d=err_code_d,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 

@@ -17,7 +17,7 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import *
+from general_func.subtest import ProcedureFull, ReadOPCServer
 from general_func.reset import ResetRelay
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
@@ -35,7 +35,7 @@ class TestUMZ:
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest2in()
+        self.di_read_full = ReadOPCServer()
 
         self.list_ust_volt = (22.6, 27.1, 31.9, 36.5, 41.3, 46.4, 50.2, 54.7, 59.3, 63.8, 68.4)
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
@@ -87,8 +87,8 @@ class TestUMZ:
         return False
 
     def st_test_11(self) -> bool:
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.1, err_code_a1=476, err_code_a2=477,
-                                    position_a1=False, position_a2=True, inp_1='in_a1', inp_2='in_a2'):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.1, err_code_a=476, err_code_b=477,
+                                         position_a=False, position_b=True, di_a='in_a1', di_b='in_a2'):
             return True
         return False
 

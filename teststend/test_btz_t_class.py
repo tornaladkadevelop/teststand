@@ -18,7 +18,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
-from general_func.subtest import ProcedureFull, Subtest4in
+from general_func.subtest import ProcedureFull, ReadOPCServer
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -36,7 +36,7 @@ class TestBTZT:
         self.ctrl_kl = CtrlKL()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest4in()
+        self.di_read_full = ReadOPCServer()
 
         self.ust_test: float = 80.0
         # self.ust_1 = (23.7, 28.6, 35.56, 37.4, 42.6, 47.3)
@@ -106,10 +106,10 @@ class TestBTZT:
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.reset_protect.sbros_zashit_kl30()
-        if self.subtest.subtest_4di(test_num=1, subtest_num=1.0,
-                                    err_code_a=390, err_code_b=391, err_code_c=392, err_code_d=393,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=1, subtest_num=1.0,
+                                         err_code_a=390, err_code_b=391, err_code_c=392, err_code_d=393,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 
@@ -147,10 +147,10 @@ class TestBTZT:
         self.ctrl_kl.ctrl_relay('KL63', True)
         sleep(2)
         self.ctrl_kl.ctrl_relay('KL63', False)
-        if self.subtest.subtest_4di(test_num=2, subtest_num=2.1,
-                                    err_code_a=395, err_code_b=396, err_code_c=397, err_code_d=398,
-                                    position_a=False, position_b=True, position_c=True, position_d=False,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=2, subtest_num=2.1,
+                                         err_code_a=395, err_code_b=396, err_code_c=397, err_code_d=398,
+                                         position_a=False, position_b=True, position_c=True, position_d=False,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             self.reset_relay.stop_procedure_3()
             return True
         self.reset_relay.stop_procedure_3()
@@ -163,10 +163,10 @@ class TestBTZT:
         self.logger.debug("тест 2.2")
         self.mysql_conn.mysql_ins_result('идет тест 2.2', '2')
         self.reset_protect.sbros_zashit_kl30()
-        if self.subtest.subtest_4di(test_num=2, subtest_num=2.2,
-                                    err_code_a=399, err_code_b=400, err_code_c=401, err_code_d=402,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=2, subtest_num=2.2,
+                                         err_code_a=399, err_code_b=400, err_code_c=401, err_code_d=402,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             if my_msg(self.msg_9):
                 return True
         return False
@@ -176,10 +176,10 @@ class TestBTZT:
         Тест 3. Проверка работоспособности защиты ТЗП блока в режиме «Проверка»
         """
         if my_msg(self.msg_3):
-            if self.subtest.subtest_4di(test_num=3, subtest_num=3.0,
-                                        err_code_a=403, err_code_b=404, err_code_c=405, err_code_d=406,
-                                        position_a=True, position_b=False, position_c=False, position_d=True,
-                                        inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+            if self.di_read_full.subtest_4di(test_num=3, subtest_num=3.0,
+                                             err_code_a=403, err_code_b=404, err_code_c=405, err_code_d=406,
+                                             position_a=True, position_b=False, position_c=False, position_d=True,
+                                             di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
                 return True
         return False
 
@@ -195,10 +195,10 @@ class TestBTZT:
             return False
         self.reset_protect.sbros_zashit_kl30()
         sleep(1)
-        if self.subtest.subtest_4di(test_num=3, subtest_num=3.1,
-                                    err_code_a=407, err_code_b=408, err_code_c=409, err_code_d=410,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=3, subtest_num=3.1,
+                                         err_code_a=407, err_code_b=408, err_code_c=409, err_code_d=410,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 
@@ -345,10 +345,10 @@ class TestBTZT:
     def reset_protection(self, *, test_num: int, subtest_num: float):
         self.reset_protect.sbros_zashit_kl30()
         sleep(1)
-        if self.subtest.subtest_4di(test_num=test_num, subtest_num=subtest_num,
-                                    err_code_a=399, err_code_b=400, err_code_c=401, err_code_d=402,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+        if self.di_read_full.subtest_4di(test_num=test_num, subtest_num=subtest_num,
+                                         err_code_a=399, err_code_b=400, err_code_c=401, err_code_d=402,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 

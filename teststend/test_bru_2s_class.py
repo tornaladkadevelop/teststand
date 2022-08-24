@@ -15,7 +15,7 @@ import logging
 from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
-from general_func.subtest import *
+from general_func.subtest import SubtestBDU, ReadOPCServer
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay
 from gui.msgbox_1 import *
@@ -31,6 +31,7 @@ class TestBRU2S:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestBDU()
+        self.di_read = ReadOPCServer()
 
         self.msg_1 = "Переведите тумблер «П/А» на блоке в положение «П» и нажмите кнопку «ОК» " \
                      "Если на блоке нет тумблера «П/А» нажмите кнопку «Отмена»"
@@ -49,7 +50,7 @@ class TestBRU2S:
         Тест 1. Проверка исходного состояния блока:
         :return: bool:
         """
-        if self.sub_test.subtest_bdu_inp_x(test_num=1, subtest_num=1.0, err_code=47):
+        if self.di_read.subtest_1di(test_num=1, subtest_num=1.0, err_code=47):
             return True
         return False
 
@@ -61,7 +62,7 @@ class TestBRU2S:
         self.logger.debug(f"старт теста: 2, подтест: 0")
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug(f'включение KL21')
-        if self.sub_test.subtest_bdu_inp_x(test_num=2, subtest_num=2.0, err_code=48, position=False):
+        if self.di_read.subtest_1di(test_num=2, subtest_num=2.0, err_code=48, position=False):
             return True
         return False
 
@@ -85,7 +86,7 @@ class TestBRU2S:
         self.logger.debug(f"старт теста: 1, подтест: 0")
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(f'отключение KL12')
-        if self.sub_test.subtest_bdu_inp_x(test_num=2, subtest_num=2.3, err_code=51, position=False):
+        if self.di_read.subtest_1di(test_num=2, subtest_num=2.3, err_code=51, position=False):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug(f'отключение KL25')
             return True
@@ -109,7 +110,7 @@ class TestBRU2S:
         """
         self.logger.debug(f"старт теста: 3, подтест: 2")
         self.resist.resist_ohm(150)
-        if self.sub_test.subtest_bdu_inp_x(test_num=3, subtest_num=3.2, err_code=52, position=False):
+        if self.di_read.subtest_1di(test_num=3, subtest_num=3.2, err_code=52, position=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug(f'отключение KL12, KL25')
@@ -135,7 +136,7 @@ class TestBRU2S:
         self.logger.debug(f"старт теста: 4, подтест: 2")
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug(f'отключение KL11')
-        if self.sub_test.subtest_bdu_inp_x(test_num=4, subtest_num=4.2, err_code=53, position=False):
+        if self.di_read.subtest_1di(test_num=4, subtest_num=4.2, err_code=53, position=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL11', False)
@@ -162,7 +163,7 @@ class TestBRU2S:
         self.logger.debug(f"старт теста: 5, подтест: 2")
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(f'отключение KL12')
-        if self.sub_test.subtest_bdu_inp_x(test_num=5, subtest_num=5.2, err_code=54, position=False):
+        if self.di_read.subtest_1di(test_num=5, subtest_num=5.2, err_code=54, position=False):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug(f'отключение KL25'
                               f'')
@@ -206,7 +207,7 @@ class TestBRU2S:
         self.resist.resist_kohm(200)
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(f'включение KL12')
-        if self.sub_test.subtest_bdu_inp_x(test_num=6, subtest_num=6.0, err_code=55, position=False):
+        if self.di_read.subtest_1di(test_num=6, subtest_num=6.0, err_code=55, position=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug(f'отключение KL12')
             return True
@@ -222,7 +223,7 @@ class TestBRU2S:
         self.resist.resist_kohm(30)
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(f'включение KL12')
-        if self.sub_test.subtest_bdu_inp_x(test_num=7, subtest_num=7.0, err_code=56, position=False):
+        if self.di_read.subtest_1di(test_num=7, subtest_num=7.0, err_code=56, position=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug(f'отключение KL12')
             return True

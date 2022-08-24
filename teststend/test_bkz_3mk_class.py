@@ -21,7 +21,7 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import Subtest2in
+from general_func.subtest import ReadOPCServer
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay, ResetProtection
 from general_func.subtest import ProcedureFull
@@ -43,8 +43,9 @@ class TestBKZ3MK:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest2in()
+        # self.di_read = Subtest2in()
         self.ai_read = AIRead()
+        self.di_read = ReadOPCServer()
 
         # Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         # медленные
@@ -117,8 +118,8 @@ class TestBKZ3MK:
         sleep(2)
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         sleep(1)
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=317, err_code_a2=318,
-                                    position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=317, err_code_b=318,
+                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -140,8 +141,8 @@ class TestBKZ3MK:
         self.mysql_conn.mysql_ins_result('идет тест 2', '2')
         self.resist.resist_kohm(200)
         sleep(1)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=319, err_code_a2=320,
-                                    position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=319, err_code_b=320,
+                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -154,8 +155,8 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL22', True)
         self.logger.debug("включение KL22")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.0, err_code_a1=321, err_code_a2=322,
-                                    position_a1=True, position_a2=False, inp_1='in_a5', inp_2='in_a6'):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=321, err_code_b=322,
+                                    position_a=True, position_b=False, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -165,8 +166,8 @@ class TestBKZ3MK:
         self.logger.debug("отключение KL22")
         sleep(2)
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.1, err_code_a1=321, err_code_a2=322,
-                                    position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=321, err_code_b=322,
+                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -330,8 +331,8 @@ class TestBKZ3MK:
         self.logger.debug(f"подтест {subtest}, сброс защиты блока")
         self.mysql_conn.mysql_ins_result(f'идет тест {subtest}', f'{test_num}')
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.subtest.subtest_2di(test_num=test_num, subtest_num=subtest, err_code_a1=err1, err_code_a2=err2,
-                                    position_a1=True, position_a2=True, inp_1='in_a5', inp_2='in_a6'):
+        if self.di_read.subtest_2di(test_num=test_num, subtest_num=subtest, err_code_a=err1, err_code_b=err2,
+                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         self.mysql_conn.mysql_add_message("Блок не исправен. Не работает сброс защит.")
         return False

@@ -15,7 +15,7 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.subtest import *
+from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.database import *
 from general_func.modbus import *
 from general_func.reset import ResetRelay
@@ -31,6 +31,7 @@ class TestBDZ:
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.di_read_full = ReadOPCServer()
 
         self.msg_1 = "Убедитесь в отсутствии блоков в панелях разъемов. " \
                      "Вставьте испытуемый блок БДЗ в разъем Х16 на панели B"
@@ -69,8 +70,8 @@ class TestBDZ:
         sleep(0.1)
         self.mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=1, err_code_a2=1, position_a1=True,
-                                    position_a2=True):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=1, err_code_b=1, position_a=True,
+                                         position_b=True):
             return True
         return False
 
@@ -83,8 +84,8 @@ class TestBDZ:
         sleep(0.1)
         self.mb_ctrl.ctrl_relay('KL24', False)
         sleep(5)
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.1, err_code_a1=1, err_code_a2=1, position_a1=False,
-                                    position_a2=False):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.1, err_code_a=1, err_code_b=1, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -99,8 +100,8 @@ class TestBDZ:
         sleep(0.1)
         self.mb_ctrl.ctrl_relay('KL24', True)
         sleep(5)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=1, err_code_a2=1, position_a1=False,
-                                    position_a2=False):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=1, err_code_b=1, position_a=False,
+                                         position_b=False):
             return True
         return False
 

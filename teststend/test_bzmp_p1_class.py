@@ -16,7 +16,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
-from general_func.subtest import Subtest2in
+from general_func.subtest import ReadOPCServer
 from gui.msgbox_1 import *
 
 __all__ = ["TestBZMPP1"]
@@ -32,7 +32,7 @@ class TestBZMPP1:
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.reset_protect = ResetProtection()
-        self.subtest = Subtest2in()
+        self.di_read_full = ReadOPCServer()
 
         self.ust: float = 14.64
         self.ust_pmz: float = 25.2
@@ -307,8 +307,8 @@ class TestBZMPP1:
         """
         self.reset_protect.sbros_zashit_kl24()
         sleep(1)
-        if self.subtest.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a1=345, err_code_a2=345,
-                                    position_a1=True, position_a2=False, inp_1='in_a1', inp_2='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=test_num, subtest_num=subtest_num, err_code_a=345, err_code_b=345,
+                                         position_a=True, position_b=False, di_a='in_a1', di_b='in_a6'):
             return True
         return False
 

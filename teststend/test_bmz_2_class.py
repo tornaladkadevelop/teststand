@@ -19,7 +19,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
-from general_func.subtest import ProcedureFull
+from general_func.subtest import ProcedureFull, Subtest3in
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -38,6 +38,7 @@ class TestBMZ2:
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.ai_read = AIRead()
+        self.subtest = Subtest3in()
 
         self.ust_test = 80.0
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
@@ -79,25 +80,9 @@ class TestBMZ2:
         self.mysql_conn.mysql_ins_result('идет тест 1', '1')
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("KL21 включен")
-        self.reset_protect.sbros_zashit_kl30()
-        self.logger.debug("тест 1 сброс защит")
-        in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
-        if in_a1 is False and in_a5 is True and in_a2 is False:
-            self.logger.debug("верное состояние выходов блока")
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            if in_a1 is True:
-                self.logger.debug("неверное состояние")
-                self.mysql_conn.mysql_error(331)
-            elif in_a5 is False:
-                self.logger.debug("неверное состояние")
-                self.mysql_conn.mysql_error(332)
-            elif in_a2 is True:
-                self.logger.debug("неверное состояние")
-                self.mysql_conn.mysql_error(333)
-            return False
-        return True
+        if self.reset_protection(test_num=1, subtest_num=1.0):
+            return True
+        return False
 
     def st_test_11_bmz_2(self) -> bool:
         """
@@ -129,50 +114,21 @@ class TestBMZ2:
         sleep(2)
         self.ctrl_kl.ctrl_relay('KL63', False)
         sleep(1)
-        in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
-        if in_a1 is True and in_a5 is False and in_a2 is True:
-            self.logger.debug("состояние выходов блока соответствуют")
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '2')
-            if in_a1 is False:
-                self.logger.debug("состояние входа 1 не соответствует")
-                self.mysql_conn.mysql_error(335)
-            elif in_a5 is True:
-                self.logger.debug("состояние входа 5 не соответствует")
-                self.mysql_conn.mysql_error(336)
-            elif in_a2 is False:
-                self.logger.debug("состояние входа 2 не соответствует")
-                self.mysql_conn.mysql_error(337)
-            return False
-        self.reset_relay.stop_procedure_3()
-        return True
+        if self.subtest.subtest_3di(test_num=2, subtest_num=2.1, err_code_a=335, err_code_b=336, err_code_c=337,
+                                    position_a=True, position_b=False, position_c=True, inp_a='in_a1',
+                                    inp_b='in_a5', inp_c='in_a2'):
+            self.reset_relay.stop_procedure_3()
+            return True
+        return False
 
     def st_test_22_bmz_2(self) -> bool:
         """
         2.4.2. Сброс защит после проверки
         """
         self.mysql_conn.mysql_ins_result('идет тест 2.4', '2')
-        self.reset_protect.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
-        if in_a1 is False and in_a5 is True and in_a2 is False:
-            self.logger.debug("состояние выходов соответствует")
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '2')
-            if in_a1 is True:
-                self.logger.debug("вход 1 не соответствует")
-                self.mysql_conn.mysql_error(338)
-            elif in_a5 is False:
-                self.logger.debug("вход 5 не соответствует")
-                self.mysql_conn.mysql_error(339)
-            elif in_a2 is True:
-                self.logger.debug("вход 2 не соответствует")
-                self.mysql_conn.mysql_error(340)
-            return False
-        self.mysql_conn.mysql_ins_result('исправен', '2')
-        self.logger.debug("тест 2 пройден")
-        return True
+        if self.reset_protection(test_num=2, subtest_num=2.2):
+            return True
+        return False
 
     def st_test_30_bmz_2(self) -> bool:
         """
@@ -232,7 +188,7 @@ class TestBMZ2:
             in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
             if in_a1 is True and in_a5 is False and in_a2 is True:
                 self.logger.debug("соответствие выходов блока, сбрасываем и переходим к тесту 3.5")
-                if self.subtest_35():
+                if self.reset_protection(test_num=3, subtest_num=3.5):
                     k += 1
                     continue
                 else:
@@ -244,7 +200,7 @@ class TestBMZ2:
                 self.mysql_conn.mysql_ins_result('неисправен', '3')
                 self.mysql_conn.mysql_error(341)
                 if self.subtest_32(i, k):
-                    if self.subtest_35():
+                    if self.reset_protection(test_num=3, subtest_num=3.5):
                         k += 1
                         continue
                     else:
@@ -252,7 +208,7 @@ class TestBMZ2:
                         k += 1
                         continue
                 else:
-                    if self.subtest_35():
+                    if self.reset_protection(test_num=3, subtest_num=3.5):
                         k += 1
                         continue
                     else:
@@ -269,22 +225,9 @@ class TestBMZ2:
         """
         self.mysql_conn.mysql_ins_result('идет тест 3.2', '3')
         self.logger.debug("старт теста 3.2")
-        self.reset_protect.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
-        if in_a1 is False and in_a5 is True and in_a2 is False:
-            self.logger.debug("состояние выходов блока соответствуют")
+        if self.reset_protection(test_num=3, subtest_num=3.2):
             pass
         else:
-            self.mysql_conn.mysql_ins_result('неисправен', '3')
-            if in_a1 is True:
-                self.logger.debug("состояние входа 1 не соответствуют")
-                self.mysql_conn.mysql_error(338)
-            elif in_a5 is False:
-                self.logger.debug("состояние входа 5 не соответствует")
-                self.mysql_conn.mysql_error(339)
-            elif in_a2 is True:
-                self.logger.debug("состояние входа 2 не соответствует")
-                self.mysql_conn.mysql_error(340)
             return False
         self.mysql_conn.mysql_ins_result('идет тест 3.3', '3')
         if self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.1):
@@ -330,30 +273,21 @@ class TestBMZ2:
         self.logger.debug("сброс реле и старт теста 3.5")
         return True
 
-    def subtest_35(self):
+    def reset_protection(self, *, test_num: int = 3, subtest_num: float = 3.5):
         """
-        3.5. Расчет относительной нагрузки сигнала
+        Сброс защиты блока.
+        :param test_num: номер теста.
+        :param subtest_num: номер подтеста.
+        :return:
         """
-        self.mysql_conn.mysql_ins_result('идет тест 3.5', '3')
-        self.logger.debug("старт теста 3.5")
+        self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
+        self.logger.debug(f"старт теста {subtest_num}")
         self.reset_protect.sbros_zashit_kl30()
-        in_a1, in_a2, in_a5 = self.di_read.di_read('in_a1', 'in_a2', 'in_a5')
-        if in_a1 is False and in_a5 and in_a2 is False:
-            self.logger.debug("состояние выходов блока соответствует")
-            self.logger.debug("тест 3.5 завершен")
+        if self.subtest.subtest_3di(test_num=test_num, subtest_num=subtest_num, err_code_a=338, err_code_b=339,
+                                    err_code_c=340, position_a=False, position_b=True, position_c=False,
+                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2'):
             return True
-        else:
-            self.mysql_conn.mysql_ins_result('неисправен', '3')
-            if in_a1 is True:
-                self.logger.debug("вход 1 не соответствует")
-                self.mysql_conn.mysql_error(338)
-            elif in_a5 is False:
-                self.logger.debug("вход 5 не соответствует")
-                self.mysql_conn.mysql_error(339)
-            elif in_a2 is True:
-                self.logger.debug("вход 2 не соответствует")
-                self.mysql_conn.mysql_error(340)
-            return False
+        return False
 
     def st_test_bmz_2(self) -> [bool, bool]:
         if self.st_test_10_bmz_2():

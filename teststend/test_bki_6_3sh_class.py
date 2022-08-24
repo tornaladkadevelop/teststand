@@ -18,6 +18,7 @@ from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay
+from general_func.subtest import ReadOPCServer
 from gui.msgbox_1 import *
 
 __all__ = ["TestBKI6"]
@@ -31,6 +32,7 @@ class TestBKI6:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
+        self.di_read = ReadOPCServer()
 
         self.msg_1 = 'Убедитесь в отсутствии других блоков или соединительных кабелей в панели разъемов А'
         self.msg_2 = 'Подключите в разъем, расположенный на панели разъемов А ' \
@@ -58,75 +60,32 @@ class TestBKI6:
             return False
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(3)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 1 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '1')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(123)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(124)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(125)
-            return False
-        self.logger.debug('тест 1 положение выходов соответствует', 4)
-        self.mysql_conn.mysql_ins_result('исправен', '1')
-        return True
+        if self.di_read.subtest_5di(test_num=1, subtest_num=1.0, err_code_a=123, err_code_b=123, err_code_c=124,
+                                    err_code_d=125, err_code_e=125, position_a=False, position_b=True, position_c=True,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_20(self) -> bool:
         """
         Тест 2. Проверка работы контактов блока при подаче питания на блок и отсутствии утечки
         """
         self.ctrl_kl.ctrl_relay('KL21', True)
-        k1 = 0
-        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-        while in_a1 is False and in_a7 is True and k1 <= 20:
-            sleep(0.2)
-            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-            k1 += 1
-        if in_a1 is True and in_a7 is False:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен", "2")
-            self.logger.debug('тест 2.0 положение выходов не соответствует', 1)
-            return False
-        k2 = 0
-        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-        while in_a1 is True and in_a7 is False and k2 <= 20:
-            sleep(0.2)
-            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-            k1 += 1
-        if in_a1 is False and in_a7 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен", "2")
-            self.logger.debug('тест 2.0 положение выходов не соответствует', 1)
-            return False
-        self.logger.debug('тест 2.0 положение выходов соответствует', 4)
-        return True
+        if self.sub_test(test_num=2, subtest_num=2.0, iteration=20):
+            return True
+        return False
 
     def st_test_21(self) -> bool:
         """
         2.1. Проверка установившегося состояния контактов по истечению 20 сек
         """
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 2.1 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '2')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(126)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(127)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(128)
-            return False
-        self.logger.debug('тест 2.1 положение выходов соответствует', 4)
-        self.mysql_conn.mysql_ins_result('исправен', '2')
-        return True
+        if self.di_read.subtest_5di(test_num=2, subtest_num=2.1, err_code_a=126, err_code_b=126, err_code_c=127,
+                                    err_code_d=128, err_code_e=128, position_a=False, position_b=True, position_c=True,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_30(self) -> bool:
         """
@@ -134,68 +93,30 @@ class TestBKI6:
         """
         self.ctrl_kl.ctrl_relay('KL36', True)
         sleep(1)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 3.1 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '3')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(129)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(130)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(131)
-            return False
-        self.logger.debug('тест 3.1 положение выходов соответствует', 4)
-        return True
+        if self.di_read.subtest_5di(test_num=3, subtest_num=3.0, err_code_a=129, err_code_b=129, err_code_c=130,
+                                    err_code_d=131, err_code_e=131, position_a=False, position_b=True, position_c=True,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_31(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL36', False)
-        k3 = 0
-        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-        while in_a1 is False and in_a7 is True and k3 <= 40:
-            sleep(0.2)
-            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-            k3 += 1
-        if in_a1 is True and in_a7 is False:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен", "3")
-            self.logger.debug('тест 3.2 положение выходов не соответствует', 1)
-            return False
-        k4 = 0
-        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-        while in_a1 is True and in_a7 is False and k4 <= 40:
-            sleep(0.2)
-            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
-            k4 += 1
-        if in_a1 is False and in_a7 is True:
-            pass
-        else:
-            self.mysql_conn.mysql_ins_result("неисправен", "3")
-            self.logger.debug('тест 3.2 положение выходов не соответствует', 1)
-            return False
-        self.logger.debug('тест 3.2 положение выходов соответствует', 4)
-        return True
+        if self.sub_test(test_num=3, subtest_num=3.1, iteration=40):
+            return True
+        return False
 
     def st_test_32(self) -> bool:
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 3.3 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '3')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(132)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(133)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(134)
-            return False
-        self.logger.debug('тест 3.3 положение выходов соответствует', 4)
-        self.mysql_conn.mysql_ins_result('исправен', '3')
-        return True
+        """
+
+        :return: bool
+        """
+        if self.di_read.subtest_5di(test_num=3, subtest_num=3.2, err_code_a=132, err_code_b=132, err_code_c=133,
+                                    err_code_d=134, err_code_e=134, position_a=False, position_b=True, position_c=True,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_40(self) -> bool:
         """
@@ -204,21 +125,12 @@ class TestBKI6:
         self.ctrl_kl.ctrl_relay('KL22', False)
         self.resist.resist_kohm(30)
         sleep(10)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is False and in_a4 is True and in_a5 is False:
-            pass
-        else:
-            self.logger.debug('тест 4.1 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '4')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(135)
-            elif in_a6 is True:
-                self.mysql_conn.mysql_error(136)
-            elif in_a4 is False and in_a5 is True:
-                self.mysql_conn.mysql_error(137)
-            return False
-        self.logger.debug('тест 4.1 положение выходов соответствует', 4)
-        return True
+        if self.di_read.subtest_5di(test_num=4, subtest_num=4.0, err_code_a=135, err_code_b=135, err_code_c=136,
+                                    err_code_d=137, err_code_e=137, position_a=False, position_b=True, position_c=False,
+                                    position_d=True, position_e=False, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_41(self) -> bool:
         """
@@ -226,22 +138,12 @@ class TestBKI6:
         """
         self.resist.resist_kohm(590)
         sleep(2)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is False and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 4.2 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '4')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(138)
-            elif in_a6 is True:
-                self.mysql_conn.mysql_error(139)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(140)
-            return False
-        self.logger.debug('тест 4.2 положение выходов соответствует', 4)
-        self.mysql_conn.mysql_ins_result('исправен', '4')
-        return True
+        if self.di_read.subtest_5di(test_num=4, subtest_num=4.1, err_code_a=138, err_code_b=138, err_code_c=139,
+                                    err_code_d=140, err_code_e=140, position_a=False, position_b=True, position_c=False,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_50(self) -> bool:
         """
@@ -249,41 +151,67 @@ class TestBKI6:
         """
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(2)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is True and in_a4 is False and in_a5 is True:
-            pass
-        else:
-            self.logger.debug('тест 5.1 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '5')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(141)
-            elif in_a6 is False:
-                self.mysql_conn.mysql_error(142)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(143)
-            return False
-        self.logger.debug('тест 5.1 положение выходов соответствует', 4)
-        return True
+        if self.di_read.subtest_5di(test_num=5, subtest_num=5.0, err_code_a=141, err_code_b=141, err_code_c=142,
+                                    err_code_d=143, err_code_e=143, position_a=False, position_b=True, position_c=True,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
 
     def st_test_51(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL22', False)
         sleep(5)
-        in_a1, in_a4, in_a5, in_a6, in_a7 = self.di_read.di_read('in_a1', 'in_a4', 'in_a5', 'in_a6', 'in_a7')
-        if in_a1 is False and in_a7 is True and in_a6 is False and in_a4 is False and in_a5 is True:
-            pass
+        if self.di_read.subtest_5di(test_num=5, subtest_num=5.1, err_code_a=144, err_code_b=144, err_code_c=145,
+                                    err_code_d=146, err_code_e=146, position_a=False, position_b=True, position_c=False,
+                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                    di_d='in_a4', di_e='in_a5'):
+            return True
+        return False
+
+    def sub_test(self, *, test_num: int, subtest_num: float, iteration):
+        """
+        Для теста 2.0 iteration = 20.
+        Для теста 3.1 iteration = 40.
+        :param test_num:
+        :param subtest_num:
+        :param iteration:
+        :return:
+        """
+        self.logger.debug(f"тест {test_num}, подтест {subtest_num}")
+        self.mysql_conn.mysql_ins_result(f"идёт подтест {subtest_num}", f"{test_num}")
+        k1 = 0
+        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
+        self.logger.debug(f"положение выходов блока: {in_a1 = } is True, {in_a7 = } is False")
+        while in_a1 is False and in_a7 is True and k1 <= iteration:
+            sleep(0.2)
+            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
+            self.logger.debug(f"итерация {k1} положение выходов блока: {in_a1 = } is True, {in_a7 = } is False")
+            k1 += 1
+        if in_a1 is True and in_a7 is False:
+            self.logger.debug(f'подтест {subtest_num} положение выходов соответствует')
+            self.mysql_conn.mysql_add_message(f'подтест {subtest_num} положение выходов соответствует')
         else:
-            self.logger.debug('тест 5.2 положение выходов не соответствует', 1)
-            self.mysql_conn.mysql_ins_result('неисправен', '5')
-            if in_a1 is True or in_a7 is False:
-                self.mysql_conn.mysql_error(144)
-            elif in_a6 is True:
-                self.mysql_conn.mysql_error(145)
-            elif in_a4 is True and in_a5 is False:
-                self.mysql_conn.mysql_error(146)
+            self.mysql_conn.mysql_ins_result("неисправен", f"{test_num}")
+            self.logger.debug(f'подтест {subtest_num} положение выходов не соответствует')
+            self.mysql_conn.mysql_add_message(f'подтест {subtest_num} положение выходов не соответствует')
             return False
-        self.logger.debug('тест 5.2 положение выходов соответствует', 4)
-        self.mysql_conn.mysql_ins_result('исправен', '5')
-        return True
+
+        k2 = 0
+        in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
+        while in_a1 is True and in_a7 is False and k2 <= iteration:
+            sleep(0.2)
+            in_a1, in_a7 = self.di_read.di_read('in_a1', 'in_a7')
+            self.logger.debug(f"итерация {k2} положение выходов блока: {in_a1 = } is False, {in_a7 = } is True")
+            k2 += 1
+        if in_a1 is False and in_a7 is True:
+            self.logger.debug(f'подтест {subtest_num} положение выходов соответствует')
+            self.mysql_conn.mysql_add_message(f'подтест {subtest_num} положение выходов соответствует')
+            return True
+        else:
+            self.mysql_conn.mysql_ins_result("неисправен", f"{test_num}")
+            self.logger.debug(f'подтест {subtest_num} положение выходов не соответствует')
+            self.mysql_conn.mysql_add_message(f'подтест {subtest_num} положение выходов не соответствует')
+            return False
 
     def st_test_bki_6_3sh(self) -> bool:
         if self.st_test_1():

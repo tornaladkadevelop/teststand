@@ -18,7 +18,7 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import *
+from general_func.subtest import ReadOPCServer, ProcedureFull
 from general_func.reset import ResetRelay, ResetProtection
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
@@ -37,7 +37,7 @@ class TestUBTZ:
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest4in()
+        self.di_read = ReadOPCServer()
 
         self.list_ust_bmz_num = (1, 2, 3, 4, 5, 6, 7)
         self.list_ust_tzp_num = (1, 2, 3, 4, 5, 6, 7)
@@ -84,10 +84,10 @@ class TestUBTZ:
         self.ctrl_kl.ctrl_relay('KL66', True)
         self.reset_protect.sbros_zashit_ubtz()
         sleep(2)
-        if self.subtest.subtest_4di(test_num=1, subtest_num=1.0,
+        if self.di_read.subtest_4di(test_num=1, subtest_num=1.0,
                                     err_code_a=451, err_code_b=452, err_code_c=453, err_code_d=454,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 
@@ -324,10 +324,10 @@ class TestUBTZ:
         """
         self.reset_protect.sbros_zashit_ubtz()
         sleep(2)
-        if self.subtest.subtest_4di(test_num=test_num, subtest_num=subtest_num,
+        if self.di_read.subtest_4di(test_num=test_num, subtest_num=subtest_num,
                                     err_code_a=460, err_code_b=461, err_code_c=462, err_code_d=463,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         self.mysql_conn.mysql_add_message(f'тест {test_num}: не срабатывает сброс защит')
         return False

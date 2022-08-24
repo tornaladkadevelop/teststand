@@ -16,7 +16,7 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.subtest import *
+from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -34,6 +34,7 @@ class TestBDUD42:
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUD42.log",
                             filemode="w",
@@ -48,8 +49,8 @@ class TestBDUD42:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=5, err_code_a2=6, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=5, err_code_b=6, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -62,8 +63,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=13, err_code_a2=14, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=13, err_code_b=14, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -72,10 +73,10 @@ class TestBDUD42:
         2.2. Включение блока от кнопки «Пуск»
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.1, err_code_a1=15, err_code_a2=16,
-                                      position_a1=True, position_a2=True):
-            if self.subtest.subtest_b_bdu(test_num=2, subtest_num=2.2, err_code_a1=7, err_code_a2=8,
-                                          position_a1=True, position_a2=True):
+        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.1, err_code_a=15, err_code_b=16,
+                                      position_a=True, position_b=True):
+            if self.subtest.subtest_b_bdu(test_num=2, subtest_num=2.2, err_code_a=7, err_code_b=8,
+                                          position_a=True, position_b=True):
                 return True
         return False
 
@@ -87,8 +88,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(2)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.3, err_code_a1=17, err_code_a2=18, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=17, err_code_b=18, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug("отключены KL25, KL1")
@@ -100,10 +101,10 @@ class TestBDUD42:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=3, subtest_num=3.0, err_code_a1=15, err_code_a2=16,
-                                      position_a1=True, position_a2=True):
-            if self.subtest.subtest_b_bdu(test_num=3, subtest_num=3.1, err_code_a1=7, err_code_a2=8,
-                                          position_a1=True, position_a2=True):
+        if self.subtest.subtest_a_bdu(test_num=3, subtest_num=3.0, err_code_a=15, err_code_b=16,
+                                      position_a=True, position_b=True):
+            if self.subtest.subtest_b_bdu(test_num=3, subtest_num=3.1, err_code_a=7, err_code_b=8,
+                                          position_a=True, position_b=True):
                 return True
         return False
 
@@ -114,8 +115,8 @@ class TestBDUD42:
         self.logger.debug("старт теста 3.2")
         self.resist.resist_10_to_110_ohm()
         sleep(3)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.2, err_code_a1=19, err_code_a2=20, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=19, err_code_b=20, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -128,10 +129,10 @@ class TestBDUD42:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a1=15, err_code_a2=16,
-                                      position_a1=True, position_a2=True):
-            if self.subtest.subtest_b_bdu(test_num=4, subtest_num=4.1, err_code_a1=7, err_code_a2=8,
-                                          position_a1=True, position_a2=True):
+        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a=15, err_code_b=16,
+                                      position_a=True, position_b=True):
+            if self.subtest.subtest_b_bdu(test_num=4, subtest_num=4.1, err_code_a=7, err_code_b=8,
+                                          position_a=True, position_b=True):
                 return True
         return False
 
@@ -143,8 +144,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=9, err_code_a2=10, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=9, err_code_b=10, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -158,10 +159,10 @@ class TestBDUD42:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a1=15, err_code_a2=16,
-                                      position_a1=True, position_a2=True):
-            if self.subtest.subtest_b_bdu(test_num=5, subtest_num=5.1, err_code_a1=7, err_code_a2=8,
-                                          position_a1=True, position_a2=True):
+        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a=15, err_code_b=16,
+                                      position_a=True, position_b=True):
+            if self.subtest.subtest_b_bdu(test_num=5, subtest_num=5.1, err_code_a=7, err_code_b=8,
+                                          position_a=True, position_b=True):
                 return True
         return False
 
@@ -173,8 +174,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=5, subtest_num=5.2, err_code_a1=11, err_code_a2=12, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=11, err_code_b=12, position_a=False,
+                                    position_b=False):
             return True
         return False
 

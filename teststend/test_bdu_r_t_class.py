@@ -13,7 +13,7 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.subtest import *
+from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -31,6 +31,7 @@ class TestBDURT:
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDURT.log",
                             filemode="w",
@@ -42,8 +43,8 @@ class TestBDURT:
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_1(self) -> bool:
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=288, err_code_a2=288, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=288, err_code_b=288, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -55,8 +56,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
         sleep(1)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=290, err_code_a2=291, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=290, err_code_b=291, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -65,10 +66,10 @@ class TestBDURT:
         2.2. Включение блока от кнопки «Пуск» в режиме «Вперёд»
         2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.1, err_code_a1=292, err_code_a2=293,
-                                      position_a1=True, position_a2=False):
-            if self.subtest.subtest_b_bdu(test_num=2, subtest_num=2.2, err_code_a1=294, err_code_a2=295,
-                                          position_a1=True, position_a2=False):
+        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.1, err_code_a=292, err_code_b=293,
+                                      position_a=True, position_b=False):
+            if self.subtest.subtest_b_bdu(test_num=2, subtest_num=2.2, err_code_a=294, err_code_b=295,
+                                          position_a=True, position_b=False):
                 return True
         return False
 
@@ -80,8 +81,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' включен KL12')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.3, err_code_a1=296, err_code_a2=297, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=296, err_code_b=297, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug(' отключены KL25, KL1')
@@ -100,8 +101,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(' включен KL12')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.0, err_code_a1=298, err_code_a2=299, position_a1=False,
-                                    position_a2=True):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=298, err_code_b=299, position_a=False,
+                                    position_b=True):
             return True
         return False
 
@@ -116,8 +117,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug(' включены KL27, KL25, KL1')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.1, err_code_a1=300, err_code_a2=301, position_a1=True,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=300, err_code_b=301, position_a=True,
+                                    position_b=False):
             return True
         return False
 
@@ -129,8 +130,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' отключен KL12')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=3, subtest_num=3.2, err_code_a1=302, err_code_a2=303, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=302, err_code_b=303, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL26', False)
             self.ctrl_kl.ctrl_relay('KL27', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -144,10 +145,10 @@ class TestBDURT:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск» в режиме «Вперёд»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a1=292, err_code_a2=293,
-                                      position_a1=True, position_a2=False):
-            if self.subtest.subtest_b_bdu(test_num=4, subtest_num=4.1, err_code_a1=294, err_code_a2=295,
-                                          position_a1=True, position_a2=False):
+        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a=292, err_code_b=293,
+                                      position_a=True, position_b=False):
+            if self.subtest.subtest_b_bdu(test_num=4, subtest_num=4.1, err_code_a=294, err_code_b=295,
+                                          position_a=True, position_b=False):
                 return True
         return False
 
@@ -158,8 +159,8 @@ class TestBDURT:
         self.logger.debug("старт теста 4.2")
         self.resist.resist_10_to_50_ohm()
         sleep(1)
-        if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=304, err_code_a2=305, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=304, err_code_b=305, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -172,10 +173,10 @@ class TestBDURT:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск» в режиме «Вперёд»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a1=292, err_code_a2=293,
-                                      position_a1=True, position_a2=False):
-            if self.subtest.subtest_b_bdu(test_num=5, subtest_num=5.1, err_code_a1=294, err_code_a2=295,
-                                          position_a1=True, position_a2=False):
+        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a=292, err_code_b=293,
+                                      position_a=True, position_b=False):
+            if self.subtest.subtest_b_bdu(test_num=5, subtest_num=5.1, err_code_a=294, err_code_b=295,
+                                          position_a=True, position_b=False):
                 return True
         return False
 
@@ -187,8 +188,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug(' включен KL11')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=5, subtest_num=5.2, err_code_a1=306, err_code_a2=307, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=306, err_code_b=307, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
@@ -202,10 +203,10 @@ class TestBDURT:
         Повторяем тест 2.2. Включение блока от кнопки «Пуск» в режиме «Вперёд»
         Повторяем тест 2.3. Проверка удержания блока во включенном состоянии при подключении Rш пульта управления:
         """
-        if self.subtest.subtest_a_bdu(test_num=6, subtest_num=6.0, err_code_a1=292, err_code_a2=293,
-                                      position_a1=True, position_a2=False):
-            if self.subtest.subtest_b_bdu(test_num=6, subtest_num=6.1, err_code_a1=294, err_code_a2=295,
-                                          position_a1=True, position_a2=False):
+        if self.subtest.subtest_a_bdu(test_num=6, subtest_num=6.0, err_code_a=292, err_code_b=293,
+                                      position_a=True, position_b=False):
+            if self.subtest.subtest_b_bdu(test_num=6, subtest_num=6.1, err_code_a=294, err_code_b=295,
+                                          position_a=True, position_b=False):
                 return True
         return False
 
@@ -217,8 +218,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' отключен KL12')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=6, subtest_num=6.2, err_code_a1=308, err_code_a2=309, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=6, subtest_num=6.2, err_code_a=308, err_code_b=309, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -230,8 +231,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL24', True)
         self.logger.debug(' включен KL24')
         sleep(1)
-        if self.subtest.subtest_2di(test_num=7, subtest_num=7.0, err_code_a1=310, err_code_a2=311, position_a1=False,
-                                    position_a2=True):
+        if self.di_read.subtest_2di(test_num=7, subtest_num=7.0, err_code_a=310, err_code_b=311, position_a=False,
+                                    position_b=True):
             return True
         return False
 

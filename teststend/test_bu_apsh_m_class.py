@@ -16,7 +16,7 @@ from time import sleep
 from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
-from general_func.subtest import *
+from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay
 from gui.msgbox_1 import *
@@ -31,6 +31,7 @@ class TestBUAPSHM:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBUAPShM.log",
                             filemode="w",
@@ -48,13 +49,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 1.0")
         sleep(2)
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=99, err_code_a2=100, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=99, err_code_b=100, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL21', True)
             self.logger.debug("включен KL21")
             sleep(1)
-            if self.subtest.subtest_2di(test_num=1, subtest_num=1.1, err_code_a1=101, err_code_a2=102,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=1, subtest_num=1.1, err_code_a=101, err_code_b=102,
+                                        position_a=False, position_b=False):
                 return True
         return False
 
@@ -65,13 +66,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 2.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.0, err_code_a1=103, err_code_a2=104,
-                                      position_a1=True, position_a2=False, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=2, subtest_num=2.0, err_code_a=103, err_code_b=104,
+                                      position_a=True, position_b=False, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug("отключен KL12")
             sleep(1)
-            if self.subtest.subtest_2di(test_num=2, subtest_num=2.1, err_code_a1=105, err_code_a2=106,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=2, subtest_num=2.1, err_code_a=105, err_code_b=106,
+                                        position_a=False, position_b=False):
                 return True
         return False
 
@@ -82,12 +83,12 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 3.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=3, subtest_num=3.0, err_code_a1=103, err_code_a2=104,
-                                      position_a1=True, position_a2=False, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=3, subtest_num=3.0, err_code_a=103, err_code_b=104,
+                                      position_a=True, position_b=False, resist=10, timeout=3):
             self.resist.resist_10_to_110_ohm()
             sleep(2)
-            if self.subtest.subtest_2di(test_num=3, subtest_num=3.1, err_code_a1=107, err_code_a2=108,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=107, err_code_b=108,
+                                        position_a=False, position_b=False):
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
                 return True
@@ -99,13 +100,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 4.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a1=103, err_code_a2=104,
-                                      position_a1=True, position_a2=False, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=4, subtest_num=4.0, err_code_a=103, err_code_b=104,
+                                      position_a=True, position_b=False, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL11', True)
             self.logger.debug("включен KL11")
             sleep(2)
-            if self.subtest.subtest_2di(test_num=4, subtest_num=4.1, err_code_a1=109, err_code_a2=110,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=4, subtest_num=4.1, err_code_a=109, err_code_b=110,
+                                        position_a=False, position_b=False):
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.ctrl_kl.ctrl_relay('KL11', False)
                 self.logger.debug("отключены KL12, KL11")
@@ -118,13 +119,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 5.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a1=103, err_code_a2=104,
-                                      position_a1=True, position_a2=False, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=5, subtest_num=5.0, err_code_a=103, err_code_b=104,
+                                      position_a=True, position_b=False, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug("отключен KL12")
             sleep(2)
-            if self.subtest.subtest_2di(test_num=5, subtest_num=5.1, err_code_a1=111, err_code_a2=112,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=5, subtest_num=5.1, err_code_a=111, err_code_b=112,
+                                        position_a=False, position_b=False):
                 return True
         return False
 
@@ -139,13 +140,13 @@ class TestBUAPSHM:
         self.ctrl_kl.ctrl_relay('KL26', True)
         self.logger.debug("включен KL26")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=6, subtest_num=6.0, err_code_a1=113, err_code_a2=114,
-                                      position_a1=False, position_a2=True, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=6, subtest_num=6.0, err_code_a=113, err_code_b=114,
+                                      position_a=False, position_b=True, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug("отключен KL12")
             sleep(1)
-            if self.subtest.subtest_2di(test_num=6, subtest_num=6.1, err_code_a1=115, err_code_a2=116,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=6, subtest_num=6.1, err_code_a=115, err_code_b=116,
+                                        position_a=False, position_b=False):
                 return True
         return False
 
@@ -156,12 +157,12 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 1.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=7, subtest_num=7.0, err_code_a1=113, err_code_a2=114,
-                                      position_a1=False, position_a2=True, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=7, subtest_num=7.0, err_code_a=113, err_code_b=114,
+                                      position_a=False, position_b=True, resist=10, timeout=3):
             self.resist.resist_10_to_110_ohm()
             sleep(2)
-            if self.subtest.subtest_2di(test_num=7, subtest_num=7.1, err_code_a1=117, err_code_a2=118,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=7, subtest_num=7.1, err_code_a=117, err_code_b=118,
+                                        position_a=False, position_b=False):
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
                 return True
@@ -173,13 +174,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 1.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=8, subtest_num=8.0, err_code_a1=113, err_code_a2=114,
-                                      position_a1=False, position_a2=True, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=8, subtest_num=8.0, err_code_a=113, err_code_b=114,
+                                      position_a=False, position_b=True, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL11', True)
             self.logger.debug("включен KL11")
             sleep(2)
-            if self.subtest.subtest_2di(test_num=8, subtest_num=8.1, err_code_a1=119, err_code_a2=120,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=8, subtest_num=8.1, err_code_a=119, err_code_b=120,
+                                        position_a=False, position_b=False):
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.ctrl_kl.ctrl_relay('KL11', False)
                 self.logger.debug("отключены KL12, KL11")
@@ -192,13 +193,13 @@ class TestBUAPSHM:
         """
         self.logger.debug("старт теста 1.0")
         sleep(2)
-        if self.subtest.subtest_a_bdu(test_num=9, subtest_num=9.0, err_code_a1=113, err_code_a2=114,
-                                      position_a1=False, position_a2=True, resistance=10, timeout=3):
+        if self.subtest.subtest_a_bdu(test_num=9, subtest_num=9.0, err_code_a=113, err_code_b=114,
+                                      position_a=False, position_b=True, resist=10, timeout=3):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug("отключен KL12")
             sleep(2)
-            if self.subtest.subtest_2di(test_num=9, subtest_num=9.1, err_code_a1=121, err_code_a2=122,
-                                        position_a1=False, position_a2=False):
+            if self.di_read.subtest_2di(test_num=9, subtest_num=9.1, err_code_a=121, err_code_b=122,
+                                        position_a=False, position_b=False):
                 return True
         return False
 

@@ -16,7 +16,7 @@ import logging
 from time import sleep
 
 from general_func.exception import *
-from general_func.subtest import *
+from general_func.subtest import ReadOPCServer
 from general_func.database import *
 from general_func.modbus import *
 from general_func.resistance import Resistor
@@ -32,7 +32,7 @@ class TestBKI1T:
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBKI1T.log",
                             filemode="w",
@@ -47,8 +47,8 @@ class TestBKI1T:
         """
         Тест 1. Проверка исходного состояния блока
         """
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=30, err_code_a2=30,
-                                    position_a1=True, position_a2=False, inp_1='in_a0', inp_2='in_a1'):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=30, err_code_b=30,
+                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             return True
         return False
 
@@ -60,8 +60,8 @@ class TestBKI1T:
         sleep(2)
         self.resist.resist_kohm(220)
         sleep(2)
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=31, err_code_a2=31,
-                                    position_a1=True, position_a2=False, inp_1='in_a0', inp_2='in_a1'):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=31, err_code_b=31,
+                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             return True
         return False
 
@@ -92,8 +92,8 @@ class TestBKI1T:
         """
         self.ctrl_kl.ctrl_relay('KL24', True)
         sleep(1)
-        if self.subtest.subtest_2di(test_num=4, subtest_num=4.0, err_code_a1=33, err_code_a2=33,
-                                    position_a1=True, position_a2=False, inp_1='in_a0', inp_2='in_a1'):
+        if self.di_read.subtest_2di(test_num=4, subtest_num=4.0, err_code_a=33, err_code_b=33,
+                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             self.ctrl_kl.ctrl_relay('KL21', False)
             return True
         return False
@@ -107,8 +107,8 @@ class TestBKI1T:
         sleep(1)
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(1)
-        if self.subtest.subtest_2di(test_num=5, subtest_num=5.0, err_code_a1=34, err_code_a2=34,
-                                    position_a1=False, position_a2=True, inp_1='in_a0', inp_2='in_a1'):
+        if self.di_read.subtest_2di(test_num=5, subtest_num=5.0, err_code_a=34, err_code_b=34,
+                                    position_a=False, position_b=True, di_a='in_a0', di_b='in_a1'):
             self.ctrl_kl.ctrl_relay('KL21', False)
             return True
         return False

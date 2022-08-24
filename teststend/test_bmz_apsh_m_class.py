@@ -18,7 +18,7 @@ from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import *
+from general_func.subtest import ReadOPCServer
 from general_func.reset import ResetRelay, ResetProtection
 from general_func.subtest import ProcedureFull
 from gui.msgbox_1 import *
@@ -36,7 +36,7 @@ class TestBMZAPSHM:
         self.ctrl_kl = CtrlKL()
         self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
-        self.subtest = Subtest4in()
+        self.di_read = ReadOPCServer()
 
         self.ust_1: float = 85.6
 
@@ -67,10 +67,10 @@ class TestBMZAPSHM:
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug('включен KL21')
         self.reset_protect.sbros_zashit_kl30()
-        if self.subtest.subtest_4di(test_num=1, subtest_num=1.0,
+        if self.di_read.subtest_4di(test_num=1, subtest_num=1.0,
                                     err_code_a=347, err_code_b=348, err_code_c=349, err_code_d=350,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 
@@ -105,10 +105,10 @@ class TestBMZAPSHM:
         self.ctrl_kl.ctrl_relay('KL63', False)
         self.logger.debug('отключен KL63')
         sleep(1)
-        if self.subtest.subtest_4di(test_num=2, subtest_num=2.1,
+        if self.di_read.subtest_4di(test_num=2, subtest_num=2.1,
                                     err_code_a=352, err_code_b=353, err_code_c=354, err_code_d=355,
                                     position_a=True, position_b=False, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             self.reset_relay.stop_procedure_3()
             return True
         self.reset_relay.stop_procedure_3()
@@ -120,10 +120,10 @@ class TestBMZAPSHM:
         """
         self.logger.debug("старт теста 2.2")
         self.reset_protect.sbros_zashit_kl30()
-        if self.subtest.subtest_4di(test_num=2, subtest_num=2.2,
+        if self.di_read.subtest_4di(test_num=2, subtest_num=2.2,
                                     err_code_a=356, err_code_b=357, err_code_c=358, err_code_d=359,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 
@@ -146,10 +146,10 @@ class TestBMZAPSHM:
         self.ctrl_kl.ctrl_relay('KL63', False)
         self.logger.debug('отключен KL63')
         sleep(1)
-        if self.subtest.subtest_4di(test_num=3, subtest_num=3.1,
+        if self.di_read.subtest_4di(test_num=3, subtest_num=3.1,
                                     err_code_a=360, err_code_b=361, err_code_c=362, err_code_d=363,
                                     position_a=False, position_b=True, position_c=True, position_d=False,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             self.reset_relay.stop_procedure_3()
             return True
         self.reset_relay.stop_procedure_3()
@@ -162,10 +162,10 @@ class TestBMZAPSHM:
         self.logger.debug("старт теста 3.2")
         self.reset_protect.sbros_zashit_kl30()
         sleep(1)
-        if self.subtest.subtest_4di(test_num=3, subtest_num=3.2,
+        if self.di_read.subtest_4di(test_num=3, subtest_num=3.2,
                                     err_code_a=364, err_code_b=365, err_code_c=366, err_code_d=367,
                                     position_a=False, position_b=True, position_c=False, position_d=True,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2', inp_d='in_a6'):
+                                    di_a='in_a1', di_b='in_a5', di_c='in_a2', di_d='in_a6'):
             return True
         return False
 

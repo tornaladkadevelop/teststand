@@ -17,7 +17,7 @@ from time import sleep
 from general_func.exception import *
 from general_func.database import *
 from general_func.modbus import *
-from general_func.subtest import *
+from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.resistance import Resistor
 from general_func.reset import ResetRelay
 from gui.msgbox_1 import *
@@ -33,6 +33,7 @@ class TestBURPMVIR:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
+        self.di_read = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBURPMVIR.log",
                             filemode="w",
@@ -47,8 +48,8 @@ class TestBURPMVIR:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        if self.subtest.subtest_2di(test_num=1, subtest_num=1.0, err_code_a1=166, err_code_a2=167, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=166, err_code_b=167, position_a=False,
+                                    position_b=False):
             return True
         return False
 
@@ -59,15 +60,15 @@ class TestBURPMVIR:
         """
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
-        if self.subtest.subtest_2di(test_num=2, subtest_num=2.0, err_code_a1=168, err_code_a2=169, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=168, err_code_b=169, position_a=False,
+                                    position_b=False):
             if self.subtest.subtest_a_bur(test_num=2, subtest_num=2.1, forward=True):
                 if self.subtest.subtest_b_bur(test_num=2, subtest_num=2.2, forward=True):
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.logger.debug("отключены KL12")
                     sleep(1)
-                    if self.subtest.subtest_2di(test_num=2, subtest_num=2.3, err_code_a1=174, err_code_a2=175,
-                                                position_a1=False, position_a2=False):
+                    if self.di_read.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=174, err_code_b=175,
+                                                position_a=False, position_b=False):
                         self.ctrl_kl.ctrl_relay('KL25', False)
                         self.logger.debug("отключен KL25")
                         return True
@@ -81,8 +82,8 @@ class TestBURPMVIR:
             if self.subtest.subtest_b_bur(test_num=3, subtest_num=3.1, forward=True):
                 self.resist.resist_0_to_100_ohm()
                 sleep(1)
-                if self.subtest.subtest_2di(test_num=3, subtest_num=3.2, err_code_a1=176, err_code_a2=177,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=176, err_code_b=177,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключены KL12, KL25")
@@ -98,8 +99,8 @@ class TestBURPMVIR:
                 self.ctrl_kl.ctrl_relay('KL11', True)
                 self.logger.debug("включен KL11")
                 sleep(2)
-                if self.subtest.subtest_2di(test_num=4, subtest_num=4.2, err_code_a1=178, err_code_a2=179,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=178, err_code_b=179,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.ctrl_kl.ctrl_relay('KL11', False)
@@ -116,8 +117,8 @@ class TestBURPMVIR:
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
                 sleep(2)
-                if self.subtest.subtest_2di(test_num=5, subtest_num=5.2, err_code_a1=180, err_code_a2=181,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=180, err_code_b=181,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключен KL25")
                     return True
@@ -131,16 +132,16 @@ class TestBURPMVIR:
         self.ctrl_kl.ctrl_relay('KL26', True)
         self.logger.debug("включен KL26")
         sleep(2)
-        if self.subtest.subtest_2di(test_num=6, subtest_num=6.0, err_code_a1=168, err_code_a2=169, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=6, subtest_num=6.0, err_code_a=168, err_code_b=169, position_a=False,
+                                    position_b=False):
             if self.subtest.subtest_a_bur(test_num=6, subtest_num=6.1, back=True):
                 if self.subtest.subtest_b_bur(test_num=6, subtest_num=6.2, back=True):
                     # 6.4. Выключение блока от кнопки «Стоп» режима «Назад»
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.logger.debug("отключен KL12")
                     sleep(2)
-                    if self.subtest.subtest_2di(test_num=6, subtest_num=6.3, err_code_a1=186, err_code_a2=187,
-                                                position_a1=False, position_a2=False):
+                    if self.di_read.subtest_2di(test_num=6, subtest_num=6.3, err_code_a=186, err_code_b=187,
+                                                position_a=False, position_b=False):
                         self.ctrl_kl.ctrl_relay('KL25', False)
                         self.logger.debug("отключен KL25")
                         return True
@@ -154,8 +155,8 @@ class TestBURPMVIR:
             if self.subtest.subtest_b_bur(test_num=7, subtest_num=7.1, back=True):
                 self.resist.resist_0_to_100_ohm()
                 sleep(2)
-                if self.subtest.subtest_2di(test_num=7, subtest_num=7.2, err_code_a1=188, err_code_a2=189,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=7, subtest_num=7.2, err_code_a=188, err_code_b=189,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключены KL12, KL25")
@@ -171,8 +172,8 @@ class TestBURPMVIR:
                 self.ctrl_kl.ctrl_relay('KL11', True)
                 self.logger.debug("включен KL11")
                 sleep(2)
-                if self.subtest.subtest_2di(test_num=8, subtest_num=8.2, err_code_a1=190, err_code_a2=191,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=8, subtest_num=8.2, err_code_a=190, err_code_b=191,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL12', False)
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.ctrl_kl.ctrl_relay('KL11', False)
@@ -189,8 +190,8 @@ class TestBURPMVIR:
                 self.ctrl_kl.ctrl_relay('KL12', False)
                 self.logger.debug("отключен KL12")
                 sleep(2)
-                if self.subtest.subtest_2di(test_num=9, subtest_num=9.2, err_code_a1=192, err_code_a2=193,
-                                            position_a1=False, position_a2=False):
+                if self.di_read.subtest_2di(test_num=9, subtest_num=9.2, err_code_a=192, err_code_b=193,
+                                            position_a=False, position_b=False):
                     self.ctrl_kl.ctrl_relay('KL25', False)
                     self.logger.debug("отключен KL25")
                     return True
@@ -205,8 +206,8 @@ class TestBURPMVIR:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("включен KL12")
         sleep(2)
-        if self.subtest.subtest_2di(test_num=10, subtest_num=10.0, err_code_a1=194, err_code_a2=195, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=10, subtest_num=10.0, err_code_a=194, err_code_b=195, position_a=False,
+                                    position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.logger.debug("отключен KL12")
             return True
@@ -220,8 +221,8 @@ class TestBURPMVIR:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug("отключены KL12, KL22")
         sleep(2)
-        if self.subtest.subtest_2di(test_num=10, subtest_num=10.1, err_code_a1=196, err_code_a2=197, position_a1=False,
-                                    position_a2=False):
+        if self.di_read.subtest_2di(test_num=10, subtest_num=10.1, err_code_a=196, err_code_b=197, position_a=False,
+                                    position_b=False):
             return True
         return False
 
