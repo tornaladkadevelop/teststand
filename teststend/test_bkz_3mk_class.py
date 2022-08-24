@@ -43,7 +43,6 @@ class TestBKZ3MK:
         self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        # self.di_read = Subtest2in()
         self.ai_read = AIRead()
         self.di_read = ReadOPCServer()
 
