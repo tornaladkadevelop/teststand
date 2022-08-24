@@ -3,7 +3,7 @@
 
 import logging
 
-from time import sleep, time
+from time import sleep
 
 from OpenOPC import client
 
@@ -701,10 +701,10 @@ class CtrlRead:
 
 if __name__ == '__main__':
     try:
-        # read_mb = DIRead()
+        read_mb = DIRead()
         # read_mb = ReadMB()
         # read_ctrl = CtrlRead()
-        read_ai = AIRead()
+        # read_ai = AIRead()
         # st_timer = time()
         # a = read_mb.read_discrete(0)
         # b = read_mb.read_discrete(1)
@@ -723,43 +723,43 @@ if __name__ == '__main__':
         # a, b, c, d, e, f, g, h, j, k, l, q = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4',
         #                                                               'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1',
         #                                                               'in_b2', 'in_b3')
-        # stop_timer = time()
+        # # stop_timer = time()
         # print(a, b, c, d, e, f, g, h, j, k, l, q)
         #
         # # print(a, b, c)
         # # print(a)
         # print(type(a))
         # print(stop_timer - st_timer)
-        #     in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
-        #     print(in_1, in_5, in_6)
-        #     read_mb.di_read('in_b1')
-        #     for i in range(10):
-        #         in_b1, *_ = read_mb.di_read('in_b1')
-        #         print(in_b1)
-        #     # read_mb.di_read('in_a3')
-        #     in_a3, *_ = read_mb.di_read('in_a3')
-        #     print(in_a3)
-        # #     in_a0 = read_mb.read_discrete('inp_00')
-        # #     read_mb.di_read('in_a0', 'in_a1')
-        # #     read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
-        #     in_a0, in_a1, in_b0, in_a5 = read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
-        #     print(in_a0, in_a1, in_b0, in_a5)
-        #     in_a7, in_b3, in_b5, in_a6 = read_mb.di_read('in_a7', 'in_b3', 'in_b5', 'in_a6')
-        #     print(in_a7, in_b3, in_b5, in_a6)
-        #     in_a2, in_a4 = read_mb.di_read('in_a3', 'in_a4')
-        #     print(in_a3, in_a4)
+        # in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
+        # print(in_1, in_5, in_6)
+        # read_mb.di_read('in_b1')
+        # for i in range(10):
+        #     in_b1, *_ = read_mb.di_read('in_b1')
+        #     print(in_b1)
+        # # read_mb.di_read('in_a3')
+        # in_a3, *_ = read_mb.di_read('in_a3')
+        # print(in_a3)
+    #     in_a0 = read_mb.read_discrete('inp_00')
+    #     read_mb.di_read('in_a0', 'in_a1')
+    #     read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
+        in_a0, in_a1, in_b0, in_a5 = read_mb.di_read('in_a0', 'in_a1', 'in_b0', 'in_a5')
+        print(in_a0, in_a1, in_b0, in_a5)
+        # in_a7, in_b3, in_b5, in_a6 = read_mb.di_read('in_a7', 'in_b3', 'in_b5', 'in_a6')
+        # print(in_a7, in_b3, in_b5, in_a6)
+        # in_a2, in_a4 = read_mb.di_read('in_a3', 'in_a4')
+        # print(in_a3, in_a4)
         # print(in_a0, in_a1, in_b0, in_b1)
         # KL1 = read_ctrl.ctrl_read('KL1')
         # print(KL1)
-        st_time = time()
-        for i in range(20):
-            ai0_res = read_ai.ai_read('AI0')
-            ai2_res = read_ai.ai_read('AI2')
-
-            print(ai0_res)
-            print(ai2_res)
-        stop_time = time()
-        print(stop_time - st_time)
+        # st_time = time()
+        # for i in range(20):
+        #     ai0_res = read_ai.ai_read('AI0')
+        #     ai2_res = read_ai.ai_read('AI2')
+        #
+        #     print(ai0_res)
+        #     print(ai2_res)
+        # stop_time = time()
+        # print(stop_time - st_time)
     except IOError:
         print('системная ошибка')
     except ModbusConnectException as mce:
