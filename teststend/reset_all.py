@@ -39,8 +39,8 @@ def res_rel_2():
 if __name__ == '__main__':
     try:
         res_rel_0()
-        res_rel_1()
-        res_rel_2()
+        # res_rel_1()
+        # res_rel_2()
     except OSError:
         print("ошибка системы")
     except SystemError:

@@ -58,7 +58,7 @@ class TestPMZ:
         self.msg_3 = 'Установите регулятор уставок на блоке в положение'
         self.msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestPMZ.log",
+        logging.basicConfig(#filename="C:\Stend\project_class\log\TestPMZ.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
@@ -113,7 +113,7 @@ class TestPMZ:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=2, subtest_num=2.1, coef_max_volt=0.4):
+        if self.proc_full.procedure_1_full(test_num=2, subtest_num=2.1, coef_min_volt=0.4):
             self.coef_volt = self.proc_full.procedure_2_full(test_num=2, subtest_num=2.2)
             return True
         return False

@@ -12,19 +12,18 @@
 Производитель: Без Производителя, ДонЭнергоЗавод, ИТЭП
 """
 
-import sys
 import logging
-
+import sys
 from time import sleep, time
 
-from general_func.exception import *
 from general_func.database import *
+from general_func.exception import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import ReadOPCServer
-from general_func.resistance import Resistor
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.resistance import Resistor
 from general_func.subtest import ProcedureFull
+from general_func.subtest import ReadOPCServer
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -40,11 +39,10 @@ class TestBKZ3MK:
         self.reset_protect = ResetProtection()
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.ai_read = AIRead()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         # Тест 5. Проверка срабатывания защиты ТЗП блока по уставкам
         # медленные
@@ -88,16 +86,18 @@ class TestBKZ3MK:
         self.msg_4 = "Установите регулятор МТЗ (1-11), расположенный на блоке, в положение «11»"
         self.msg_5 = "Установите регулятор ТЗП (0.3-1.1), расположенный на блоке в положение"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBKZ3MK.log",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(  # filename="C:\\Stend\\project_class\\log\\TestBKZ3MK.log",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s',
+            filemode="w")
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_0(self) -> bool:
-        self.di_read.di_read('in_a0')
+        self.di_read.di_read('in_a0', )
+        # print(in_a0)
         if my_msg(self.msg_1):
             if my_msg(self.msg_2):
                 self.mysql_conn.mysql_ins_result('---', '1')
@@ -117,8 +117,8 @@ class TestBKZ3MK:
         sleep(2)
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         sleep(1)
-        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=317, err_code_b=318,
-                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=317, err_code_b=318,
+                                         position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -140,8 +140,8 @@ class TestBKZ3MK:
         self.mysql_conn.mysql_ins_result('идет тест 2', '2')
         self.resist.resist_kohm(200)
         sleep(1)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=319, err_code_b=320,
-                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=319, err_code_b=320,
+                                         position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -154,8 +154,8 @@ class TestBKZ3MK:
         self.ctrl_kl.ctrl_relay('KL22', True)
         self.logger.debug("включение KL22")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=321, err_code_b=322,
-                                    position_a=True, position_b=False, di_a='in_a5', di_b='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=321, err_code_b=322,
+                                         position_a=True, position_b=False, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -165,8 +165,8 @@ class TestBKZ3MK:
         self.logger.debug("отключение KL22")
         sleep(2)
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=321, err_code_b=322,
-                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=321, err_code_b=322,
+                                         position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         return False
 
@@ -196,6 +196,7 @@ class TestBKZ3MK:
                 continue
 
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
+            self.logger.debug("4.1.  Проверка срабатывания блока от сигнала нагрузки:")
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_mtz_num[k]}, подтест 4.1')
             self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i, factor=1.0)
             self.meas_volt = self.ai_read.ai_read('AI0')
@@ -207,10 +208,14 @@ class TestBKZ3MK:
                 self.meas_volt = self.ai_read.ai_read('AI0')
                 self.func_delta_t_mtz(k=k)
                 self.reset_relay.stop_procedure_3()
+            else:
+                pass
 
             # обработка полученных результатов
+            self.logger.debug("обработка полученных результатов")
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_mtz_num[k]}, подтест 4.2')
             self.calc_delta_percent_mtz = self.meas_volt * 9.19125
+            self.logger.info(f"коэффициент напряжения: {self.calc_delta_percent_mtz}")
             if self.calc_delta_t_mtz == 9999 or self.malfunction is True:
                 self.delta_t_mtz = 'неисправен'
                 self.delta_percent_mtz = 'неисправен'
@@ -221,16 +226,20 @@ class TestBKZ3MK:
             elif self.calc_delta_t_mtz != 9999 and self.malfunction is False:
                 self.delta_t_mtz = f"{self.calc_delta_t_mtz:.1f}"
                 self.delta_percent_mtz = f"{self.calc_delta_percent_mtz:.2f}"
+            self.logger.info(f"время срабатывания: {self.calc_delta_t_mtz}")
 
             # запись результатов в БД
-            result = f'уставка МТЗ: {self.list_ust_mtz_num[k]} [дельта %: {self.delta_percent_mtz:.2f}, ' \
-                     f'дельта t: {self.delta_t_mtz}]'
+            self.logger.debug("запись результатов в БД")
+            result = f'уставка МТЗ: {self.list_ust_mtz_num[k]}, дельта %: {self.calc_delta_percent_mtz:.2f}, ' \
+                     f'дельта t: {self.delta_t_mtz}'
             self.logger.info(result)
+            #
             self.mysql_conn.mysql_add_message(result)
-            self.list_delta_percent_mtz.append(f'{self.delta_percent_mtz:.2f}')
-            self.list_delta_t_mtz.append(f'{self.delta_t_mtz:.1f}')
+            self.list_delta_percent_mtz.append(f'{self.calc_delta_percent_mtz:.2f}')
+            self.list_delta_t_mtz.append(f'{self.delta_t_mtz}')
 
             # сброс защиты блока после проверки
+            self.logger.debug("сброс защиты блока после проверки")
             if self.reset_protection(test_num=4, subtest=4.3, err1=325, err2=326):
                 k += 1
                 continue
@@ -240,6 +249,8 @@ class TestBKZ3MK:
                 return False
         if self.health_flag_mtz is True:
             self.mysql_conn.mysql_ins_result('неисправен', '4')
+        else:
+            pass
         self.logger.debug("тест 4 завершен")
         return True
 
@@ -330,8 +341,8 @@ class TestBKZ3MK:
         self.logger.debug(f"подтест {subtest}, сброс защиты блока")
         self.mysql_conn.mysql_ins_result(f'идет тест {subtest}', f'{test_num}')
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.di_read.subtest_2di(test_num=test_num, subtest_num=subtest, err_code_a=err1, err_code_b=err2,
-                                    position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
+        if self.di_read_full.subtest_2di(test_num=test_num, subtest_num=subtest, err_code_a=err1, err_code_b=err2,
+                                         position_a=True, position_b=True, di_a='in_a5', di_b='in_a6'):
             return True
         self.mysql_conn.mysql_add_message("Блок не исправен. Не работает сброс защит.")
         return False
@@ -427,6 +438,7 @@ if __name__ == '__main__':
     reset_test_bkz_3mk = ResetRelay()
     mysql_conn_bkz_3mk = MySQLConnect()
     try:
+        # test_bkz_3mk.st_test_bkz_3mk()
         test, health_flag_mtz, health_flag_tzp = test_bkz_3mk.st_test_bkz_3mk()
         if test and not health_flag_mtz and not health_flag_tzp:
             mysql_conn_bkz_3mk.mysql_block_good()

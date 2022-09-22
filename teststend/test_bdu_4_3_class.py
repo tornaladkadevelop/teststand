@@ -29,7 +29,7 @@ class TestBDU43:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestBDU()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDU43.log",
                             filemode="w",
@@ -44,7 +44,7 @@ class TestBDU43:
         """
             Тест 1. Проверка исходного состояния блока:
         """
-        if self.di_read.subtest_1di(test_num=1, subtest_num=1.0, err_code=47, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=1, subtest_num=1.0, err_code=47, di_a='in_a1'):
             return True
         return False
 
@@ -56,7 +56,7 @@ class TestBDU43:
         self.logger.debug("старт теста 2.0")
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включение KL2")
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.0, err_code=13, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.0, err_code=13, di_a='in_a1'):
             return True
         return False
 
@@ -77,7 +77,7 @@ class TestBDU43:
         self.logger.debug("старт теста 2.3")
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключение KL2")
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.3, err_code=23, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.3, err_code=23, di_a='in_a1'):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug("отключение KL25, KL1")
@@ -99,7 +99,7 @@ class TestBDU43:
         """
         self.logger.debug("старт теста 3.2")
         self.resist.resist_0_to_63_ohm()
-        if self.di_read.subtest_1di(test_num=3, subtest_num=3.2, err_code=24, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=3, subtest_num=3.2, err_code=24, di_a='in_a1'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -123,7 +123,7 @@ class TestBDU43:
         self.logger.debug("старт теста 4.2")
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включение KL11")
-        if self.di_read.subtest_1di(test_num=4, subtest_num=4.2, err_code=3, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=4, subtest_num=4.2, err_code=3, di_a='in_a1'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -148,7 +148,7 @@ class TestBDU43:
         self.logger.debug("старт теста 5.2")
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключение KL12")
-        if self.di_read.subtest_1di(test_num=5, subtest_num=5.2, err_code=4, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=5, subtest_num=5.2, err_code=4, di_a='in_a1'):
             return True
         return False
 

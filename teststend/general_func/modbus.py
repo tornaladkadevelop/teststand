@@ -177,7 +177,7 @@ class CtrlKL:
                              'Устройство.tg.in_KL99', 'Устройство.tg.in_KL100',
                              'Устройство.tg.in_Q113_4', 'Устройство.tg.in_Q113_5',
                              'Устройство.tg.in_Q113_6', 'Устройство.tg.in_Q113_7')
-        self.__analog_tags_value = []
+        self.analog_tags_value = []
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
@@ -211,16 +211,22 @@ class CtrlKL:
         """
         self.opc['Устройство.tegs.in_num_alg'] = code
         sleep(3)
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[3])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
+        if list_str[2] == "'Good'":
+            pass
+        else:
+            # elif list_str[2] == "'Bad'":
+            self.opc['Устройство.tegs.in_num_alg'] = 0
+            self.logger.warning(f'качество сигнала ctrl_ai_code_v0 {list_str[2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
+
         analog_inp_fl = float(list_str[1])
+        self.logger.info(f"ctrl_ai_code_v0 время срабатывания: {analog_inp_fl}")
         self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
 
@@ -232,8 +238,8 @@ class CtrlKL:
         self.opc['Устройство.tegs.in_num_alg'] = 100
         sleep(3)
 
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[0])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[0])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -241,7 +247,9 @@ class CtrlKL:
             pass
         else:
             self.opc['Устройство.tegs.in_num_alg'] = 0
-            return 9999
+            self.logger.warning(f'качество сигнала ctrl_ai_code_v0 {list_str[2]}')
+            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
         self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
@@ -253,8 +261,8 @@ class CtrlKL:
         """
         self.opc['Устройство.tegs.in_num_alg'] = 101
         sleep(21)
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[1])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -262,7 +270,9 @@ class CtrlKL:
             pass
         else:
             self.opc['Устройство.tegs.in_num_alg'] = 0
-            return 9999
+            self.logger.warning(f'качество сигнала ctrl_ai_code_v0 {list_str[2]}')
+            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
         self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
@@ -274,8 +284,8 @@ class CtrlKL:
         """
         self.opc['Устройство.tegs.in_num_alg'] = 102
         sleep(3)
-        self.__analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
-        val = self.opc.read(self.__analog_tags_value, update=1, include_error=True)
+        self.analog_tags_value.append(self.opc.list('Устройство.tegs')[2])
+        val = self.opc.read(self.analog_tags_value, update=1, include_error=True)
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
@@ -283,7 +293,9 @@ class CtrlKL:
             pass
         else:
             self.opc['Устройство.tegs.in_num_alg'] = 0
-            return 9999
+            self.logger.warning(f'качество сигнала ctrl_ai_code_v0 {list_str[2]}')
+            raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
+                                         "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
         self.opc['Устройство.tegs.in_num_alg'] = 0
         return analog_inp_fl
@@ -324,8 +336,10 @@ class ReadMB:
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
+        if list_str[2] == "'Good'":
+            pass
+        else:
+            self.logger.warning(f'качество сигнала read_uint_error_4 {list_str[2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
@@ -341,8 +355,10 @@ class ReadMB:
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
+        if list_str[2] == "'Good'":
+            pass
+        else:
+            self.logger.warning(f'качество сигнала read_uint_error_1 {list_str[2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
@@ -358,8 +374,10 @@ class ReadMB:
         conv_lst = ' '.join(map(str, val))
         list_str = conv_lst.split(', ', 5)
         list_str[0] = list_str[0][2:-1]
-        if list_str[2] != 'Good':
-            self.logger.warning(f'качество сигнала {list_str[2]}')
+        if list_str[2] == "'Good'":
+            pass
+        else:
+            self.logger.warning(f'качество сигнала read_uint_error_2 {list_str[2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_fl = float(list_str[1])
@@ -411,8 +429,10 @@ class DIRead:
         read_tags = self.opc.read(tag_list, group=gr_di, update=1, include_error=True)
         self.opc.remove(gr_di)
         self.logger.info(f'считанные значения {read_tags}')
-        if read_tags[0][2] != 'Good':
-            self.logger.warning(f'качество сигнала {read_tags[0][2]}')
+        if read_tags[0][2] == "Good":
+            self.logger.info(f'качество дискретных сигналов {read_tags[0][2]}')
+        else:
+            self.logger.warning(f'качество дискретных сигналов {read_tags[0][2]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         for k in range(len(args)):
@@ -445,14 +465,16 @@ class AIRead:
 
         read_tags.clear()
 
-        self.logger.debug("старт считыва"
-                          "ния аналоговых входов ПЛК")
+        self.logger.debug("старт считывания аналоговых входов ПЛК")
+
         gr_ai = 'AI.AI.'
         read_tags = self.opc.read(ai_teg_list, group=gr_ai, update=1, include_error=True)
         self.opc.remove(gr_ai)
         self.logger.info(f'считанные значения {read_tags}')
-        if read_tags[0][2] != 'Good':
-            self.logger.warning(f'качество сигнала {read_tags[1]}')
+        if read_tags[0][2] == 'Good':
+            pass
+        else:
+            self.logger.warning(f'качество аналогового сигнала {read_tags[1]}')
             raise ModbusConnectException("!!! Нет связи с контроллером !!! \nПроверьте подключение компьютера к "
                                          "шкафу \"Ethernet\" кабелем  и состояние OPC сервера.")
         analog_inp_ai0 = read_tags[0][1]
@@ -604,7 +626,7 @@ class CtrlRead:
 
 if __name__ == '__main__':
     try:
-        # read_mb = DIRead()
+        read_mb = DIRead()
         # read_mb = ReadMB()
         # read_ctrl = CtrlRead()
         read_ai = AIRead()
@@ -621,7 +643,7 @@ if __name__ == '__main__':
         # k = read_mb.read_discrete(9)
         # l = read_mb.read_discrete(10)
         # q = read_mb.read_discrete(11)
-        # a, b, c = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2')
+        a, b, c = read_mb.di_read('in_a0', 'in_a1', 'in_a2')
         # a = read_mb.read_discrete_v1('in_a0')
         # a, b, c, d, e, f, g, h, j, k, l, q = read_mb.read_discrete_v1('in_a0', 'in_a1', 'in_a2', 'in_a3', 'in_a4',
         #                                                               'in_a5', 'in_a6', 'in_a7', 'in_b0', 'in_b1',
@@ -636,9 +658,9 @@ if __name__ == '__main__':
         # in_1, in_5, in_6 = read_mb.inputs_a(1, 5, 6)
         # print(in_1, in_5, in_6)
         # read_mb.di_read('in_b1')
-        # for i in range(10):
-        #     in_b1, *_ = read_mb.di_read('in_b1')
-        #     print(in_b1)
+        for i in range(100):
+            in_b1, *_ = read_mb.di_read('in_b1')
+            print(in_b1)
         # # read_mb.di_read('in_a3')
         # in_a3, *_ = read_mb.di_read('in_a3')
         # print(in_a3)

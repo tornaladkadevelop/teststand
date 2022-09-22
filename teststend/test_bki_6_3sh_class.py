@@ -29,10 +29,9 @@ class TestBKI6:
     def __init__(self):
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         self.msg_1 = 'Убедитесь в отсутствии других блоков или соединительных кабелей в панели разъемов А'
         self.msg_2 = 'Подключите в разъем, расположенный на панели разъемов А ' \
@@ -60,10 +59,11 @@ class TestBKI6:
             return False
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(3)
-        if self.di_read.subtest_5di(test_num=1, subtest_num=1.0, err_code_a=123, err_code_b=123, err_code_c=124,
-                                    err_code_d=125, err_code_e=125, position_a=False, position_b=True, position_c=True,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=1, subtest_num=1.0, err_code_a=123, err_code_b=123, err_code_c=124,
+                                         err_code_d=125, err_code_e=125, position_a=False, position_b=True,
+                                         position_c=True,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -80,10 +80,11 @@ class TestBKI6:
         """
         2.1. Проверка установившегося состояния контактов по истечению 20 сек
         """
-        if self.di_read.subtest_5di(test_num=2, subtest_num=2.1, err_code_a=126, err_code_b=126, err_code_c=127,
-                                    err_code_d=128, err_code_e=128, position_a=False, position_b=True, position_c=True,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=2, subtest_num=2.1, err_code_a=126, err_code_b=126, err_code_c=127,
+                                         err_code_d=128, err_code_e=128, position_a=False, position_b=True,
+                                         position_c=True,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -93,10 +94,11 @@ class TestBKI6:
         """
         self.ctrl_kl.ctrl_relay('KL36', True)
         sleep(1)
-        if self.di_read.subtest_5di(test_num=3, subtest_num=3.0, err_code_a=129, err_code_b=129, err_code_c=130,
-                                    err_code_d=131, err_code_e=131, position_a=False, position_b=True, position_c=True,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=3, subtest_num=3.0, err_code_a=129, err_code_b=129, err_code_c=130,
+                                         err_code_d=131, err_code_e=131, position_a=False, position_b=True,
+                                         position_c=True,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -111,10 +113,11 @@ class TestBKI6:
 
         :return: bool
         """
-        if self.di_read.subtest_5di(test_num=3, subtest_num=3.2, err_code_a=132, err_code_b=132, err_code_c=133,
-                                    err_code_d=134, err_code_e=134, position_a=False, position_b=True, position_c=True,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=3, subtest_num=3.2, err_code_a=132, err_code_b=132, err_code_c=133,
+                                         err_code_d=134, err_code_e=134, position_a=False, position_b=True,
+                                         position_c=True,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -125,10 +128,11 @@ class TestBKI6:
         self.ctrl_kl.ctrl_relay('KL22', False)
         self.resist.resist_kohm(30)
         sleep(10)
-        if self.di_read.subtest_5di(test_num=4, subtest_num=4.0, err_code_a=135, err_code_b=135, err_code_c=136,
-                                    err_code_d=137, err_code_e=137, position_a=False, position_b=True, position_c=False,
-                                    position_d=True, position_e=False, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=4, subtest_num=4.0, err_code_a=135, err_code_b=135, err_code_c=136,
+                                         err_code_d=137, err_code_e=137, position_a=False, position_b=True,
+                                         position_c=False,
+                                         position_d=True, position_e=False, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -138,10 +142,11 @@ class TestBKI6:
         """
         self.resist.resist_kohm(590)
         sleep(2)
-        if self.di_read.subtest_5di(test_num=4, subtest_num=4.1, err_code_a=138, err_code_b=138, err_code_c=139,
-                                    err_code_d=140, err_code_e=140, position_a=False, position_b=True, position_c=False,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=4, subtest_num=4.1, err_code_a=138, err_code_b=138, err_code_c=139,
+                                         err_code_d=140, err_code_e=140, position_a=False, position_b=True,
+                                         position_c=False,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
@@ -151,20 +156,22 @@ class TestBKI6:
         """
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(2)
-        if self.di_read.subtest_5di(test_num=5, subtest_num=5.0, err_code_a=141, err_code_b=141, err_code_c=142,
-                                    err_code_d=143, err_code_e=143, position_a=False, position_b=True, position_c=True,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=5, subtest_num=5.0, err_code_a=141, err_code_b=141, err_code_c=142,
+                                         err_code_d=143, err_code_e=143, position_a=False, position_b=True,
+                                         position_c=True,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 
     def st_test_51(self) -> bool:
         self.ctrl_kl.ctrl_relay('KL22', False)
         sleep(5)
-        if self.di_read.subtest_5di(test_num=5, subtest_num=5.1, err_code_a=144, err_code_b=144, err_code_c=145,
-                                    err_code_d=146, err_code_e=146, position_a=False, position_b=True, position_c=False,
-                                    position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
-                                    di_d='in_a4', di_e='in_a5'):
+        if self.di_read_full.subtest_5di(test_num=5, subtest_num=5.1, err_code_a=144, err_code_b=144, err_code_c=145,
+                                         err_code_d=146, err_code_e=146, position_a=False, position_b=True,
+                                         position_c=False,
+                                         position_d=False, position_e=True, di_a="in_a1", di_b='in_a7', di_c='in_a6',
+                                         di_d='in_a4', di_e='in_a5'):
             return True
         return False
 

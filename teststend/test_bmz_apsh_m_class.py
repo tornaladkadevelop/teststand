@@ -34,7 +34,6 @@ class TestBMZAPSHM:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         self.di_read = ReadOPCServer()
 

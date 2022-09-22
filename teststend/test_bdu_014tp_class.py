@@ -41,7 +41,7 @@ class TestBDU014TP:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.sub_test = SubtestBDU()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDU014TP.log",
                             filemode="w",
@@ -57,7 +57,7 @@ class TestBDU014TP:
         Тест 1. Проверка исходного состояния блока:
         :return:
         """
-        if self.di_read.subtest_1di(test_num=1, subtest_num=1.0, err_code=47, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=1, subtest_num=1.0, err_code=47, di_a='in_a1'):
             return True
         return False
 
@@ -70,7 +70,7 @@ class TestBDU014TP:
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug(f'включение KL2')
         sleep(1)
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.0, err_code=21, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.0, err_code=21, di_a='in_a1'):
             return True
         return False
 
@@ -90,7 +90,7 @@ class TestBDU014TP:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(f'отключение KL12')
         sleep(1)
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.2, err_code=27, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.2, err_code=27, di_a='in_a1'):
             return True
         return False
 
@@ -109,7 +109,7 @@ class TestBDU014TP:
         self.logger.debug(f"старт теста: 3, подтест: 1")
         self.resist.resist_10_to_35_ohm()
         sleep(1)
-        if self.di_read.subtest_1di(test_num=3, subtest_num=3.1, err_code=28, position=True, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=3, subtest_num=3.1, err_code=28, position=True, di_a='in_a1'):
             return True
         return False
 
@@ -120,7 +120,7 @@ class TestBDU014TP:
         self.logger.debug(f"старт теста: 4, подтест: 0")
         self.resist.resist_35_to_110_ohm()
         sleep(1)
-        if self.di_read.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug(f'отключение KL12, KL1')
@@ -142,7 +142,7 @@ class TestBDU014TP:
         self.logger.debug(f"старт теста: 5, подтест: 1")
         self.ctrl_kl.ctrl_relay('KL11', True)
         sleep(2)
-        if self.di_read.subtest_1di(test_num=5, subtest_num=5.1, err_code=3, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=5, subtest_num=5.1, err_code=3, di_a='in_a1'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.ctrl_kl.ctrl_relay('KL11', False)
@@ -165,7 +165,7 @@ class TestBDU014TP:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(f'отключение KL12')
         sleep(1)
-        if self.di_read.subtest_1di(test_num=6, subtest_num=6.1, err_code=4, position=False, di_a='in_a1'):
+        if self.di_read_full.subtest_1di(test_num=6, subtest_num=6.1, err_code=4, position=False, di_a='in_a1'):
             return True
         return False
 

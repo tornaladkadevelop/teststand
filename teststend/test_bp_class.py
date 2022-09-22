@@ -8,17 +8,16 @@
 Производитель: Строй-энергомаш, ТЭТЗ-Инвест, нет производителя
 """
 
+import logging
 import math
 import sys
-import logging
-
 from time import sleep
 
-from general_func.exception import *
 from general_func.database import *
+from general_func.exception import *
 from general_func.modbus import *
-from general_func.subtest import ReadOPCServer
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ReadOPCServer
 from gui.msgbox_1 import *
 
 __all__ = ["TestBP"]
@@ -37,7 +36,7 @@ class TestBP:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.mysql_conn = MySQLConnect()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         self.capacitor_capacitance: float = 0.0
         self.capacitor_capacitance_d: float = 0.0
@@ -66,10 +65,10 @@ class TestBP:
             return False
         self.mysql_conn.mysql_ins_result("идёт тест 1", "1")
         self.mb_ctrl.ctrl_relay('KL78', True)
-        if self.di_read.subtest_4di(test_num=1, subtest_num=1.0,
-                                    err_code_a=344, err_code_b=344, err_code_c=344, err_code_d=344,
-                                    position_a=True, position_b=False, position_c=True, position_d=False,
-                                    di_a='in_a6', di_b='in_a1', di_c='in_a7', di_d='in_a2'):
+        if self.di_read_full.subtest_4di(test_num=1, subtest_num=1.0,
+                                         err_code_a=344, err_code_b=344, err_code_c=344, err_code_d=344,
+                                         position_a=True, position_b=False, position_c=True, position_d=False,
+                                         di_a='in_a6', di_b='in_a1', di_c='in_a7', di_d='in_a2'):
             return True
         return False
 
@@ -142,10 +141,10 @@ class TestBP:
         self.mysql_conn.mysql_ins_result("идёт тест 3", "5")
         self.mb_ctrl.ctrl_relay('KL75', True)
         sleep(0.3)
-        if self.di_read.subtest_4di(test_num=5, subtest_num=5.0,
-                                    err_code_a=344, err_code_b=344, err_code_c=344, err_code_d=344,
-                                    position_a=False, position_b=True, position_c=False, position_d=True,
-                                    di_a='in_a6', di_b='in_a1', di_c='in_a7', di_d='in_a2'):
+        if self.di_read_full.subtest_4di(test_num=5, subtest_num=5.0,
+                                         err_code_a=344, err_code_b=344, err_code_c=344, err_code_d=344,
+                                         position_a=False, position_b=True, position_c=False, position_d=True,
+                                         di_a='in_a6', di_b='in_a1', di_c='in_a7', di_d='in_a2'):
             self.reset_protect.sbros_testa_bp_1()
             self.mysql_conn.mysql_ins_result("неисправен", "5")
             return True

@@ -42,7 +42,7 @@ class TestBDU1:
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.subtest = SubtestBDU()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename='C:\Stend\project_class\log\TestBDU1.log',
                             filemode="w",
@@ -58,7 +58,7 @@ class TestBDU1:
         Тест 1. Проверка исходного состояния блока.
         :return: bool
         """
-        if self.di_read.subtest_1di(test_num=1, subtest_num=1.0, err_code=30, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=1, subtest_num=1.0, err_code=30, di_a='in_a1', position=False):
             return True
         return False
 
@@ -69,7 +69,7 @@ class TestBDU1:
         """
         self.ctrl_kl.ctrl_relay('KL2', True)
         sleep(3)
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.0, err_code=30, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.0, err_code=30, di_a='in_a1', position=False):
             return True
         return False
 
@@ -83,7 +83,7 @@ class TestBDU1:
         sleep(3)
         self.ctrl_kl.ctrl_relay('KL12', True)
         sleep(3)
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.1, err_code=21, di_a='in_a1', position=True):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.1, err_code=21, di_a='in_a1', position=True):
             return True
         return False
 
@@ -96,7 +96,7 @@ class TestBDU1:
         sleep(3)
         self.ctrl_kl.ctrl_relay('KL12', False)
         sleep(3)
-        if self.di_read.subtest_1di(test_num=2, subtest_num=2.2, err_code=23, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=2, subtest_num=2.2, err_code=23, di_a='in_a1', position=False):
             return True
         return False
 
@@ -115,7 +115,7 @@ class TestBDU1:
         self.ctrl_kl.ctrl_relay('KL5', False)
         self.ctrl_kl.ctrl_relay('KL8', False)
         sleep(1)
-        if self.di_read.subtest_1di(test_num=3, subtest_num=3.0, err_code=28, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=3, subtest_num=3.0, err_code=28, di_a='in_a1', position=False):
             return True
         return False
 
@@ -132,7 +132,7 @@ class TestBDU1:
         self.ctrl_kl.ctrl_relay('KL6', True)
         self.ctrl_kl.ctrl_relay('KL10', True)
         sleep(2)
-        if self.di_read.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1', position=False):
             self.ctrl_kl.ctrl_relay('KL12', True)
             return True
         return False
@@ -150,7 +150,7 @@ class TestBDU1:
         sleep(0.5)
         self.ctrl_kl.ctrl_relay('KL11', True)
         sleep(1)
-        if self.di_read.subtest_1di(test_num=5, subtest_num=5.0, err_code=3, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=5, subtest_num=5.0, err_code=3, di_a='in_a1', position=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL11', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -167,7 +167,7 @@ class TestBDU1:
         sleep(1)
         self.ctrl_kl.ctrl_relay('KL12', False)
         sleep(2)
-        if self.di_read.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1', position=False):
+        if self.di_read_full.subtest_1di(test_num=4, subtest_num=4.0, err_code=29, di_a='in_a1', position=False):
             return True
         return False
 

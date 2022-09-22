@@ -28,10 +28,9 @@ class TestBDURT:
     def __init__(self):
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDURT.log",
                             filemode="w",
@@ -43,8 +42,8 @@ class TestBDURT:
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
     def st_test_1(self) -> bool:
-        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=288, err_code_b=288, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=288, err_code_b=288, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -56,8 +55,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=290, err_code_b=291, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=290, err_code_b=291, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -81,8 +80,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' включен KL12')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=296, err_code_b=297, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=296, err_code_b=297, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug(' отключены KL25, KL1')
@@ -101,8 +100,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', True)
         self.logger.debug(' включен KL12')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=298, err_code_b=299, position_a=False,
-                                    position_b=True):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.0, err_code_a=298, err_code_b=299, position_a=False,
+                                         position_b=True):
             return True
         return False
 
@@ -117,8 +116,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL25', True)
         self.logger.debug(' включены KL27, KL25, KL1')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=300, err_code_b=301, position_a=True,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.1, err_code_a=300, err_code_b=301, position_a=True,
+                                         position_b=False):
             return True
         return False
 
@@ -130,8 +129,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' отключен KL12')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=302, err_code_b=303, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=302, err_code_b=303, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL26', False)
             self.ctrl_kl.ctrl_relay('KL27', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -159,8 +158,8 @@ class TestBDURT:
         self.logger.debug("старт теста 4.2")
         self.resist.resist_10_to_50_ohm()
         sleep(1)
-        if self.di_read.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=304, err_code_b=305, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=304, err_code_b=305, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -188,8 +187,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug(' включен KL11')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=306, err_code_b=307, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=306, err_code_b=307, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
@@ -218,8 +217,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug(' отключен KL12')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=6, subtest_num=6.2, err_code_a=308, err_code_b=309, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=6, subtest_num=6.2, err_code_a=308, err_code_b=309, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -231,8 +230,8 @@ class TestBDURT:
         self.ctrl_kl.ctrl_relay('KL24', True)
         self.logger.debug(' включен KL24')
         sleep(1)
-        if self.di_read.subtest_2di(test_num=7, subtest_num=7.0, err_code_a=310, err_code_b=311, position_a=False,
-                                    position_b=True):
+        if self.di_read_full.subtest_2di(test_num=7, subtest_num=7.0, err_code_a=310, err_code_b=311, position_a=False,
+                                         position_b=True):
             return True
         return False
 

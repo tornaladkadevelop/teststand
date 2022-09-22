@@ -32,7 +32,6 @@ class TestBMZAPSH4:
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
 

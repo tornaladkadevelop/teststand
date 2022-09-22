@@ -14,17 +14,16 @@
 
 """
 
-import sys
 import logging
-
+import sys
 from time import time, sleep
 
-from general_func.exception import *
 from general_func.database import *
+from general_func.exception import *
 from general_func.modbus import *
 from general_func.procedure import *
-from general_func.subtest import ReadOPCServer, ProcedureFull
 from general_func.reset import ResetRelay, ResetProtection
+from general_func.subtest import ReadOPCServer, ProcedureFull
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -32,7 +31,7 @@ __all__ = ["TestTZP"]
 
 
 class TestTZP:
-    
+
     def __init__(self):
         self.reset_relay = ResetRelay()
         self.reset_protect = ResetProtection()
@@ -42,7 +41,7 @@ class TestTZP:
         self.di_read = DIRead()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         self._list_ust_num = (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
         self._list_ust_volt = (25.7, 29.8, 34.3, 39.1, 43.7, 48.5)
@@ -57,12 +56,12 @@ class TestTZP:
         self._msg_2 = "Переключите тумблер на корпусе блока в положение «Работа» "
         self._msg_3 = "Установите регулятор уставок на блоке в положение"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestTZP.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
-        logging.getLogger('mysql').setLevel('DEBUG')
+        logging.basicConfig(  # filename="C:\Stend\project_class\log\TestTZP.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
 
@@ -77,8 +76,8 @@ class TestTZP:
         self.ctrl_kl.ctrl_relay('KL21', True)
         self.logger.debug("включен KL21")
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=277, err_code_b=278, position_a=False,
-                                    position_b=True, di_b='in_a5'):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=277, err_code_b=278, position_a=False,
+                                         position_b=True, di_b='in_a5'):
             return True
         return False
 
@@ -88,7 +87,7 @@ class TestTZP:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_max_volt=0.6):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2):
             self._coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.3)
             return True
         return False
@@ -104,8 +103,8 @@ class TestTZP:
         else:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.0', '2')
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=282, err_code_b=283,
-                                    position_a=True, position_b=False, di_b='in_a5'):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=282, err_code_b=283,
+                                         position_a=True, position_b=False, di_b='in_a5'):
             return True
         return False
 
@@ -121,8 +120,8 @@ class TestTZP:
             return False
         self.mysql_conn.mysql_ins_result('идет тест 2.1', '2')
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.1, err_code_a=284, err_code_b=285,
-                                    position_a=False, position_b=True, di_b='in_a5'):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.1, err_code_a=284, err_code_b=285,
+                                         position_a=False, position_b=True, di_b='in_a5'):
             return True
         return False
 
@@ -176,7 +175,7 @@ class TestTZP:
                 start_timer = time()
                 self.logger.debug(f"начало отсчета: {start_timer}")
                 sub_timer = 0
-                in_a1, in_a5 = self.di_read.di_read("in_a1")
+                in_a1, in_a5 = self.di_read.di_read("in_a1", "in_a5")
                 self.logger.debug(f"in_a1 = {in_a5} (False)")
                 while in_a5 is True and sub_timer <= 370:
                     sleep(0.2)
@@ -235,15 +234,15 @@ class TestTZP:
         self.mysql_conn.mysql_ins_result('исправен', '3')
         self.logger.debug("тест 3 завершен")
         return True
-    
+
     def subtest_35(self) -> bool:
         self.mysql_conn.mysql_ins_result('идет тест 3.5', '3')
         self.logger.debug("идет тест 3.5")
         self.reset_protect.sbros_zashit_kl30(time_on=1.5, time_off=2.0)
         self.logger.debug("сброс защит")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.5, err_code_a=284, err_code_b=285,
-                                    position_a=False, position_b=True, di_b='in_a5'):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.5, err_code_a=284, err_code_b=285,
+                                         position_a=False, position_b=True, di_b='in_a5'):
             return True
         return False
 

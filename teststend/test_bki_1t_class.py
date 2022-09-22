@@ -32,7 +32,7 @@ class TestBKI1T:
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBKI1T.log",
                             filemode="w",
@@ -47,8 +47,8 @@ class TestBKI1T:
         """
         Тест 1. Проверка исходного состояния блока
         """
-        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=30, err_code_b=30,
-                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=30, err_code_b=30,
+                                         position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             return True
         return False
 
@@ -60,8 +60,8 @@ class TestBKI1T:
         sleep(2)
         self.resist.resist_kohm(220)
         sleep(2)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=31, err_code_b=31,
-                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=31, err_code_b=31,
+                                         position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             return True
         return False
 
@@ -92,8 +92,8 @@ class TestBKI1T:
         """
         self.ctrl_kl.ctrl_relay('KL24', True)
         sleep(1)
-        if self.di_read.subtest_2di(test_num=4, subtest_num=4.0, err_code_a=33, err_code_b=33,
-                                    position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
+        if self.di_read_full.subtest_2di(test_num=4, subtest_num=4.0, err_code_a=33, err_code_b=33,
+                                         position_a=True, position_b=False, di_a='in_a0', di_b='in_a1'):
             self.ctrl_kl.ctrl_relay('KL21', False)
             return True
         return False
@@ -107,8 +107,8 @@ class TestBKI1T:
         sleep(1)
         self.ctrl_kl.ctrl_relay('KL22', True)
         sleep(1)
-        if self.di_read.subtest_2di(test_num=5, subtest_num=5.0, err_code_a=34, err_code_b=34,
-                                    position_a=False, position_b=True, di_a='in_a0', di_b='in_a1'):
+        if self.di_read_full.subtest_2di(test_num=5, subtest_num=5.0, err_code_a=34, err_code_b=34,
+                                         position_a=False, position_b=True, di_a='in_a0', di_b='in_a1'):
             self.ctrl_kl.ctrl_relay('KL21', False)
             return True
         return False

@@ -10,17 +10,16 @@
 
 """
 
-import sys
 import logging
-
+import sys
 from time import sleep
 
-from general_func.exception import *
-from general_func.subtest import Subtest2in, ReadOPCServer
 from general_func.database import *
+from general_func.exception import *
 from general_func.modbus import *
-from general_func.resistance import Resistor
 from general_func.reset import ResetRelay
+from general_func.resistance import Resistor
+from general_func.subtest import Subtest2in, ReadOPCServer
 from gui.msgbox_1 import *
 
 __all__ = ["TestBDUD42"]
@@ -31,10 +30,9 @@ class TestBDUD42:
     def __init__(self):
         self.resist = Resistor()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest2in()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUD42.log",
                             filemode="w",
@@ -49,8 +47,8 @@ class TestBDUD42:
         """
         Тест 1. Проверка исходного состояния блока:
         """
-        if self.di_read.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=5, err_code_b=6, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=1, subtest_num=1.0, err_code_a=5, err_code_b=6, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -63,8 +61,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=13, err_code_b=14, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.0, err_code_a=13, err_code_b=14, position_a=False,
+                                         position_b=False):
             return True
         return False
 
@@ -88,8 +86,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(2)
-        if self.di_read.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=17, err_code_b=18, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=2, subtest_num=2.3, err_code_a=17, err_code_b=18, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.logger.debug("отключены KL25, KL1")
@@ -115,8 +113,8 @@ class TestBDUD42:
         self.logger.debug("старт теста 3.2")
         self.resist.resist_10_to_110_ohm()
         sleep(3)
-        if self.di_read.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=19, err_code_b=20, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=3, subtest_num=3.2, err_code_a=19, err_code_b=20, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -144,8 +142,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=9, err_code_b=10, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=4, subtest_num=4.2, err_code_a=9, err_code_b=10, position_a=False,
+                                         position_b=False):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -174,8 +172,8 @@ class TestBDUD42:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.di_read.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=11, err_code_b=12, position_a=False,
-                                    position_b=False):
+        if self.di_read_full.subtest_2di(test_num=5, subtest_num=5.2, err_code_a=11, err_code_b=12, position_a=False,
+                                         position_b=False):
             return True
         return False
 

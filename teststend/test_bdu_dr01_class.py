@@ -29,11 +29,10 @@ class TestBDUDR01:
 
     def __init__(self):
         self.resist = Resistor()
-        self.read_mb = ReadMB()
         self.ctrl_kl = CtrlKL()
         self.mysql_conn = MySQLConnect()
         self.subtest = Subtest4in()
-        self.di_read = ReadOPCServer()
+        self.di_read_full = ReadOPCServer()
 
         logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUDR01.log",
                             filemode="w",
@@ -50,9 +49,9 @@ class TestBDUDR01:
         :return:
         :rtype bool:
         """
-        if self.di_read.subtest_4di(test_num=1, subtest_num=1.0, err_code_a=216, err_code_b=217, err_code_c=218,
-                                    err_code_d=219, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=1, subtest_num=1.0, err_code_a=216, err_code_b=217, err_code_c=218,
+                                         err_code_d=219, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             return True
         return False
 
@@ -63,9 +62,9 @@ class TestBDUDR01:
         self.logger.debug("старт теста 2.0")
         self.ctrl_kl.ctrl_relay('KL2', True)
         self.logger.debug("включен KL2")
-        if self.di_read.subtest_4di(test_num=2, subtest_num=2.0, err_code_a=220, err_code_b=221, err_code_c=222,
-                                    err_code_d=223, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=2, subtest_num=2.0, err_code_a=220, err_code_b=221, err_code_c=222,
+                                         err_code_d=223, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             return True
         return False
 
@@ -94,9 +93,9 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=2, subtest_num=2.3, err_code_a=232, err_code_b=233, err_code_c=234,
-                                    err_code_d=235, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=2, subtest_num=2.3, err_code_a=232, err_code_b=233, err_code_c=234,
+                                         err_code_d=235, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug("отключены KL1, KL25")
@@ -127,9 +126,9 @@ class TestBDUDR01:
         self.logger.debug("старт теста 3.2")
         self.resist.resist_10_to_110_ohm()
         sleep(1)
-        if self.di_read.subtest_4di(test_num=3, subtest_num=3.2, err_code_a=236, err_code_b=237, err_code_c=238,
-                                    err_code_d=239, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=3, subtest_num=3.2, err_code_a=236, err_code_b=237, err_code_c=238,
+                                         err_code_d=239, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -162,9 +161,9 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=4, subtest_num=4.3, err_code_a=240, err_code_b=241, err_code_c=242,
-                                    err_code_d=243, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=4, subtest_num=4.3, err_code_a=240, err_code_b=241, err_code_c=242,
+                                         err_code_d=243, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
@@ -198,9 +197,9 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=5, subtest_num=5.2, err_code_a=244, err_code_b=245, err_code_c=246,
-                                    err_code_d=247, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=5, subtest_num=5.2, err_code_a=244, err_code_b=245, err_code_c=246,
+                                         err_code_d=247, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL1', False)
             self.logger.debug("отключены KL1, KL25")
@@ -217,9 +216,9 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL28', True)
         self.logger.debug("включены KL2, KL26, KL28")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=6, subtest_num=6.0, err_code_a=248, err_code_b=249, err_code_c=250,
-                                    err_code_d=251, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=6, subtest_num=6.0, err_code_a=248, err_code_b=249, err_code_c=250,
+                                         err_code_d=251, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             return True
         return False
 
@@ -248,9 +247,9 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=6, subtest_num=6.3, err_code_a=260, err_code_b=261, err_code_c=262,
-                                    err_code_d=263, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=6, subtest_num=6.3, err_code_a=260, err_code_b=261, err_code_c=262,
+                                         err_code_d=263, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL29', False)
             self.logger.debug("отключены KL25, KL29")
@@ -281,9 +280,9 @@ class TestBDUDR01:
         self.logger.debug("старт теста 7.2")
         self.resist.resist_10_to_110_ohm()
         sleep(1)
-        if self.di_read.subtest_4di(test_num=7, subtest_num=7.2, err_code_a=264, err_code_b=265, err_code_c=266,
-                                    err_code_d=267, position_a=False, position_b=False, position_c=False,
-                                    position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=7, subtest_num=7.2, err_code_a=264, err_code_b=265, err_code_c=266,
+                                         err_code_d=267, position_a=False, position_b=False, position_c=False,
+                                         position_d=False, di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL29', False)
@@ -316,10 +315,10 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL11', True)
         self.logger.debug("включен KL11")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=8, subtest_num=8.2,
-                                    err_code_a=268, err_code_b=269, err_code_c=270, err_code_d=271,
-                                    position_a=False, position_b=False, position_c=False, position_d=False,
-                                    di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=8, subtest_num=8.2,
+                                         err_code_a=268, err_code_b=269, err_code_c=270, err_code_d=271,
+                                         position_a=False, position_b=False, position_c=False, position_d=False,
+                                         di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             self.ctrl_kl.ctrl_relay('KL12', False)
             self.ctrl_kl.ctrl_relay('KL25', False)
             self.ctrl_kl.ctrl_relay('KL29', False)
@@ -353,10 +352,10 @@ class TestBDUDR01:
         self.ctrl_kl.ctrl_relay('KL12', False)
         self.logger.debug("отключен KL12")
         sleep(1)
-        if self.di_read.subtest_4di(test_num=9, subtest_num=9.2,
-                                    err_code_a=272, err_code_b=273, err_code_c=274, err_code_d=275,
-                                    position_a=False, position_b=False, position_c=False, position_d=False,
-                                    di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
+        if self.di_read_full.subtest_4di(test_num=9, subtest_num=9.2,
+                                         err_code_a=272, err_code_b=273, err_code_c=274, err_code_d=275,
+                                         position_a=False, position_b=False, position_c=False, position_d=False,
+                                         di_a='in_a1', di_b='in_a2', di_c='in_a3', di_d='in_a4'):
             return True
         return False
 

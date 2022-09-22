@@ -84,7 +84,7 @@ class TestBTZT:
         self.msg_5 = "Установите регулятор уставок ПМЗ (1-11) на блоке в положение"
         self.msg_7 = "Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBTZT.log",
+        logging.basicConfig(#filename="C:\Stend\project_class\log\TestBTZT.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
@@ -118,7 +118,7 @@ class TestBTZT:
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_max_volt=0.4):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_min_volt=0.4):
             self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
             return True
         return False
@@ -226,6 +226,7 @@ class TestBTZT:
             self.mysql_conn.mysql_ins_result('идет тест 4.1', '4')
 
             # 4.1.  Проверка срабатывания блока от сигнала нагрузки:
+            self.logger.debug("4.1.  Проверка срабатывания блока от сигнала нагрузки:")
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_pmz_num[k]}, подтест 4.1')
             self.proc.procedure_1_24_34(coef_volt=self.coef_volt, setpoint_volt=i)
             self.meas_volt = self.ai_read.ai_read('AI0')
@@ -236,9 +237,12 @@ class TestBTZT:
                 self.meas_volt = self.ai_read.ai_read('AI0')
                 self.func_delta_t_pmz(k=k)
                 self.reset_relay.stop_procedure_3()
+            else:
+                pass
 
             # обработка полученных результатов
             # Δ%= 2.7938*U4
+            self.logger.debug("обработка полученных результатов")
             calc_delta_percent_pmz = 2.7938 * self.meas_volt
             self.mysql_conn.mysql_add_message(f'уставка МТЗ: {self.list_ust_pmz_num[k]}, подтест 4.2')
             if self.calc_delta_t_pmz == 9999 or self.malfunction is True:
@@ -262,6 +266,7 @@ class TestBTZT:
             self.list_delta_t_pmz.append(self.delta_t_pmz)
 
             # сброс защиты после проверки
+            self.logger.debug("сброс защиты после проверки")
             if self.reset_protection(test_num=4, subtest_num=4.2):
                 k += 1
                 continue
@@ -355,8 +360,10 @@ class TestBTZT:
     def func_delta_t_pmz(self, k):
         for qw in range(4):
             if self.reset_protection(test_num=4, subtest_num=4.2):
+                self.in_a1, self.in_a2, self.in_a5, self.in_a6 = self.di_read.di_read('in_a1', 'in_a2',
+                                                                                      'in_a5', 'in_a6')
                 self.calc_delta_t_pmz = self.ctrl_kl.ctrl_ai_code_v0(code=103)
-                sleep(3)
+                # sleep(3)
                 self.in_a1, self.in_a2, self.in_a5, self.in_a6 = self.di_read.di_read('in_a1', 'in_a2',
                                                                                       'in_a5', 'in_a6')
                 result_delta_t = f"уставка ПМЗ: {self.list_ust_pmz_num[k]}; попытка: {qw}; " \

@@ -9,17 +9,16 @@
 
 """
 
-import sys
 import logging
-
+import sys
 from time import sleep
 
-from general_func.exception import *
 from general_func.database import *
+from general_func.exception import *
 from general_func.modbus import *
 from general_func.procedure import *
 from general_func.reset import ResetRelay, ResetProtection
-from general_func.subtest import ProcedureFull, Subtest3in
+from general_func.subtest import ProcedureFull, ReadOPCServer
 from gui.msgbox_1 import *
 from gui.msgbox_2 import *
 
@@ -34,11 +33,10 @@ class TestBMZ2:
         self.proc = Procedure()
         self.proc_full = ProcedureFull()
         self.ctrl_kl = CtrlKL()
-        self.read_mb = ReadMB()
         self.di_read = DIRead()
         self.mysql_conn = MySQLConnect()
         self.ai_read = AIRead()
-        self.subtest = Subtest3in()
+        self.di_read_full = ReadOPCServer()
 
         self.ust_test = 80.0
         self.list_ust_num = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
@@ -114,9 +112,9 @@ class TestBMZ2:
         sleep(2)
         self.ctrl_kl.ctrl_relay('KL63', False)
         sleep(1)
-        if self.subtest.subtest_3di(test_num=2, subtest_num=2.1, err_code_a=335, err_code_b=336, err_code_c=337,
-                                    position_a=True, position_b=False, position_c=True, inp_a='in_a1',
-                                    inp_b='in_a5', inp_c='in_a2'):
+        if self.di_read_full.subtest_3di(test_num=2, subtest_num=2.1, err_code_a=335, err_code_b=336, err_code_c=337,
+                                         position_a=True, position_b=False, position_c=True, di_a='in_a1',
+                                         di_b='in_a5', di_c='in_a2'):
             self.reset_relay.stop_procedure_3()
             return True
         return False
@@ -283,9 +281,9 @@ class TestBMZ2:
         self.mysql_conn.mysql_ins_result(f'идёт тест {subtest_num}', f'{test_num}')
         self.logger.debug(f"старт теста {subtest_num}")
         self.reset_protect.sbros_zashit_kl30()
-        if self.subtest.subtest_3di(test_num=test_num, subtest_num=subtest_num, err_code_a=338, err_code_b=339,
-                                    err_code_c=340, position_a=False, position_b=True, position_c=False,
-                                    inp_a='in_a1', inp_b='in_a5', inp_c='in_a2'):
+        if self.di_read_full.subtest_3di(test_num=test_num, subtest_num=subtest_num, err_code_a=338, err_code_b=339,
+                                         err_code_c=340, position_a=False, position_b=True, position_c=False,
+                                         di_a='in_a1', di_b='in_a5', di_c='in_a2'):
             return True
         return False
 
