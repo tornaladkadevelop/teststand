@@ -84,7 +84,7 @@ class TestBTZT:
         self.msg_5 = "Установите регулятор уставок ПМЗ (1-11) на блоке в положение"
         self.msg_7 = "Установите регулятор уставок ТЗП (0.5…1.0) на блоке в положение"
 
-        logging.basicConfig(#filename="C:\Stend\project_class\log\TestBTZT.log",
+        logging.basicConfig(filename="C:\Stend\project_class\log\TestBTZT.log",
                             filemode="w",
                             level=logging.DEBUG,
                             encoding="utf-8",
@@ -258,7 +258,7 @@ class TestBTZT:
 
             # запись результатов в БД
             self.logger.debug("запись результатов в БД")
-            result_pmz = f'уставка {self.list_ust_pmz_num[k]}: дельта t: {self.delta_t_pmz:.1f}, ' \
+            result_pmz = f'уставка {self.list_ust_pmz_num[k]}: дельта t: {self.delta_t_pmz}, ' \
                          f'дельта %: {self.delta_percent_pmz:.2f}'
             self.mysql_conn.mysql_add_message(result_pmz)
             self.logger.info(result_pmz)
@@ -288,6 +288,7 @@ class TestBTZT:
         for n in self.list_ust_tzp_volt:
             self.malfunction = False
             msg_result = my_msg_2(f'{self.msg_7} {self.list_ust_tzp_num[m]}')
+            self.logger.debug(f"от пользователя пришло {msg_result}")
             if msg_result == 0:
                 pass
             elif msg_result == 1:
@@ -300,6 +301,7 @@ class TestBTZT:
                 continue
 
             # формирование испытательного напряжения
+            self.logger.debug("5.1 формирование испытательного напряжения")
             self.mysql_conn.mysql_ins_result('идет тест 5.1', '5')
             if self.proc.procedure_x4_to_x5(coef_volt=self.coef_volt, setpoint_volt=n):
                 pass
@@ -308,12 +310,14 @@ class TestBTZT:
                 return False
 
             # измерение испытательного напряжения и вычисление процентного соотношения
+            self.logger.debug("5.2 измерение испытательного напряжения и вычисление процентного соотношения")
             self.mysql_conn.mysql_ins_result('идет тест 5.2', '5')
             self.meas_volt = self.ai_read.ai_read('AI0')
             # Δ%= 0.0044*U42[i]+2.274* U4[i]
             calc_delta_percent_tzp = 0.0044 * self.meas_volt ** 2 + 2.274 * self.meas_volt
 
             # Проверка срабатывания блока от сигнала нагрузки:
+            self.logger.debug("5.3 Проверка срабатывания блока от сигнала нагрузки:")
             self.mysql_conn.progress_level(0.0)
             self.logger.debug("тест 5.3")
             self.mysql_conn.mysql_ins_result('идет тест 5.3', '5')
@@ -321,6 +325,7 @@ class TestBTZT:
             self.func_delta_t_tzp()
 
             # обработка результатов
+            self.logger.debug("5.4 обработка результатов")
             if self.malfunction is True:
                 self.delta_t_tzp = "неисправен"
                 self.delta_percent_tzp = "неисправен"
@@ -331,6 +336,7 @@ class TestBTZT:
                 self.delta_percent_tzp = f'{calc_delta_percent_tzp:.2f}'
 
             # запись результатов в БД
+            self.logger.debug("5.5 запись результатов в БД")
             result = f'уставка {self.list_ust_tzp_num[m]}: дельта t: {self.delta_t_tzp}, ' \
                      f'дельта %: {self.delta_percent_tzp}'
             self.logger.info(result)
@@ -348,6 +354,7 @@ class TestBTZT:
         return True
 
     def reset_protection(self, *, test_num: int, subtest_num: float):
+        self.logger.debug("сброс защит")
         self.reset_protect.sbros_zashit_kl30()
         sleep(1)
         if self.di_read_full.subtest_4di(test_num=test_num, subtest_num=subtest_num,
@@ -358,7 +365,7 @@ class TestBTZT:
         return False
 
     def func_delta_t_pmz(self, k):
-        for qw in range(4):
+        for qw in range(2):
             if self.reset_protection(test_num=4, subtest_num=4.2):
                 self.in_a1, self.in_a2, self.in_a5, self.in_a6 = self.di_read.di_read('in_a1', 'in_a2',
                                                                                       'in_a5', 'in_a6')

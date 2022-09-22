@@ -98,7 +98,7 @@ class TestMMTZD:
         1.1.2. Проверка отсутствия короткого замыкания на входе измерительной части блока:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_max_volt=0.4):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.2, coef_min_volt=0.4):
             self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.3)
             return True
         return False

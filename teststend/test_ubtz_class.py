@@ -95,7 +95,7 @@ class TestUBTZ:
         1.2. Определение коэффициента Кс отклонения фактического напряжения от номинального.
         :return:
         """
-        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_max_volt=0.6):
+        if self.proc_full.procedure_1_full(test_num=1, subtest_num=1.1, coef_min_volt=0.6):
             self.coef_volt = self.proc_full.procedure_2_full(test_num=1, subtest_num=1.2)
             return True
         return False
