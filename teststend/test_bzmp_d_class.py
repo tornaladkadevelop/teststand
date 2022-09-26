@@ -56,11 +56,12 @@ class TestBZMPD:
         self.msg_4 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
         self.msg_5 = "С помощью кнопки SB3 перейдите в главное окно меню блока"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBZMPD.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestBZMPD.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

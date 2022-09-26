@@ -34,11 +34,12 @@ class TestBDUDR01:
         self.subtest = Subtest4in()
         self.di_read_full = ReadOPCServer()
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBDUDR01.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestBDUDR01.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

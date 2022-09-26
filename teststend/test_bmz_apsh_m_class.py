@@ -45,11 +45,12 @@ class TestBMZAPSHM:
         self.msg_1 = "Убедитесь в отсутствии блоков во всех испытательных разъемах. " \
                      "Вставьте блок в соответствующий испытательный разъем»"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBMZAPShM.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestBMZAPShM.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('DEBUG')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

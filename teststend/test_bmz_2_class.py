@@ -57,11 +57,12 @@ class TestBMZ2:
         self.msg_3 = "Переключите тумблер на корпусе блока в положение «Работа»"
         self.msg_4 = 'Установите регулятор уставок на блоке в положение '
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestBMZ2.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestBMZ2.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

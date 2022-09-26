@@ -67,11 +67,12 @@ class TestMTZ5V28:
         self.msg_7 = "Установите регулятор уставок на блоке в положение\t"
         self.msg_8 = "Переключите тумблер, расположенный на корпусе блока в положение «Работа»"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestMTZ5_v28.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestMTZ5_v28.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

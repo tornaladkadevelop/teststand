@@ -142,7 +142,7 @@ class ReadOPCServer:
 
         self._write_condition_1(test_num, subtest_num)
         in_a, in_b, in_c = self.di_read.di_read(di_a, di_b, di_c)
-        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b}"
+        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b} "
                           f"and {in_c = } is {position_c}")
         if in_a is position_a and in_b is position_b and in_c is position_c:
             self._write_condition_true(test_num, subtest_num)
@@ -184,7 +184,7 @@ class ReadOPCServer:
 
         self._write_condition_1(test_num, subtest_num)
         in_a, in_b, in_c, in_d = self.di_read.di_read(di_a, di_b, di_c, di_d)
-        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b}"
+        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b} "
                           f"and {in_c = } is {position_c} and {in_d = } is {position_d}")
         if in_a is position_a and in_b is position_b and in_c is position_c and in_d is position_d:
             self._write_condition_true(test_num, subtest_num)
@@ -231,7 +231,7 @@ class ReadOPCServer:
 
         self._write_condition_1(test_num, subtest_num)
         in_a, in_b, in_c, in_d, in_e = self.di_read.di_read(di_a, di_b, di_c, di_d, di_e)
-        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b}"
+        self.logger.debug(f"состояние входа: {in_a = } is {position_a} and {in_b = } is {position_b} "
                           f"and {in_c = } is {position_c} and {in_d = } is {position_d} and {in_e} is {position_e}")
         if in_a is position_a and in_b is position_b and in_c is position_c and \
                 in_d is position_d and in_e is position_e:

@@ -55,11 +55,12 @@ class TestMMTZD:
         self.msg_5 = "Установите регулятор уставок II канала, расположенного на блоке в положение «50»"
         self.msg_6 = "Установите регулятор уставок III канала, расположенного на блоке в положение\t"
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestMMTZD.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestMMTZD.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

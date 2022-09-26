@@ -57,11 +57,12 @@ class TestMTZP2:
                      "- Защита введена: ДА; - Уставка по току: 200А; \n" \
                      "- Уставка по времени: 60000 мс; - Отключение КА – ДА."
 
-        logging.basicConfig(filename="C:\Stend\project_class\log\TestMTZP2.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestMTZP2.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))

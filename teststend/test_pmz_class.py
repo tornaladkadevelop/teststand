@@ -58,11 +58,12 @@ class TestPMZ:
         self.msg_3 = 'Установите регулятор уставок на блоке в положение'
         self.msg_4 = "Переключите тумблер на корпусе блока в положение «Проверка»"
 
-        logging.basicConfig(#filename="C:\Stend\project_class\log\TestPMZ.log",
-                            filemode="w",
-                            level=logging.DEBUG,
-                            encoding="utf-8",
-                            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
+        logging.basicConfig(
+            filename="C:\\Stend\\project_class\\log\\TestPMZ.log",
+            filemode="w",
+            level=logging.DEBUG,
+            encoding="utf-8",
+            format='[%(asctime)s: %(name)s: %(levelname)s] %(message)s')
         logging.getLogger('mysql').setLevel('WARNING')
         self.logger = logging.getLogger(__name__)
         # self.logger.addHandler(logging.StreamHandler(self.logger.setLevel(10)))
